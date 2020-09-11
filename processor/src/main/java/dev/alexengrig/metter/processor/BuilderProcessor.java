@@ -1,4 +1,4 @@
-package dev.alexengrig.metter;
+package dev.alexengrig.metter.processor;
 
 import com.google.auto.service.AutoService;
 
