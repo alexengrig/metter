@@ -1,4 +1,4 @@
-package dev.alexengrig.lombok.custom.meta;
+package dev.alexengrig.metter.meta;
 
 public interface CachedSetterMethod<T, V> extends SetterMethod<T, V> {
     boolean hasCache(T object, V value);

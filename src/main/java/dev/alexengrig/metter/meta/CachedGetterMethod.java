@@ -1,4 +1,4 @@
-package dev.alexengrig.lombok.custom.meta;
+package dev.alexengrig.metter.meta;
 
 public interface CachedGetterMethod<T, R> extends GetterMethod<T, R> {
     boolean hasCache(T object);

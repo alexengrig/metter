@@ -1,4 +1,4 @@
-package dev.alexengrig.lombok.custom.meta;
+package dev.alexengrig.metter.meta;
 
 import java.util.function.Supplier;
 
