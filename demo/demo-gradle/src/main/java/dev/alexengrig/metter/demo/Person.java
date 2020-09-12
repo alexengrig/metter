@@ -2,28 +2,39 @@ package dev.alexengrig.metter.demo;
 
 
 import dev.alexengrig.metter.BuilderProperty;
+import dev.alexengrig.metter.processor.MetaAnnotation;
 
+@MetaAnnotation
 public class Person {
+    private final int constant = 100;
+    private int integer;
+    private String string;
+    private boolean enable;
+    private boolean disable;
 
-    private int age;
+    public boolean isEnable() {
+        return enable;
+    }
 
-    private String name;
-
-    public int getAge() {
-        return age;
+    public int getInteger() {
+        return integer;
     }
 
     @BuilderProperty
-    public void setAge(int age) {
-        this.age = age;
+    public void setInteger(int integer) {
+        this.integer = integer;
     }
 
-    public String getName() {
-        return name;
+    public String getString() {
+        return string;
     }
 
     @BuilderProperty
-    public void setName(String name) {
-        this.name = name;
+    public void setString(String string) {
+        this.string = string;
+    }
+
+    public int getConstant() {
+        return constant;
     }
 }
