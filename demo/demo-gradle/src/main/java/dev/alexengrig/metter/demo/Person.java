@@ -1,7 +1,6 @@
 package dev.alexengrig.metter.demo;
 
 
-import dev.alexengrig.metter.BuilderProperty;
 import dev.alexengrig.metter.processor.MetaAnnotation;
 
 @MetaAnnotation
@@ -24,7 +23,6 @@ public class Person {
         return integer;
     }
 
-    @BuilderProperty
     public void setInteger(int integer) {
         this.integer = integer;
     }
@@ -33,7 +31,6 @@ public class Person {
         return string;
     }
 
-    @BuilderProperty
     public void setString(String string) {
         this.string = string;
     }

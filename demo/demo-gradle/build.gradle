@@ -11,8 +11,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'dev.alexengrig:metter:1.0-SNAPSHOT'
-    implementation 'dev.alexengrig:metter-processor:0.1.0-SNAPSHOT'
+    compileOnly 'dev.alexengrig:metter-processor:0.1.0-SNAPSHOT'
     annotationProcessor 'dev.alexengrig:metter-processor:0.1.0-SNAPSHOT'
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
