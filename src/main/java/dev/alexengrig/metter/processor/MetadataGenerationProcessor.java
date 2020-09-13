@@ -1,6 +1,7 @@
 package dev.alexengrig.metter.processor;
 
 import com.google.auto.service.AutoService;
+import dev.alexengrig.metter.annotation.MetadataGeneration;
 import dev.alexengrig.metter.processor.element.GetterTypeElementVisitor;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -19,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 @AutoService(Processor.class)
-public class MetaGenerationProcessor extends AbstractProcessor {
+public class MetadataGenerationProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         for (TypeElement annotationTypeElement : annotations) {
@@ -105,7 +106,7 @@ public class MetaGenerationProcessor extends AbstractProcessor {
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        return Collections.singleton(MetaAnnotation.class.getName());
+        return Collections.singleton(MetadataGeneration.class.getName());
     }
 
     @Override

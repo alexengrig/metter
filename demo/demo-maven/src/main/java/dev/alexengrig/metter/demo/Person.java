@@ -1,9 +1,8 @@
 package dev.alexengrig.metter.demo;
 
+import dev.alexengrig.metter.annotation.MetadataGeneration;
 
-import dev.alexengrig.metter.processor.MetaAnnotation;
-
-@MetaAnnotation
+@MetadataGeneration
 public class Person {
     private final int constant = 100;
     private int integer;
