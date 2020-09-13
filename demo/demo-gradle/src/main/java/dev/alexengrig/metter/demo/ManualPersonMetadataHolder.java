@@ -13,6 +13,7 @@ public class ManualPersonMetadataHolder implements Function<String, Function<Per
         this.getterByField.put("integer", Person::getInteger);
         this.getterByField.put("string", Person::getString);
         this.getterByField.put("enable", Person::isEnable);
+        this.getterByField.put("lombok", Person::getLombok);
     }
 
     @Override

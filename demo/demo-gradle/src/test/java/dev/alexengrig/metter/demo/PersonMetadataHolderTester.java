@@ -28,5 +28,7 @@ public abstract class PersonMetadataHolderTester {
         assertEquals(person.getInteger(), getterByFieldForPerson.apply("integer"));
         assertEquals(person.getString(), getterByFieldForPerson.apply("string"));
         assertEquals(person.isEnable(), getterByFieldForPerson.apply("enable"));
+        // TODO: Add support of lombok
+//        assertEquals(person.getLombok(), getterByFieldForPerson.apply("lombok"));
     }
 }

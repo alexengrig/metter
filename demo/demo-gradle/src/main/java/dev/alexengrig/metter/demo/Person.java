@@ -1,6 +1,7 @@
 package dev.alexengrig.metter.demo;
 
 import dev.alexengrig.metter.annotation.MetadataGeneration;
+import lombok.Getter;
 
 @MetadataGeneration
 public class Person {
@@ -9,6 +10,8 @@ public class Person {
     private String string;
     private boolean enable;
     private boolean withoutGetter;
+    @Getter
+    private String lombok;
 
     public boolean isEnable() {
         return enable;
