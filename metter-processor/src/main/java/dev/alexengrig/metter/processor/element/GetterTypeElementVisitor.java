@@ -8,6 +8,7 @@ import java.util.Set;
 
 public class GetterTypeElementVisitor extends BaseElementVisitor {
     private final Map<String, String> field2Method;
+    private String className;
 
     public GetterTypeElementVisitor() {
         this.field2Method = new HashMap<>();
@@ -15,7 +16,7 @@ public class GetterTypeElementVisitor extends BaseElementVisitor {
 
     @Override
     public void visitType(TypeElement typeElement) {
-        String className = typeElement.getQualifiedName().toString();
+        this.className = typeElement.getQualifiedName().toString();
         VariableNamesCollectorElementVisitor variableVisitor = new VariableNamesCollectorElementVisitor();
         GetterMethodCollectorElementVisitor methodVisitor = new GetterMethodCollectorElementVisitor();
         for (Element element : typeElement.getEnclosedElements()) {
@@ -31,18 +32,23 @@ public class GetterTypeElementVisitor extends BaseElementVisitor {
                 String variablePart = variableName.substring(0, 1).toUpperCase() + variableName.substring(1);
                 if (methodName.startsWith("get") && ("get" + variablePart).equals(methodName)
                         || methodName.startsWith("is") && ("is" + variablePart).equals(methodName)) {
-                    field2Method.put(variableName, className + "::" + methodName);
+                    field2Method.put(variableName, methodName);
                     has = true;
                     break;
                 }
             }
-            if (!has) {
-                field2Method.put(variableName, "NOT_FOUND");
-            }
+//            if (!has) {
+//                TODO: throw or ignore?
+//                field2Method.put(variableName, "NOT_FOUND");
+//            }
         }
     }
 
     public Map<String, String> getMap() {
         return field2Method;
+    }
+
+    public String getClassName() {
+        return className;
     }
 }
