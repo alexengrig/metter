@@ -17,19 +17,15 @@ public abstract class PersonMetadataHolderTester {
         return person;
     }
 
-    protected abstract PersonMetadataHolder getMetadataHolder();
+    protected abstract Function<String, Function<Person, Object>> getMetadataHolder();
 
     @Test
     public void should_return_expectedValues() {
         Person person = getPerson();
-        PersonMetadataHolder metaHolder = getMetadataHolder();
-        Function<Person, ?> constantGetter = metaHolder.getter("constant");
-        assertEquals(person.getConstant(), constantGetter.apply(person));
-        Function<Person, ?> integerGetter = metaHolder.getter("integer");
-        assertEquals(person.getInteger(), integerGetter.apply(person));
-        Function<Person, ?> stringGetter = metaHolder.getter("string");
-        assertEquals(person.getString(), stringGetter.apply(person));
-        Function<Person, ?> enableGetter = metaHolder.getter("enable");
-        assertEquals(person.isEnable(), enableGetter.apply(person));
+        Function<String, Function<Person, Object>> metaHolder = getMetadataHolder();
+        assertEquals(person.getConstant(), metaHolder.andThen(t -> t.apply(person)).apply("constant"));
+        assertEquals(person.getInteger(), metaHolder.andThen(t -> t.apply(person)).apply("integer"));
+        assertEquals(person.getString(), metaHolder.andThen(t -> t.apply(person)).apply("string"));
+        assertEquals(person.isEnable(), metaHolder.andThen(t -> t.apply(person)).apply("enable"));
     }
 }
