@@ -10,10 +10,14 @@ public class Person {
     private int integer;
     private String string;
     private boolean enable;
-    private boolean disable;
+    private boolean withoutGetter;
 
     public boolean isEnable() {
         return enable;
+    }
+
+    public void setEnable(boolean enable) {
+        this.enable = enable;
     }
 
     public int getInteger() {
