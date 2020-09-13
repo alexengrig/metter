@@ -23,9 +23,10 @@ public abstract class PersonMetadataHolderTester {
     public void should_return_expectedValues() {
         Person person = getPerson();
         Function<String, Function<Person, Object>> metaHolder = getMetadataHolder();
-        assertEquals(person.getConstant(), metaHolder.andThen(t -> t.apply(person)).apply("constant"));
-        assertEquals(person.getInteger(), metaHolder.andThen(t -> t.apply(person)).apply("integer"));
-        assertEquals(person.getString(), metaHolder.andThen(t -> t.apply(person)).apply("string"));
-        assertEquals(person.isEnable(), metaHolder.andThen(t -> t.apply(person)).apply("enable"));
+        Function<String, Object> getterByFieldForPerson = metaHolder.andThen(t -> t.apply(person));
+        assertEquals(person.getConstant(), getterByFieldForPerson.apply("constant"));
+        assertEquals(person.getInteger(), getterByFieldForPerson.apply("integer"));
+        assertEquals(person.getString(), getterByFieldForPerson.apply("string"));
+        assertEquals(person.isEnable(), getterByFieldForPerson.apply("enable"));
     }
 }
