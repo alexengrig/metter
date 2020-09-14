@@ -24,9 +24,7 @@ public class ManualPersonMetadataHolder implements Function<String, Function<Per
     private final Map<String, Function<Person, Object>> getterByField;
 
     public ManualPersonMetadataHolder() {
-        this.getterByField = new HashMap<>(4);
-        // TODO: As IntelliJ Live template
-//        ${FIELD_TO_GETTER}(this.getterByField.put(${FIELD}, ${GETTER}));
+        this.getterByField = new HashMap<>(5);
         this.getterByField.put("constant", Person::getConstant);
         this.getterByField.put("integer", Person::getInteger);
         this.getterByField.put("string", Person::getString);
