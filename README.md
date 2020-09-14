@@ -1,6 +1,6 @@
 # metter
 
-Metter is an annotation processor for generation meta information (getters and setters).
+Metter is an annotation processor for generation meta-information (getters and setters).
 
 ## Motivation
 
