@@ -17,10 +17,12 @@
 package dev.alexengrig.metter.demo;
 
 import dev.alexengrig.metter.annotation.GetterSupplier;
+import dev.alexengrig.metter.annotation.SetterSupplier;
 import lombok.Getter;
 import lombok.Setter;
 
 @GetterSupplier
+@SetterSupplier
 public class Person {
     private final int constant = 100;
     private int integer;

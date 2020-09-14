@@ -16,29 +16,29 @@
 
 package dev.alexengrig.metter.processor.element;
 
-import javax.lang.model.element.VariableElement;
-import java.util.HashMap;
-import java.util.Map;
+import javax.lang.model.element.ExecutableElement;
+import java.util.HashSet;
 import java.util.Set;
 
-public class VariableNamesCollectorElementVisitor extends BaseElementVisitor {
-    private final Map<String, String> variable2Type;
+public class SetterMethodCollectorElementVisitor extends BaseElementVisitor {
+    private final Set<String> methodNames;
 
-    public VariableNamesCollectorElementVisitor() {
-        this.variable2Type = new HashMap<>();
+    public SetterMethodCollectorElementVisitor() {
+        methodNames = new HashSet<>();
     }
 
     @Override
-    public void visitVariable(VariableElement variableElement) {
-        String name = variableElement.getSimpleName().toString();
-        this.variable2Type.put(name, variableElement.asType().toString());
+    public void visitExecutable(ExecutableElement executableElement) {
+        if (executableElement.getParameters().size() != 1) {
+            return;
+        }
+        String name = executableElement.getSimpleName().toString();
+        if (name.startsWith("set")) {
+            methodNames.add(name);
+        }
     }
 
-    public Map<String, String> getVariable2Type() {
-        return variable2Type;
-    }
-
-    public Set<String> getVariableNames() {
-        return variable2Type.keySet();
+    public Set<String> getMethodNames() {
+        return methodNames;
     }
 }
