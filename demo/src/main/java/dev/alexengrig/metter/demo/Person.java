@@ -18,6 +18,7 @@ package dev.alexengrig.metter.demo;
 
 import dev.alexengrig.metter.annotation.GetterSupplier;
 import lombok.Getter;
+import lombok.Setter;
 
 @GetterSupplier
 public class Person {
@@ -25,8 +26,9 @@ public class Person {
     private int integer;
     private String string;
     private boolean enable;
-    private boolean withoutGetter;
+    private boolean withoutGetterAndSetter;
     @Getter
+    @Setter
     private String lombok;
 
     public boolean isEnable() {
