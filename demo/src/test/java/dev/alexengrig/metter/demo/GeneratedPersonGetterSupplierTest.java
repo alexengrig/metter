@@ -16,11 +16,13 @@
 
 package dev.alexengrig.metter.demo;
 
+import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
-public class GeneratedPersonMetadataHolderTest extends PersonMetadataHolderTester {
+public class GeneratedPersonGetterSupplierTest extends PersonGetterSupplierTester {
     @Override
-    protected Function<String, Function<Person, Object>> getMetadataHolder() {
-        return new GeneratedPersonMetadataHolder();
+    protected Supplier<Map<String, Function<Person, Object>>> getGetterSupplier() {
+        return new PersonGetterSupplier();
     }
 }

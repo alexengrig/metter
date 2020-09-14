@@ -16,10 +16,10 @@
 
 package dev.alexengrig.metter.demo;
 
-import dev.alexengrig.metter.annotation.MetadataGeneration;
+import dev.alexengrig.metter.annotation.GetterSupplier;
 import lombok.Getter;
 
-@MetadataGeneration
+@GetterSupplier
 public class Person {
     private final int constant = 100;
     private int integer;

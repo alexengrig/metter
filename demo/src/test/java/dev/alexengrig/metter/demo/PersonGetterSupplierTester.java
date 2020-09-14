@@ -18,33 +18,33 @@ package dev.alexengrig.metter.demo;
 
 import org.junit.Test;
 
+import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
 
-public abstract class PersonMetadataHolderTester {
+public abstract class PersonGetterSupplierTester {
     protected Person getPerson() {
         Person person = new Person();
-        int integer = 100;
-        person.setInteger(integer);
-        String string = "string";
-        person.setString(string);
+        person.setInteger(100);
+        person.setString("string");
         person.setEnable(true);
         return person;
     }
 
-    protected abstract Function<String, Function<Person, Object>> getMetadataHolder();
+    protected abstract Supplier<Map<String, Function<Person, Object>>> getGetterSupplier();
 
     @Test
-    public void should_return_expectedValues() {
+    public void should_return_valuesFromGetters() {
         Person person = getPerson();
-        Function<String, Function<Person, Object>> metaHolder = getMetadataHolder();
-        Function<String, Object> getterByFieldForPerson = metaHolder.andThen(t -> t.apply(person));
-        assertEquals(person.getConstant(), getterByFieldForPerson.apply("constant"));
-        assertEquals(person.getInteger(), getterByFieldForPerson.apply("integer"));
-        assertEquals(person.getString(), getterByFieldForPerson.apply("string"));
-        assertEquals(person.isEnable(), getterByFieldForPerson.apply("enable"));
+        Supplier<Map<String, Function<Person, Object>>> getterSupplier = getGetterSupplier();
+        Map<String, Function<Person, Object>> getterByField = getterSupplier.get();
+        assertEquals(person.getConstant(), getterByField.get("constant").apply(person));
+        assertEquals(person.getInteger(), getterByField.get("integer").apply(person));
+        assertEquals(person.getString(), getterByField.get("string").apply(person));
+        assertEquals(person.isEnable(), getterByField.get("enable").apply(person));
         // TODO: Add support of lombok
-//        assertEquals(person.getLombok(), getterByFieldForPerson.apply("lombok"));
+//        assertEquals(person.getLombok(), getterByField.get("lombok").apply(person));
     }
 }

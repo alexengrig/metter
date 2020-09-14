@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package dev.alexengrig.metter.demo;
+package dev.alexengrig.metter.annotation;
 
-import java.util.function.Function;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public class ReflectionPersonMetadataHolderTest extends PersonMetadataHolderTester {
-    @Override
-    protected Function<String, Function<Person, Object>> getMetadataHolder() {
-        return new ReflectionPersonMetadataHolder();
-    }
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.SOURCE)
+public @interface GetterSupplier {
 }
