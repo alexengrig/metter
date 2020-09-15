@@ -56,12 +56,13 @@ public class SetterSupplierProcessor extends BaseProcessor {
                     String packageName = getPackageName(className);
                     String domainClassName = getSimpleName(className);
                     String sourceClassName = className + CLASS_NAME_SUFFIX;
+                    String simpleClassName = getSimpleName(sourceClassName);
                     JavaFileObject sourceFile = createSourceFile(sourceClassName);
                     try (PrintWriter sourcePrinter = new PrintWriter(sourceFile.openWriter())) {
                         if (packageName != null) {
                             sourcePrinter.printf("package %s;%n%n", packageName);
                         }
-                        String source = generateSource(domainClassName, setterByField);
+                        String source = generateSource(simpleClassName, domainClassName, setterByField);
                         sourcePrinter.println(source);
                     } catch (IOException e) {
                         processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
@@ -93,7 +94,7 @@ public class SetterSupplierProcessor extends BaseProcessor {
         }
     }
 
-    private String generateSource(String className, Map<String, String> field2Setter) {
+    private String generateSource(String className, String domainClassName, Map<String, String> field2Setter) {
         StringJoiner joiner = new StringJoiner("\n")
                 .add("import javax.annotation.Generated;")
                 .add("import java.util.HashMap;")
@@ -103,19 +104,19 @@ public class SetterSupplierProcessor extends BaseProcessor {
                 .add("")
                 .add(format("@Generated(value = \"%s\", date = \"%s\")",
                         getClass().getName(), LocalDateTime.now().toString()))
-                .add(format("public class %s%s implements Supplier<Map<String, BiConsumer<%s, Object>>> {",
-                        className, CLASS_NAME_SUFFIX, className))
+                .add(format("public class %s implements Supplier<Map<String, BiConsumer<%s, Object>>> {",
+                        className, domainClassName))
                 .add(format("    protected final Map<String, BiConsumer<%s, Object>> setterByField;",
-                        className))
+                        domainClassName))
                 .add("")
-                .add(format("    public %s%s() {", className, CLASS_NAME_SUFFIX))
+                .add(format("    public %s() {", className))
                 .add("        this.setterByField = createMap();")
                 .add("    }")
                 .add("")
                 .add(format("    protected Map<String, BiConsumer<%s, Object>> createMap() {",
-                        className))
+                        domainClassName))
                 .add(format("        Map<String, BiConsumer<%s, Object>> map = new HashMap<>(%d);",
-                        className, field2Setter.size()));
+                        domainClassName, field2Setter.size()));
         field2Setter.forEach((field, setter) -> joiner.add(format("        map.put(\"%s\", %s);",
                 field, setter)));
         return joiner
@@ -124,11 +125,10 @@ public class SetterSupplierProcessor extends BaseProcessor {
                 .add("")
                 .add("    @Override")
                 .add(format("    public Map<String, BiConsumer<%s, Object>> get() {",
-                        className))
+                        domainClassName))
                 .add("        return setterByField;")
                 .add("    }")
                 .add("}")
-                .add("")
                 .toString();
     }
 }
