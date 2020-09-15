@@ -33,8 +33,8 @@ Add this code to `dependencies` section in your `pom.xml`:
 
 ### Using
 
-Add `@GetterSupplier` for to generate getters and/or
-`@SetterSupplier` for to generate setters to your class:
+Add to your class `@GetterSupplier` for to generate getters and/or
+`@SetterSupplier` for to generate setters:
 
 ```java
 import dev.alexengrig.metter.annotation.GetterSupplier;
