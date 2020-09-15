@@ -53,15 +53,10 @@ public class GetterSupplierProcessor extends BaseProcessor {
                 Map<String, String> getterByField = typeVisitor.getMap();
                 if (!getterByField.isEmpty()) {
                     String className = typeVisitor.getClassName();
-                    String packageName = getPackageName(className);
-                    String domainClassName = getSimpleName(className);
                     String sourceClassName = className + CLASS_NAME_SUFFIX;
                     JavaFileObject sourceFile = createSourceFile(sourceClassName);
                     try (PrintWriter sourcePrinter = new PrintWriter(sourceFile.openWriter())) {
-                        if (packageName != null) {
-                            sourcePrinter.printf("package %s;%n%n", packageName);
-                        }
-                        String source = generateSource(domainClassName, getterByField);
+                        String source = generateSource(sourceClassName, className, getterByField);
                         sourcePrinter.println(source);
                     } catch (IOException e) {
                         processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
@@ -93,8 +88,15 @@ public class GetterSupplierProcessor extends BaseProcessor {
         }
     }
 
-    private String generateSource(String className, Map<String, String> field2Getter) {
-        StringJoiner joiner = new StringJoiner("\n")
+    private String generateSource(String className, String domainClassName, Map<String, String> field2Getter) {
+        String packageName = getPackageName(className);
+        String simpleClassName = getSimpleName(className);
+        String simpleDomainClassName = getSimpleName(domainClassName);
+        StringJoiner joiner = new StringJoiner("\n");
+        if (packageName != null) {
+            joiner.add("package " + packageName + ";").add("");
+        }
+        joiner
                 .add("import javax.annotation.Generated;")
                 .add("import java.util.HashMap;")
                 .add("import java.util.Map;")
@@ -103,32 +105,31 @@ public class GetterSupplierProcessor extends BaseProcessor {
                 .add("")
                 .add(format("@Generated(value = \"%s\", date = \"%s\")",
                         getClass().getName(), LocalDateTime.now().toString()))
-                .add(format("public class %s%s implements Supplier<Map<String, Function<%s, Object>>> {",
-                        className, CLASS_NAME_SUFFIX, className))
+                .add(format("public class %s implements Supplier<Map<String, Function<%s, Object>>> {",
+                        simpleClassName, simpleDomainClassName))
                 .add(format("    protected final Map<String, Function<%s, Object>> getterByField;",
-                        className))
+                        simpleDomainClassName))
                 .add("")
-                .add(format("    public %s%s() {", className, CLASS_NAME_SUFFIX))
+                .add(format("    public %s() {", simpleClassName))
                 .add("        this.getterByField = createMap();")
                 .add("    }")
                 .add("")
                 .add(format("    protected Map<String, Function<%s, Object>> createMap() {",
-                        className))
+                        simpleDomainClassName))
                 .add(format("        Map<String, Function<%s, Object>> map = new HashMap<>(%d);",
-                        className, field2Getter.size()));
+                        simpleDomainClassName, field2Getter.size()));
         field2Getter.forEach((field, getter) -> joiner.add(format("        map.put(\"%s\", %s::%s);",
-                field, className, getter)));
+                field, simpleDomainClassName, getter)));
         return joiner
                 .add("        return map;")
                 .add("    }")
                 .add("")
                 .add("    @Override")
                 .add(format("    public Map<String, Function<%s, Object>> get() {",
-                        className))
+                        simpleDomainClassName))
                 .add("        return getterByField;")
                 .add("    }")
                 .add("}")
-                .add("")
                 .toString();
     }
 }
