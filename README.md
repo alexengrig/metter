@@ -2,6 +2,126 @@
 
 Metter is an annotation processor for generation meta-information (getters and setters).
 
+## Get Started
+
+### Install
+
+#### Gradle
+
+Add this code to `dependencies` section in your `build.gradle`:
+
+```groovy
+compileOnly 'dev.alexengrig:metter:0.1.0-SNAPSHOT'
+annotationProcessor 'dev.alexengrig:metter:0.1.0-SNAPSHOT'
+```
+
+#### Maven
+
+Add this code to `dependencies` section in your `pom.xml`:
+
+```xml
+<dependency>
+    <groupId>dev.alexengrig</groupId>
+    <artifactId>metter</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <scope>provided</scope>
+    <optional>true</optional>
+</dependency>
+```
+
+### Using
+
+Add `@GetterSupplier` for to generate getters and/or
+`@SetterSupplier` for to generate setters to your class:
+
+```java
+import dev.alexengrig.metter.annotation.GetterSupplier;
+import dev.alexengrig.metter.annotation.SetterSupplier;
+
+@GetterSupplier
+@SetterSupplier
+public class Domain {
+    private int integer;
+    private boolean bool;
+    private String string;
+
+    public int getInteger() {
+        return integer;
+    }
+
+    public void setInteger(int integer) {
+        this.integer = integer;
+    }
+
+    public boolean isBool() {
+        return bool;
+    }
+
+    public void setBool(boolean bool) {
+        this.bool = bool;
+    }
+
+    public String getString() {
+        return string;
+    }
+
+    public void setString(String string) {
+        this.string = string;
+    }
+}
+```
+
+The generated suppliers have a name consisting of a prefix as a class name
+and a suffix as the supplier name: `${CLASS_NAME}GetterSupplier` and `${CLASS_NAME}SetterSupplier`.
+
+All fields that have getters/setter will be added to
+the map that `DomainGetterSupplier`/`DomainSetterSupplier` stores
+and to get it, you need to call `Supplier#get`:
+
+```java
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+
+public class DomainService {
+    private final Map<String, Function<Domain, Object>> getterByField = new DomainGetterSupplier().get();
+    private final Map<String, BiConsumer<Domain, Object>> setterByField = new DomainSetterSupplier().get();
+
+    public void printFieldValues(Domain domain) {
+        getterByField.forEach((field, getter) -> {
+            System.out.println(field + " = " + getter.apply(domain));
+        });
+    }
+
+    public void transfer(Domain from, Domain to) {
+        setterByField.forEach((field, setter) -> {
+            setter.accept(to, getterByField.get(field).apply(from));
+        });
+    }
+}
+```
+
+Or you can extend:
+
+```java
+import java.util.Collections;
+import java.util.Map;
+import java.util.function.Function;
+
+public class CustomDomainGetterSupplier extends DomainGetterSupplier {
+    @Override
+    protected Map<String, Function<Domain, Object>> createMap() {
+        Map<String, Function<Domain, Object>> generatedMap = super.createMap();
+        generatedMap.put("name", domain -> "Name: domain.toString()");
+        return Collections.unmodifiableMap(generatedMap);
+    }
+
+    public Function<Domain, Object> getGetter(String field) {
+        return this.getterByField.get(field);
+    }
+}
+```
+
 ## Motivation
 
 ### Problem
