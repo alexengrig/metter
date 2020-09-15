@@ -41,6 +41,8 @@ age: 18  -> 19
 
 ### Solution
 
+[See full code](src/test/java/dev/alexengrig/metter/motivation).
+
 #### Manual solution
 
 Each field:
