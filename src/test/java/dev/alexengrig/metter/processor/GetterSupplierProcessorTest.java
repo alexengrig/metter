@@ -27,7 +27,7 @@ import static org.junit.Assert.assertNotNull;
 public class GetterSupplierProcessorTest {
     @Test
     public void should_create_supplierClass() {
-        assertNotNull("Create supplier class: " + DomainGetterSupplier.class, DomainGetterSupplier.class);
+        assertNotNull("Create supplier class: DomainGetterSupplier", DomainGetterSupplier.class);
     }
 
     @Test
