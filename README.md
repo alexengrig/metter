@@ -31,6 +31,29 @@ Add this code to `dependencies` section in your `pom.xml`:
 </dependency>
 ```
 
+Specify the annotation processor to `maven-compiler-plugin` plugin:
+
+```xml
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.8.1</version>
+            <configuration>
+                <annotationProcessorPaths>
+                    <annotationProcessorPath>
+                        <groupId>dev.alexengrig</groupId>
+                        <artifactId>metter</artifactId>
+                        <version>0.1.0-SNAPSHOT</version>
+                    </annotationProcessorPath>
+                </annotationProcessorPaths>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+```
+
 ### Using
 
 Add to your class `@GetterSupplier` for to generate getters and/or
