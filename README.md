@@ -323,3 +323,7 @@ If you add a new field to `Man`,
 then the reflection solution and the generation solution will continue to work,
 unlike the manual solution.
 The generation solution is faster than the reflection solution (reflection is slow).
+
+## License
+
+This project is [licensed](LICENSE) under [Apache License, version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
