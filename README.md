@@ -1,5 +1,7 @@
 # metter
 
+[![Build Status](https://travis-ci.com/alexengrig/metter.svg?branch=master)](https://travis-ci.com/alexengrig/metter)
+
 Metter is an annotation processor for generation meta-information (getters and setters).
 
 ## Get Started
