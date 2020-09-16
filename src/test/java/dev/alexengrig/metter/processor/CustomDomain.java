@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package dev.alexengrig.metter.annotation;
+package dev.alexengrig.metter.processor;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import dev.alexengrig.metter.annotation.GetterSupplier;
 
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.SOURCE)
-public @interface GetterSupplier {
-    String value() default "";
+@GetterSupplier("GetterSupplierForCustomDomain")
+public class CustomDomain {
+    private int integer;
+
+    public int getInteger() {
+        return integer;
+    }
 }

@@ -31,6 +31,11 @@ public class GetterSupplierProcessorTest {
     }
 
     @Test
+    public void should_create_supplierClass_with_customName() {
+        assertNotNull("Create supplier class: GetterSupplierForCustomDomain", GetterSupplierForCustomDomain.class);
+    }
+
+    @Test
     public void should_create_gettersMap_with_allFields() {
         Map<String, Function<Domain, Object>> map = new DomainGetterSupplier().get();
         assertNotNull("Has getter for 'integer' field", map.get("integer"));
