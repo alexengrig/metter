@@ -21,12 +21,19 @@ import org.junit.Test;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class SetterSupplierProcessorTest {
     @Test
     public void should_create_supplierClass() {
         assertNotNull("Create supplier class: DomainSetterSupplier", DomainSetterSupplier.class);
+    }
+
+    @Test
+    public void should_create_supplierClass_with_customName() {
+        assertNotNull("Create supplier class: SetterSupplierForCustomDomain", SetterSupplierForCustomDomain.class);
     }
 
     @Test

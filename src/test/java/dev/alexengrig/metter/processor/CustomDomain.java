@@ -17,12 +17,18 @@
 package dev.alexengrig.metter.processor;
 
 import dev.alexengrig.metter.annotation.GetterSupplier;
+import dev.alexengrig.metter.annotation.SetterSupplier;
 
 @GetterSupplier("GetterSupplierForCustomDomain")
+@SetterSupplier("SetterSupplierForCustomDomain")
 public class CustomDomain {
     private int integer;
 
     public int getInteger() {
         return integer;
+    }
+
+    public void setInteger(int integer) {
+        this.integer = integer;
     }
 }
