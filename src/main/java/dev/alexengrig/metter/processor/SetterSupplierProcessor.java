@@ -18,61 +18,27 @@ package dev.alexengrig.metter.processor;
 
 import com.google.auto.service.AutoService;
 import dev.alexengrig.metter.annotation.SetterSupplier;
-import dev.alexengrig.metter.processor.element.BaseElementVisitor;
+import dev.alexengrig.metter.processor.element.MethodSupplierProcessor;
 
 import javax.annotation.processing.Processor;
-import javax.annotation.processing.RoundEnvironment;
-import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.NoType;
-import javax.lang.model.type.TypeMirror;
-import javax.tools.Diagnostic;
-import javax.tools.JavaFileObject;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringJoiner;
 
 import static java.lang.String.format;
 
 @AutoService(Processor.class)
-public class SetterSupplierProcessor extends BaseProcessor {
+public class SetterSupplierProcessor extends MethodSupplierProcessor {
     public SetterSupplierProcessor() {
         super(SetterSupplier.class);
     }
 
     @Override
-    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        for (TypeElement annotation : annotations) {
-            for (Element element : roundEnv.getElementsAnnotatedWith(annotation)) {
-                ClassVisitor classVisitor = new ClassVisitor();
-                element.accept(classVisitor, null);
-                String className = classVisitor.className;
-                String sourceClassName = classVisitor.sourceClassName;
-                Map<String, String> field2Setter = classVisitor.field2Setter;
-                JavaFileObject sourceFile = createSourceFile(sourceClassName);
-                try (PrintWriter sourcePrinter = new PrintWriter(sourceFile.openWriter())) {
-                    String source = generateSource(sourceClassName, className, field2Setter);
-                    sourcePrinter.println(source);
-                } catch (IOException e) {
-                    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
-                }
-            }
-        }
-        return true;
-    }
-
-    protected JavaFileObject createSourceFile(String className) {
-        try {
-            return processingEnv.getFiler().createSourceFile(className);
-        } catch (IOException e) {
-            throw new IllegalArgumentException(className);
-        }
+    protected MethodSupplierClassVisitor getMethodSupplierClassVisitor() {
+        return new SetterSupplierClassVisitor();
     }
 
     protected String generateSource(String className, String domainClassName, Map<String, String> field2Setter) {
@@ -120,94 +86,57 @@ public class SetterSupplierProcessor extends BaseProcessor {
                 .toString();
     }
 
-    protected String getPackageName(String className) {
-        int lastIndexOfDot = className.lastIndexOf('.');
-        if (lastIndexOfDot > 0) {
-            return className.substring(0, lastIndexOfDot);
-        }
-        return null;
-    }
-
-    protected String getSimpleName(String className) {
-        int lastIndexOfDot = className.lastIndexOf('.');
-        return className.substring(lastIndexOfDot + 1);
-    }
-
-    protected static class Field2SetterVisitor extends BaseElementVisitor {
+    protected static class Field2SetterVisitor extends Field2MethodVisitor {
         protected static final String SET = "set";
-        protected final Map<String, String> field2Type = new HashMap<>();
-        protected final Map<String, String> setter2Type = new HashMap<>();
 
-        public Map<String, String> getField2SetterMap() {
-            Map<String, String> map = new HashMap<>();
-            for (String setter : setter2Type.keySet()) {
-                String field = getFieldName(setter);
-                if (field2Type.containsKey(field)) {
-                    String fieldType = field2Type.get(field);
-                    map.put(field, format("(instance, value) -> instance.%s((%s) value)", setter, fieldType));
-                }
+        @Override
+        protected String getFieldFromMethod(String method) {
+            if (method.startsWith(SET)) {
+                return method.substring(3, 4).toLowerCase() + method.substring(4);
             }
-            return map;
-        }
-
-        protected String getFieldName(String setter) {
-            if (setter.startsWith(SET)) {
-                return setter.substring(3, 4).toLowerCase() + setter.substring(4);
-            }
-            throw new IllegalArgumentException("Unknown setter name construction (no set): " + setter);
+            throw new IllegalArgumentException("Unknown setter name construction (no set): " + method);
         }
 
         @Override
-        public void visitVariable(VariableElement variableElement) {
-            String name = variableElement.getSimpleName().toString();
-            String type = variableElement.asType().toString();
-            field2Type.put(name, type);
+        protected String getMethodForField(String field, String method) {
+            String fieldType = this.field2Type.get(field);
+            return format("(instance, value) -> instance.%s((%s) value)", method, fieldType);
         }
 
         @Override
-        public void visitExecutable(ExecutableElement executableElement) {
-            if (executableElement.getParameters().size() == 1) {
-                String name = executableElement.getSimpleName().toString();
-                if (name.startsWith(SET)) {
-                    TypeMirror returnType = executableElement.getReturnType();
-                    if (returnType instanceof NoType) {
-                        setter2Type.put(name, returnType.toString());
-                    }
-                }
-            }
+        protected boolean isTargetMethod(ExecutableElement executableElement) {
+            return executableElement.getParameters().size() == 1
+                    && executableElement.getSimpleName().toString().startsWith(SET)
+                    && executableElement.getReturnType() instanceof NoType;
         }
     }
 
-    protected class ClassVisitor extends BaseElementVisitor {
+    protected class SetterSupplierClassVisitor extends MethodSupplierClassVisitor {
         protected static final String DEFAULT_PREFIX = "SetterSupplier";
-        protected String className;
-        protected String sourceClassName;
-        protected Map<String, String> field2Setter;
 
         @Override
-        public void visitType(TypeElement typeElement) {
-            this.className = typeElement.getQualifiedName().toString();
-            SetterSupplier annotation = typeElement.getAnnotation(SetterSupplier.class);
-            this.sourceClassName = annotation.value().isEmpty()
-                    ? defaultSourceClassName(className)
-                    : customSourceClassName(className, annotation.value());
-            Field2SetterVisitor field2SetterVisitor = new Field2SetterVisitor();
-            for (Element element : typeElement.getEnclosedElements()) {
-                element.accept(field2SetterVisitor, null);
-            }
-            this.field2Setter = field2SetterVisitor.getField2SetterMap();
-        }
-
-        private String defaultSourceClassName(String className) {
+        protected String defaultSourceClassName(String className) {
             return className.concat(DEFAULT_PREFIX);
         }
 
-        private String customSourceClassName(String className, String name) {
+        @Override
+        protected String customSourceClassName(TypeElement typeElement) {
+            SetterSupplier annotation = typeElement.getAnnotation(SetterSupplier.class);
+            String name = annotation.value();
+            if (name.isEmpty()) {
+                return name;
+            }
             String packageName = getPackageName(className);
             if (packageName != null) {
                 return packageName.concat(".").concat(name);
             }
             return name;
         }
+
+        @Override
+        protected SetterSupplierProcessor.Field2SetterVisitor getField2MethodVisitor() {
+            return new Field2SetterVisitor();
+        }
+
     }
 }
