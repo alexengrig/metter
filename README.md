@@ -96,12 +96,17 @@ public class Domain {
 }
 ```
 
-The generated suppliers have a name consisting of a prefix as a class name
+The generated suppliers have a default name consisting of a prefix as a class name
 and a suffix as the supplier name: `${CLASS_NAME}GetterSupplier` and `${CLASS_NAME}SetterSupplier`.
+You can set a custom name using the annotation parameter `value`.
 
 All fields that have getters/setter will be added to
-the map that `DomainGetterSupplier`/`DomainSetterSupplier` stores
-and to get it, you need to call `Supplier#get`:
+the map that `DomainGetterSupplier`/`DomainSetterSupplier` stores.
+You can set included/excluded field names using the annotation parameters `includeFields`/`excludeFields`.
+
+The generated suppliers implement the
+[Supplier](https://docs.oracle.com/javase/8/docs/api/java/util/function/Supplier.html)
+functional interface and to get the map of getters/setters, you need to call `Supplier#get`:
 
 ```java
 import java.util.Map;
