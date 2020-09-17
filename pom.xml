@@ -153,13 +153,13 @@
                 </executions>
             </plugin>
             <!--    Coveralls    -->
-            <!--<plugin>
+            <plugin>
                 <groupId>org.eluder.coveralls</groupId>
                 <artifactId>coveralls-maven-plugin</artifactId>
                 <version>4.3.0</version>
-            </plugin>-->
+            </plugin>
             <!--    Codacy Maven    -->
-            <!--<plugin>
+            <plugin>
                 <groupId>com.gavinmogan</groupId>
                 <artifactId>codacy-maven-plugin</artifactId>
                 <version>1.2.0</version>
@@ -170,22 +170,13 @@
                     <coverageReportFile>${project.reporting.outputDirectory}/jacoco.xml</coverageReportFile>
                     <failOnMissingReportFile>false</failOnMissingReportFile>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>post-test</id>
-                        <phase>post-integration-test</phase>
-                        <goals>
-                            <goal>coverage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>-->
-            <!-- Codecov Plugin -->
-            <!--<plugin>
+            </plugin>
+            <!-- Codecov -->
+            <plugin>
                 <groupId>dev.alexengrig</groupId>
                 <artifactId>codecov-maven-plugin</artifactId>
                 <version>1.0</version>
-            </plugin>-->
+            </plugin>
         </plugins>
     </build>
 
