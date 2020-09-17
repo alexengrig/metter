@@ -23,6 +23,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 
 public abstract class PersonSetterSupplierTester {
@@ -65,5 +66,12 @@ public abstract class PersonSetterSupplierTester {
 //        assertNotEquals(other.getLombok(), person.getLombok());
 //        setterByField.get("lombok").accept(person, other.getLombok());
 //        assertEquals(other.getLombok(), person.getLombok());
+    }
+
+    @Test
+    public void should_ignore_excludedFields() {
+        Supplier<Map<String, BiConsumer<Person, Object>>> getterSupplier = getSetterSupplier();
+        Map<String, BiConsumer<Person, Object>> getterByField = getterSupplier.get();
+        assertFalse(getterByField.containsKey("excluded"));
     }
 }

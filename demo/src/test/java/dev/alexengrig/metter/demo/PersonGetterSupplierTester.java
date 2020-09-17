@@ -23,6 +23,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public abstract class PersonGetterSupplierTester {
     protected Person getPerson() {
@@ -46,5 +47,12 @@ public abstract class PersonGetterSupplierTester {
         assertEquals(person.isEnable(), getterByField.get("enable").apply(person));
         // TODO: Add support of lombok
 //        assertEquals(person.getLombok(), getterByField.get("lombok").apply(person));
+    }
+
+    @Test
+    public void should_ignore_excludedFields() {
+        Supplier<Map<String, Function<Person, Object>>> getterSupplier = getGetterSupplier();
+        Map<String, Function<Person, Object>> getterByField = getterSupplier.get();
+        assertFalse(getterByField.containsKey("excluded"));
     }
 }

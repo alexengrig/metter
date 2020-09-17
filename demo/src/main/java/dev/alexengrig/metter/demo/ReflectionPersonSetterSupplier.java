@@ -19,12 +19,16 @@ package dev.alexengrig.metter.demo;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 public class ReflectionPersonSetterSupplier implements Supplier<Map<String, BiConsumer<Person, Object>>> {
+    protected static final Set<String> excludedFields = Collections.singleton("excluded");
+
     protected final Map<String, BiConsumer<Person, Object>> setterByField;
 
     public ReflectionPersonSetterSupplier() {
@@ -32,6 +36,9 @@ public class ReflectionPersonSetterSupplier implements Supplier<Map<String, BiCo
         this.setterByField = new HashMap<>(fields.length);
         for (Field field : fields) {
             String fieldName = field.getName();
+            if (excludedFields.contains(fieldName)) {
+                continue;
+            }
             String capitalizedFieldName = getCapitalized(fieldName);
             for (Method method : Person.class.getDeclaredMethods()) {
                 if (method.getParameterCount() == 1 && isSetter(method.getName(), capitalizedFieldName)) {

@@ -21,14 +21,17 @@ import dev.alexengrig.metter.annotation.SetterSupplier;
 import lombok.Getter;
 import lombok.Setter;
 
-@GetterSupplier
-@SetterSupplier
+@GetterSupplier(excludedFields = "excluded")
+@SetterSupplier(excludedFields = "excluded")
 public class Person {
+    @SuppressWarnings("FieldCanBeLocal")
     private final int constant = 100;
     private int integer;
     private String string;
     private boolean enable;
+    @SuppressWarnings({"unused", "RedundantSuppression"})
     private boolean withoutGetterAndSetter;
+    private String excluded;
     @Getter
     @Setter
     private String lombok;
@@ -59,5 +62,13 @@ public class Person {
 
     public int getConstant() {
         return constant;
+    }
+
+    public String getExcluded() {
+        return excluded;
+    }
+
+    public void setExcluded(String excluded) {
+        this.excluded = excluded;
     }
 }
