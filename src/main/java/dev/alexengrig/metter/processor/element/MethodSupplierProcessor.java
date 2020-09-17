@@ -33,6 +33,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * A supplier processor for methods.
+ *
+ * @author Grig Alex
+ * @version 0.1.0
+ * @see dev.alexengrig.metter.processor.BaseProcessor
+ * @since 0.1.0
+ */
 public abstract class MethodSupplierProcessor extends BaseProcessor {
     public MethodSupplierProcessor(Class<? extends Annotation> annotation) {
         super(annotation);
