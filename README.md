@@ -113,15 +113,11 @@ public class DomainService {
     private final Map<String, BiConsumer<Domain, Object>> setterByField = new DomainSetterSupplier().get();
 
     public void printFieldValues(Domain domain) {
-        getterByField.forEach((field, getter) -> {
-            System.out.println(field + " = " + getter.apply(domain));
-        });
+        getterByField.forEach((field, getter) -> System.out.println(field + " = " + getter.apply(domain)));
     }
 
     public void transfer(Domain from, Domain to) {
-        setterByField.forEach((field, setter) -> {
-            setter.accept(to, getterByField.get(field).apply(from));
-        });
+        setterByField.forEach((field, setter) -> setter.accept(to, getterByField.get(field).apply(from)));
     }
 }
 ```
@@ -223,7 +219,7 @@ class MapManChangeLogGenerator extends ManualManChangeLogGenerator {
     Map<String, Function<Man, Object>> getterByField = createMap();
 
     Map<String, Function<Man, Object>> createMap() {
-        return new HashMap<String, Function<Man, Object>>() {{
+        return new HashMap<>() {{
             put("name", Man::getName);
             put("age", Man::getAge);
         }};
