@@ -32,8 +32,10 @@ import static java.lang.String.format;
 
 @AutoService(Processor.class)
 public class SetterSupplierProcessor extends MethodSupplierProcessor {
+    protected static final Class<SetterSupplier> ANNOTATION_TYPE = SetterSupplier.class;
+
     public SetterSupplierProcessor() {
-        super(SetterSupplier.class);
+        super(ANNOTATION_TYPE);
     }
 
     @Override
@@ -120,23 +122,14 @@ public class SetterSupplierProcessor extends MethodSupplierProcessor {
         }
 
         @Override
-        protected String customSourceClassName(TypeElement typeElement) {
+        protected String customClassName(TypeElement typeElement) {
             SetterSupplier annotation = typeElement.getAnnotation(SetterSupplier.class);
-            String name = annotation.value();
-            if (name.isEmpty()) {
-                return name;
-            }
-            String packageName = getPackageName(className);
-            if (packageName != null) {
-                return packageName.concat(".").concat(name);
-            }
-            return name;
+            return annotation.value();
         }
 
         @Override
-        protected SetterSupplierProcessor.Field2SetterVisitor getField2MethodVisitor() {
+        protected Field2SetterVisitor getField2MethodVisitor() {
             return new Field2SetterVisitor();
         }
-
     }
 }

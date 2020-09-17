@@ -85,7 +85,43 @@ public abstract class MethodSupplierProcessor extends BaseProcessor {
         return className.substring(lastIndexOfDot + 1);
     }
 
-    protected abstract static class MethodSupplierClassVisitor extends BaseElementVisitor {
+    protected abstract static class Field2MethodVisitor extends BaseElementVisitor {
+        protected final Map<String, String> field2Type = new HashMap<>();
+        protected final Set<String> methods = new HashSet<>();
+
+        public Map<String, String> getField2Method() {
+            Map<String, String> map = new HashMap<>();
+            for (String method : methods) {
+                String field = getFieldFromMethod(method);
+                if (field2Type.containsKey(field)) {
+                    map.put(field, getMethodForField(field, method));
+                }
+            }
+            return map;
+        }
+
+        protected abstract String getFieldFromMethod(String method);
+
+        protected abstract String getMethodForField(String field, String method);
+
+        @Override
+        public void visitVariable(VariableElement variableElement) {
+            String name = variableElement.getSimpleName().toString();
+            String type = variableElement.asType().toString();
+            field2Type.put(name, type);
+        }
+
+        @Override
+        public void visitExecutable(ExecutableElement executableElement) {
+            if (isTargetMethod(executableElement)) {
+                methods.add(executableElement.getSimpleName().toString());
+            }
+        }
+
+        protected abstract boolean isTargetMethod(ExecutableElement executableElement);
+    }
+
+    protected abstract class MethodSupplierClassVisitor extends BaseElementVisitor {
         protected String className;
         protected String sourceClassName;
         protected Map<String, String> field2Method;
@@ -121,46 +157,22 @@ public abstract class MethodSupplierProcessor extends BaseProcessor {
             return customName;
         }
 
+        protected String customSourceClassName(TypeElement typeElement) {
+            String name = customClassName(typeElement);
+            if (name.isEmpty()) {
+                return name;
+            }
+            String packageName = getPackageName(className);
+            if (packageName != null) {
+                return packageName.concat(".").concat(name);
+            }
+            return name;
+        }
+
+        protected abstract String customClassName(TypeElement typeElement);
+
         protected abstract String defaultSourceClassName(String className);
 
-        protected abstract String customSourceClassName(TypeElement typeElement);
-
         protected abstract Field2MethodVisitor getField2MethodVisitor();
-    }
-
-    protected abstract static class Field2MethodVisitor extends BaseElementVisitor {
-        protected final Map<String, String> field2Type = new HashMap<>();
-        protected final Set<String> methods = new HashSet<>();
-
-        public Map<String, String> getField2Method() {
-            Map<String, String> map = new HashMap<>();
-            for (String method : methods) {
-                String field = getFieldFromMethod(method);
-                if (field2Type.containsKey(field)) {
-                    map.put(field, getMethodForField(field, method));
-                }
-            }
-            return map;
-        }
-
-        protected abstract String getFieldFromMethod(String method);
-
-        protected abstract String getMethodForField(String field, String method);
-
-        @Override
-        public void visitVariable(VariableElement variableElement) {
-            String name = variableElement.getSimpleName().toString();
-            String type = variableElement.asType().toString();
-            field2Type.put(name, type);
-        }
-
-        @Override
-        public void visitExecutable(ExecutableElement executableElement) {
-            if (isTargetMethod(executableElement)) {
-                methods.add(executableElement.getSimpleName().toString());
-            }
-        }
-
-        protected abstract boolean isTargetMethod(ExecutableElement executableElement);
     }
 }

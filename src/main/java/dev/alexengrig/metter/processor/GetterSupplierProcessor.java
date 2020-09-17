@@ -32,8 +32,10 @@ import static java.lang.String.format;
 
 @AutoService(Processor.class)
 public class GetterSupplierProcessor extends MethodSupplierProcessor {
+    protected static final Class<GetterSupplier> ANNOTATION_TYPE = GetterSupplier.class;
+
     public GetterSupplierProcessor() {
-        super(GetterSupplier.class);
+        super(ANNOTATION_TYPE);
     }
 
     protected GetterSupplierClassVisitor getMethodSupplierClassVisitor() {
@@ -94,24 +96,15 @@ public class GetterSupplierProcessor extends MethodSupplierProcessor {
         }
 
         @Override
-        protected String customSourceClassName(TypeElement typeElement) {
-            GetterSupplier annotation = typeElement.getAnnotation(GetterSupplier.class);
-            String name = annotation.value();
-            if (name.isEmpty()) {
-                return name;
-            }
-            String packageName = getPackageName(className);
-            if (packageName != null) {
-                return packageName.concat(".").concat(name);
-            }
-            return name;
+        protected String customClassName(TypeElement typeElement) {
+            GetterSupplier annotation = typeElement.getAnnotation(ANNOTATION_TYPE);
+            return annotation.value();
         }
 
         @Override
         protected Field2GetterVisitor getField2MethodVisitor() {
             return new Field2GetterVisitor(className);
         }
-
     }
 
     protected class Field2GetterVisitor extends Field2MethodVisitor {
