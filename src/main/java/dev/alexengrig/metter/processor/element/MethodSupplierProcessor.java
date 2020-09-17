@@ -85,42 +85,6 @@ public abstract class MethodSupplierProcessor extends BaseProcessor {
         return className.substring(lastIndexOfDot + 1);
     }
 
-    protected abstract static class Field2MethodVisitor extends BaseElementVisitor {
-        protected final Map<String, String> field2Type = new HashMap<>();
-        protected final Set<String> methods = new HashSet<>();
-
-        public Map<String, String> getField2Method() {
-            Map<String, String> map = new HashMap<>();
-            for (String method : methods) {
-                String field = getFieldFromMethod(method);
-                if (field2Type.containsKey(field)) {
-                    map.put(field, getMethodForField(field, method));
-                }
-            }
-            return map;
-        }
-
-        protected abstract String getFieldFromMethod(String method);
-
-        protected abstract String getMethodForField(String field, String method);
-
-        @Override
-        public void visitVariable(VariableElement variableElement) {
-            String name = variableElement.getSimpleName().toString();
-            String type = variableElement.asType().toString();
-            field2Type.put(name, type);
-        }
-
-        @Override
-        public void visitExecutable(ExecutableElement executableElement) {
-            if (isTargetMethod(executableElement)) {
-                methods.add(executableElement.getSimpleName().toString());
-            }
-        }
-
-        protected abstract boolean isTargetMethod(ExecutableElement executableElement);
-    }
-
     protected abstract class MethodSupplierClassVisitor extends BaseElementVisitor {
         protected String className;
         protected String sourceClassName;
@@ -142,7 +106,7 @@ public abstract class MethodSupplierProcessor extends BaseProcessor {
         public void visitType(TypeElement typeElement) {
             this.className = typeElement.getQualifiedName().toString();
             this.sourceClassName = getSourceClassName(typeElement);
-            Field2MethodVisitor field2MethodVisitor = getField2MethodVisitor();
+            Field2MethodVisitor field2MethodVisitor = getField2MethodVisitor(typeElement);
             for (Element element : typeElement.getEnclosedElements()) {
                 element.accept(field2MethodVisitor, null);
             }
@@ -173,6 +137,61 @@ public abstract class MethodSupplierProcessor extends BaseProcessor {
 
         protected abstract String defaultSourceClassName(String className);
 
-        protected abstract Field2MethodVisitor getField2MethodVisitor();
+        protected abstract Field2MethodVisitor getField2MethodVisitor(TypeElement typeElement);
+
+        protected abstract class Field2MethodVisitor extends BaseElementVisitor {
+            protected final Map<String, String> field2Type = new HashMap<>();
+            protected final Set<String> methods = new HashSet<>();
+            protected final Set<String> includedFieldNames;
+            protected final Set<String> excludedFieldNames;
+
+            protected Field2MethodVisitor(Set<String> includedFieldNames, Set<String> excludedFieldNames) {
+                this.includedFieldNames = includedFieldNames;
+                this.excludedFieldNames = excludedFieldNames;
+            }
+
+            public Map<String, String> getField2Method() {
+                Map<String, String> map = new HashMap<>();
+                for (String method : methods) {
+                    String field = getFieldFromMethod(method);
+                    if (field2Type.containsKey(field)) {
+                        map.put(field, getMethodForField(field, method));
+                    }
+                }
+                return map;
+            }
+
+            protected abstract String getFieldFromMethod(String method);
+
+            protected abstract String getMethodForField(String field, String method);
+
+            @Override
+            public void visitVariable(VariableElement variableElement) {
+                if (isTargetField(variableElement)) {
+                    String name = variableElement.getSimpleName().toString();
+                    String type = variableElement.asType().toString();
+                    field2Type.put(name, type);
+                }
+            }
+
+            protected boolean isTargetField(VariableElement variableElement) {
+                String name = variableElement.getSimpleName().toString();
+                if (!includedFieldNames.isEmpty()) {
+                    return includedFieldNames.contains(name);
+                } else if (!excludedFieldNames.isEmpty()) {
+                    return !excludedFieldNames.contains(name);
+                }
+                return true;
+            }
+
+            @Override
+            public void visitExecutable(ExecutableElement executableElement) {
+                if (isTargetMethod(executableElement)) {
+                    methods.add(executableElement.getSimpleName().toString());
+                }
+            }
+
+            protected abstract boolean isTargetMethod(ExecutableElement executableElement);
+        }
     }
 }

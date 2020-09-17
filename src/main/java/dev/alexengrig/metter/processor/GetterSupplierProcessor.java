@@ -25,7 +25,10 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.NoType;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 
 import static java.lang.String.format;
@@ -102,42 +105,48 @@ public class GetterSupplierProcessor extends MethodSupplierProcessor {
         }
 
         @Override
-        protected Field2GetterVisitor getField2MethodVisitor() {
-            return new Field2GetterVisitor(className);
-        }
-    }
-
-    protected class Field2GetterVisitor extends Field2MethodVisitor {
-        protected static final String GET = "get";
-        protected static final String IS = "is";
-
-        protected final String className;
-
-        public Field2GetterVisitor(String className) {
-            this.className = getSimpleName(className);
+        protected InsideVisitor getField2MethodVisitor(TypeElement typeElement) {
+            GetterSupplier annotation = typeElement.getAnnotation(ANNOTATION_TYPE);
+            return new InsideVisitor(annotation.includedFields(), annotation.excludedFields());
         }
 
-        @Override
-        protected String getFieldFromMethod(String method) {
-            if (method.startsWith(GET)) {
-                return method.substring(3, 4).toLowerCase() + method.substring(4);
-            } else if (method.startsWith(IS)) {
-                return method.substring(2, 3).toLowerCase() + method.substring(3);
+        protected class InsideVisitor extends Field2MethodVisitor {
+            protected static final String GET = "get";
+            protected static final String IS = "is";
+
+            protected final String simpleClassName;
+
+            protected InsideVisitor(String[] includedFieldNames, String[] excludedFieldNames) {
+                this(new HashSet<>(Arrays.asList(includedFieldNames)), new HashSet<>(Arrays.asList(excludedFieldNames)));
             }
-            throw new IllegalArgumentException("Unknown getter name construction (no get/is): " + method);
-        }
 
-        @Override
-        protected String getMethodForField(String field, String method) {
-            return this.className.concat("::").concat(method);
-        }
+            protected InsideVisitor(Set<String> includedFieldNames, Set<String> excludedFieldNames) {
+                super(includedFieldNames, excludedFieldNames);
+                this.simpleClassName = getSimpleName(className);
+            }
 
-        @Override
-        protected boolean isTargetMethod(ExecutableElement executableElement) {
-            String name = executableElement.getSimpleName().toString();
-            return (name.startsWith(GET) || name.startsWith(IS))
-                    && executableElement.getParameters().isEmpty()
-                    && !(executableElement.getReturnType() instanceof NoType);
+            @Override
+            protected String getFieldFromMethod(String method) {
+                if (method.startsWith(GET)) {
+                    return method.substring(3, 4).toLowerCase() + method.substring(4);
+                } else if (method.startsWith(IS)) {
+                    return method.substring(2, 3).toLowerCase() + method.substring(3);
+                }
+                throw new IllegalArgumentException("Unknown getter name construction (no get/is): " + method);
+            }
+
+            @Override
+            protected String getMethodForField(String field, String method) {
+                return this.simpleClassName.concat("::").concat(method);
+            }
+
+            @Override
+            protected boolean isTargetMethod(ExecutableElement executableElement) {
+                String name = executableElement.getSimpleName().toString();
+                return (name.startsWith(GET) || name.startsWith(IS))
+                        && executableElement.getParameters().isEmpty()
+                        && !(executableElement.getReturnType() instanceof NoType);
+            }
         }
     }
 }

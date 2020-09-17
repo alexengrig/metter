@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package dev.alexengrig.metter.processor;
+package dev.alexengrig.metter.processor.domain;
+
+import dev.alexengrig.metter.processor.DomainGetterSupplier;
 
 import java.util.Collections;
 import java.util.Map;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dev.alexengrig.metter.processor;
+package dev.alexengrig.metter.processor.domain;
 
 import dev.alexengrig.metter.annotation.GetterSupplier;
 import dev.alexengrig.metter.annotation.SetterSupplier;

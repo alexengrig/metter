@@ -25,7 +25,10 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.NoType;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 
 import static java.lang.String.format;
@@ -88,31 +91,6 @@ public class SetterSupplierProcessor extends MethodSupplierProcessor {
                 .toString();
     }
 
-    protected static class Field2SetterVisitor extends Field2MethodVisitor {
-        protected static final String SET = "set";
-
-        @Override
-        protected String getFieldFromMethod(String method) {
-            if (method.startsWith(SET)) {
-                return method.substring(3, 4).toLowerCase() + method.substring(4);
-            }
-            throw new IllegalArgumentException("Unknown setter name construction (no set): " + method);
-        }
-
-        @Override
-        protected String getMethodForField(String field, String method) {
-            String fieldType = this.field2Type.get(field);
-            return format("(instance, value) -> instance.%s((%s) value)", method, fieldType);
-        }
-
-        @Override
-        protected boolean isTargetMethod(ExecutableElement executableElement) {
-            return executableElement.getParameters().size() == 1
-                    && executableElement.getSimpleName().toString().startsWith(SET)
-                    && executableElement.getReturnType() instanceof NoType;
-        }
-    }
-
     protected class SetterSupplierClassVisitor extends MethodSupplierClassVisitor {
         protected static final String DEFAULT_PREFIX = "SetterSupplier";
 
@@ -128,8 +106,42 @@ public class SetterSupplierProcessor extends MethodSupplierProcessor {
         }
 
         @Override
-        protected Field2SetterVisitor getField2MethodVisitor() {
-            return new Field2SetterVisitor();
+        protected InsideVisitor getField2MethodVisitor(TypeElement typeElement) {
+            SetterSupplier annotation = typeElement.getAnnotation(ANNOTATION_TYPE);
+            return new InsideVisitor(annotation.includedFields(), annotation.excludedFields());
+        }
+
+        protected class InsideVisitor extends Field2MethodVisitor {
+            protected static final String SET = "set";
+
+            protected InsideVisitor(String[] includedFieldNames, String[] excludedFieldNames) {
+                this(new HashSet<>(Arrays.asList(includedFieldNames)), new HashSet<>(Arrays.asList(excludedFieldNames)));
+            }
+
+            protected InsideVisitor(Set<String> includedFieldNames, Set<String> excludedFieldNames) {
+                super(includedFieldNames, excludedFieldNames);
+            }
+
+            @Override
+            protected String getFieldFromMethod(String method) {
+                if (method.startsWith(SET)) {
+                    return method.substring(3, 4).toLowerCase() + method.substring(4);
+                }
+                throw new IllegalArgumentException("Unknown setter name construction (no set): " + method);
+            }
+
+            @Override
+            protected String getMethodForField(String field, String method) {
+                String fieldType = this.field2Type.get(field);
+                return format("(instance, value) -> instance.%s((%s) value)", method, fieldType);
+            }
+
+            @Override
+            protected boolean isTargetMethod(ExecutableElement executableElement) {
+                return executableElement.getParameters().size() == 1
+                        && executableElement.getSimpleName().toString().startsWith(SET)
+                        && executableElement.getReturnType() instanceof NoType;
+            }
         }
     }
 }

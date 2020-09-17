@@ -25,4 +25,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 public @interface SetterSupplier {
     String value() default "";
+
+    String[] includedFields() default {};
+
+    String[] excludedFields() default {};
 }

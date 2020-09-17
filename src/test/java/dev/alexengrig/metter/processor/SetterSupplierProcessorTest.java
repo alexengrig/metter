@@ -16,14 +16,23 @@
 
 package dev.alexengrig.metter.processor;
 
+import dev.alexengrig.metter.processor.domain.CustomExclusionDomain;
+import dev.alexengrig.metter.processor.domain.CustomExclusionDomainSetterSupplier;
+import dev.alexengrig.metter.processor.domain.CustomInExclusionDomain;
+import dev.alexengrig.metter.processor.domain.CustomInExclusionDomainSetterSupplier;
+import dev.alexengrig.metter.processor.domain.CustomInclusionDomain;
+import dev.alexengrig.metter.processor.domain.CustomInclusionDomainSetterSupplier;
+import dev.alexengrig.metter.processor.domain.Domain;
 import org.junit.Test;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class SetterSupplierProcessorTest {
     @Test
@@ -64,5 +73,30 @@ public class SetterSupplierProcessorTest {
         assertNotEquals("Value of 'string' field", domain.getString(), other.getString());
         map.get("string").accept(domain, other.getString());
         assertEquals("Value of 'string' field", domain.getString(), other.getString());
+    }
+
+    @Test
+    public void should_create_settersMap_with_includedFields() {
+        Map<String, BiConsumer<CustomInclusionDomain, Object>> map = new CustomInclusionDomainSetterSupplier().get();
+        assertFalse("No has setter for 'integer' field", map.containsKey("integer"));
+        assertFalse("No has setter for 'excludedString' field", map.containsKey("excludedString"));
+        assertTrue("Has setter for 'includedString' field", map.containsKey("includedString"));
+    }
+
+    @Test
+    public void should_create_settersMap_without_excludedFields() {
+        Map<String, BiConsumer<CustomExclusionDomain, Object>> map = new CustomExclusionDomainSetterSupplier().get();
+        assertFalse("No has setter for 'excludedString' field", map.containsKey("excludedString"));
+        assertTrue("Has setter for 'integer' field", map.containsKey("integer"));
+        assertTrue("Has setter for 'includedString' field", map.containsKey("includedString"));
+    }
+
+    @Test
+    public void should_create_settersMap_with_includedFields_and_ignore_ExcludedFields() {
+        Map<String, BiConsumer<CustomInExclusionDomain, Object>> map =
+                new CustomInExclusionDomainSetterSupplier().get();
+        assertFalse("No has setter for 'excludedString' field", map.containsKey("excludedString"));
+        assertFalse("No has setter for 'integer' field", map.containsKey("integer"));
+        assertTrue("Has setter for 'includedString' field", map.containsKey("includedString"));
     }
 }
