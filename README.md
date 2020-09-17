@@ -143,6 +143,26 @@ public class CustomDomainGetterSupplier extends DomainGetterSupplier {
 }
 ```
 
+Or you can create a bean (e.g. [Spring](https://github.com/spring-projects/spring-framework)):
+
+```java
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class ApplicationConfiguration {
+    @Bean
+    public Map<String, Function<Domain, Object>> getterByField() {
+        return new DomainGetterSupplier().get();
+    }
+
+    @Bean
+    public Map<String, BiConsumer<Domain, Object>> setterByField() {
+        return new DomainSetterSupplier().get();
+    }
+}
+```
+
 ## Motivation
 
 ### Problem
