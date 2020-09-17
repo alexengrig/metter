@@ -18,7 +18,6 @@ package dev.alexengrig.metter.processor;
 
 import com.google.auto.service.AutoService;
 import dev.alexengrig.metter.annotation.SetterSupplier;
-import dev.alexengrig.metter.processor.element.MethodSupplierProcessor;
 
 import javax.annotation.processing.Processor;
 import javax.lang.model.element.ExecutableElement;
@@ -33,6 +32,15 @@ import java.util.StringJoiner;
 
 import static java.lang.String.format;
 
+/**
+ * A supplier processor for setters.
+ *
+ * @author Grig Alex
+ * @version 0.1.0
+ * @see dev.alexengrig.metter.processor.MethodSupplierProcessor
+ * @see dev.alexengrig.metter.annotation.SetterSupplier
+ * @since 0.1.0
+ */
 @AutoService(Processor.class)
 public class SetterSupplierProcessor extends MethodSupplierProcessor {
     protected static final Class<SetterSupplier> ANNOTATION_TYPE = SetterSupplier.class;

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package dev.alexengrig.metter.processor.element;
+package dev.alexengrig.metter.processor;
 
-import dev.alexengrig.metter.processor.BaseProcessor;
+import dev.alexengrig.metter.processor.element.BaseElementVisitor;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;

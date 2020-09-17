@@ -22,6 +22,14 @@ import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.Set;
 
+/**
+ * A base processor.
+ *
+ * @author Grig Alex
+ * @version 0.1.0
+ * @see javax.annotation.processing.AbstractProcessor
+ * @since 0.1.0
+ */
 public abstract class BaseProcessor extends AbstractProcessor {
     protected final Set<String> supportedAnnotationTypes;
 
