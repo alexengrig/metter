@@ -15,6 +15,10 @@
  */
 
 /**
- * Metter is generator and provider meta information (getter and setter).
+ * An annotation processor for generation meta-information (getters and setters).
+ *
+ * @author Grig Alex
+ * @version 0.1.0
+ * @since 0.1.0
  */
 package dev.alexengrig.metter;
