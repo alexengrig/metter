@@ -23,6 +23,8 @@ import dev.alexengrig.metter.processor.domain.CustomInExclusionDomainSetterSuppl
 import dev.alexengrig.metter.processor.domain.CustomInclusionDomain;
 import dev.alexengrig.metter.processor.domain.CustomInclusionDomainSetterSupplier;
 import dev.alexengrig.metter.processor.domain.Domain;
+import dev.alexengrig.metter.processor.domain.DomainSetterSupplier;
+import dev.alexengrig.metter.processor.domain.SetterSupplierForCustomDomain;
 import org.junit.Test;
 
 import java.util.Map;

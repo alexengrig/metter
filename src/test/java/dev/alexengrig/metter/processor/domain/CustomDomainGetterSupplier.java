@@ -16,8 +16,6 @@
 
 package dev.alexengrig.metter.processor.domain;
 
-import dev.alexengrig.metter.processor.DomainGetterSupplier;
-
 import java.util.Collections;
 import java.util.Map;
 import java.util.function.Function;
