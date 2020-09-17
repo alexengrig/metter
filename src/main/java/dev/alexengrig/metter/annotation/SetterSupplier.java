@@ -21,12 +21,44 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * An annotation for to generate a setters supplier.
+ *
+ * @author Grig Alex
+ * @version 0.1.0
+ * @see dev.alexengrig.metter.processor.SetterSupplierProcessor
+ * @since 0.1.0
+ */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.SOURCE)
 public @interface SetterSupplier {
+    /**
+     * A supplier class name.
+     * Default value consisting of a prefix as an annotated class name
+     * and a suffix as the supplier name: {@code ${CLASS_NAME}SetterSupplier}.
+     *
+     * @return the supplier class name
+     * @since 0.1.0
+     */
     String value() default "";
 
+    /**
+     * Field names to be included in the map of setters supplier.
+     * <p>
+     * Primary relative to {@link #excludedFields()}.
+     *
+     * @return field names
+     * @since 0.1.0
+     */
     String[] includedFields() default {};
 
+    /**
+     * Field names to be excluded in the map of setters supplier.
+     * <p>
+     * Ignored if {@link #includedFields()} is specified.
+     *
+     * @return field names
+     * @since 0.1.0
+     */
     String[] excludedFields() default {};
 }
