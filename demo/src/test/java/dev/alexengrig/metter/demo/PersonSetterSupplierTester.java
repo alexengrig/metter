@@ -25,6 +25,7 @@ import java.util.function.Supplier;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 public abstract class PersonSetterSupplierTester {
     protected Person getPerson() {
@@ -33,6 +34,8 @@ public abstract class PersonSetterSupplierTester {
         person.setString("string");
         person.setEnable(true);
         person.setLombok("lombok");
+        person.setBooleanLombok(true);
+        person.setBoxedBooleanLombok(true);
         return person;
     }
 
@@ -46,6 +49,18 @@ public abstract class PersonSetterSupplierTester {
     }
 
     protected abstract Supplier<Map<String, BiConsumer<Person, Object>>> getSetterSupplier();
+
+    @Test
+    public void should_contain_setters() {
+        Supplier<Map<String, BiConsumer<Person, Object>>> setterSupplier = getSetterSupplier();
+        Map<String, BiConsumer<Person, Object>> setterByField = setterSupplier.get();
+        assertNotNull(setterByField.get("integer"));
+        assertNotNull(setterByField.get("string"));
+        assertNotNull(setterByField.get("enable"));
+        assertNotNull(setterByField.get("lombok"));
+        assertNotNull(setterByField.get("booleanLombok"));
+        assertNotNull(setterByField.get("boxedBooleanLombok"));
+    }
 
     @Test
     public void should_set_values() {
@@ -62,10 +77,15 @@ public abstract class PersonSetterSupplierTester {
         assertNotEquals(other.isEnable(), person.isEnable());
         setterByField.get("enable").accept(person, other.isEnable());
         assertEquals(other.isEnable(), person.isEnable());
-        // TODO: Add support of lombok
-//        assertNotEquals(other.getLombok(), person.getLombok());
-//        setterByField.get("lombok").accept(person, other.getLombok());
-//        assertEquals(other.getLombok(), person.getLombok());
+        assertNotEquals(other.getLombok(), person.getLombok());
+        setterByField.get("lombok").accept(person, other.getLombok());
+        assertEquals(other.getLombok(), person.getLombok());
+        assertNotEquals(other.isBooleanLombok(), person.isBooleanLombok());
+        setterByField.get("booleanLombok").accept(person, other.isBooleanLombok());
+        assertEquals(other.isBooleanLombok(), person.isBooleanLombok());
+        assertNotEquals(other.getBoxedBooleanLombok(), person.getBoxedBooleanLombok());
+        setterByField.get("boxedBooleanLombok").accept(person, other.getBoxedBooleanLombok());
+        assertEquals(other.getBoxedBooleanLombok(), person.getBoxedBooleanLombok());
     }
 
     @Test

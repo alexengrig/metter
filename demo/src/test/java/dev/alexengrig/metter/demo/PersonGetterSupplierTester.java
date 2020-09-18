@@ -24,6 +24,7 @@ import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 public abstract class PersonGetterSupplierTester {
     protected Person getPerson() {
@@ -37,6 +38,19 @@ public abstract class PersonGetterSupplierTester {
     protected abstract Supplier<Map<String, Function<Person, Object>>> getGetterSupplier();
 
     @Test
+    public void should_contain_getters() {
+        Supplier<Map<String, Function<Person, Object>>> getterSupplier = getGetterSupplier();
+        Map<String, Function<Person, Object>> getterByField = getterSupplier.get();
+        assertNotNull(getterByField.get("constant"));
+        assertNotNull(getterByField.get("integer"));
+        assertNotNull(getterByField.get("string"));
+        assertNotNull(getterByField.get("enable"));
+        assertNotNull(getterByField.get("lombok"));
+        assertNotNull(getterByField.get("booleanLombok"));
+        assertNotNull(getterByField.get("boxedBooleanLombok"));
+    }
+
+    @Test
     public void should_return_valuesFromGetters() {
         Person person = getPerson();
         Supplier<Map<String, Function<Person, Object>>> getterSupplier = getGetterSupplier();
@@ -45,8 +59,9 @@ public abstract class PersonGetterSupplierTester {
         assertEquals(person.getInteger(), getterByField.get("integer").apply(person));
         assertEquals(person.getString(), getterByField.get("string").apply(person));
         assertEquals(person.isEnable(), getterByField.get("enable").apply(person));
-        // TODO: Add support of lombok
-//        assertEquals(person.getLombok(), getterByField.get("lombok").apply(person));
+        assertEquals(person.getLombok(), getterByField.get("lombok").apply(person));
+        assertEquals(person.isBooleanLombok(), getterByField.get("booleanLombok").apply(person));
+        assertEquals(person.getBoxedBooleanLombok(), getterByField.get("boxedBooleanLombok").apply(person));
     }
 
     @Test

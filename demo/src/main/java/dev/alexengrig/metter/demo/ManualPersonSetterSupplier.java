@@ -29,6 +29,9 @@ public class ManualPersonSetterSupplier implements Supplier<Map<String, BiConsum
         this.setterByField.put("integer", (instance, value) -> instance.setInteger((Integer) value));
         this.setterByField.put("string", (instance, value) -> instance.setString((String) value));
         this.setterByField.put("enable", (instance, value) -> instance.setEnable((Boolean) value));
+        this.setterByField.put("lombok", (instance, value) -> instance.setLombok((String) value));
+        this.setterByField.put("booleanLombok", (instance, value) -> instance.setBooleanLombok((boolean) value));
+        this.setterByField.put("boxedBooleanLombok", (instance, value) -> instance.setBoxedBooleanLombok((Boolean) value));
     }
 
     @Override

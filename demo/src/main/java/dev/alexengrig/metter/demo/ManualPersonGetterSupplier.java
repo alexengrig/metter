@@ -30,6 +30,9 @@ public class ManualPersonGetterSupplier implements Supplier<Map<String, Function
         this.getterByField.put("string", Person::getString);
         this.getterByField.put("enable", Person::isEnable);
         this.getterByField.put("integer", Person::getInteger);
+        this.getterByField.put("lombok", Person::getLombok);
+        this.getterByField.put("booleanLombok", Person::isBooleanLombok);
+        this.getterByField.put("boxedBooleanLombok", Person::getBoxedBooleanLombok);
     }
 
     @Override
