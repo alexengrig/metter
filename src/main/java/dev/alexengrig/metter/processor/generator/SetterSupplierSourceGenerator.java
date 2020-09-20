@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-package dev.alexengrig.metter.demo;
+package dev.alexengrig.metter.processor.generator;
 
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Supplier;
-
-public class GeneratedPersonSetterSupplierTest extends PersonSetterSupplierTester {
+public class SetterSupplierSourceGenerator extends MethodSupplierSourceGenerator {
     @Override
-    protected Supplier<Map<String, BiConsumer<Person, Object>>> getSetterSupplier() {
-        return new PersonSetterSupplier();
+    protected String getMapValueType(String className) {
+        return String.format("java.util.function.BiConsumer<%s, java.lang.Object>", className);
     }
 }
