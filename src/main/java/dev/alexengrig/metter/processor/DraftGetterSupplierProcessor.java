@@ -20,19 +20,18 @@ import com.google.auto.service.AutoService;
 import dev.alexengrig.metter.annotation.GetterSupplier;
 import dev.alexengrig.metter.processor.element.descriptor.FieldDescriptor;
 import dev.alexengrig.metter.processor.element.descriptor.TypeDescriptor;
+import dev.alexengrig.metter.processor.generator.GetterSupplierSourceGenerator;
 
 import javax.annotation.processing.Processor;
 import javax.lang.model.element.TypeElement;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiFunction;
 
 @AutoService(Processor.class)
 public class DraftGetterSupplierProcessor extends DraftBaseProcessor<GetterSupplier, TypeElement> {
@@ -76,110 +75,6 @@ public class DraftGetterSupplierProcessor extends DraftBaseProcessor<GetterSuppl
             return processingEnv.getFiler().createSourceFile(className);
         } catch (IOException e) {
             throw new IllegalArgumentException("Exception of source file creation for:" + className);
-        }
-    }
-
-    static class GetterSupplierSourceGenerator {
-        public String generate(String className, String domainClassName, Map<Object, Object> field2Getter) {
-            String packageName = getPackageName(className);
-            String simpleClassName = getSimpleName(className);
-            return new LineJoiner()
-                    .ftIf(packageName != null, "package %s;\n", packageName)
-                    .ln("@javax.annotation.Generated(")
-                    .ft("        value = \"%s\",", getClass().getName())
-                    .ft("        date = \"%s\")", LocalDateTime.now().toString())
-                    .ft("public class %s implements", simpleClassName)
-                    .ln("        java.util.function.Supplier<")
-                    .ln("                java.util.Map<")
-                    .ln("                        java.lang.String,")
-                    .ln("                        java.util.function.Function<")
-                    .ft("                                %s,", domainClassName)
-                    .ln("                                java.lang.Object>>> {")
-                    .ln("    protected final java.util.Map<")
-                    .ln("            java.lang.String,")
-                    .ln("            java.util.function.Function<")
-                    .ft("                    %s,", domainClassName)
-                    .ln("                    java.lang.Object>> getterByField;")
-                    .ln()
-                    .ft("    public %s() {", simpleClassName)
-                    .ln("        this.getterByField = createMap();")
-                    .ln("    }")
-                    .ln()
-                    .ln("    protected java.util.Map<")
-                    .ln("            java.lang.String,")
-                    .ln("            java.util.function.Function<")
-                    .ft("                    %s,", domainClassName)
-                    .ln("                    java.lang.Object>>")
-                    .ln("    createMap() {")
-                    .ln("        java.util.HashMap<")
-                    .ln("                java.lang.String,")
-                    .ln("                java.util.function.Function<")
-                    .ft("                        %s,", domainClassName)
-                    .ln("                        java.lang.Object>>")
-                    .ft("                map = new java.util.HashMap<>(%d);", field2Getter.size())
-                    .mp("        map.put(\"%s\",\n                %s);", (f, g) -> new Object[]{f, g}, field2Getter)
-                    .ln("        return map;")
-                    .ln("    }")
-                    .ln()
-                    .ln("    @Override")
-                    .ln("    public java.util.Map<")
-                    .ln("            java.lang.String,")
-                    .ln("            java.util.function.Function<")
-                    .ft("                    %s,", domainClassName)
-                    .ln("                    java.lang.Object>>")
-                    .ln("    get() {")
-                    .ln("        return getterByField;")
-                    .ln("    }")
-                    .ln("}")
-                    .toString();
-        }
-
-        protected String getPackageName(String className) {
-            int lastIndexOfDot = className.lastIndexOf('.');
-            if (lastIndexOfDot > 0) {
-                return className.substring(0, lastIndexOfDot);
-            }
-            return null;
-        }
-
-        protected String getSimpleName(String className) {
-            int lastIndexOfDot = className.lastIndexOf('.');
-            return className.substring(lastIndexOfDot + 1);
-        }
-    }
-
-    static class LineJoiner {
-        protected static final String NL = "\n";
-        protected final StringBuilder builder = new StringBuilder();
-
-        public LineJoiner ln() {
-            builder.append(NL);
-            return this;
-        }
-
-        public LineJoiner ln(String line) {
-            builder.append(line);
-            return ln();
-        }
-
-        public LineJoiner ft(String line, Object... args) {
-            return ln(String.format(line, args));
-        }
-
-        public LineJoiner ftIf(boolean condition, String line, Object... args) {
-            return condition ? ln(String.format(line, args)) : this;
-        }
-
-        public <K, V> LineJoiner mp(String template,
-                                    BiFunction<? super K, ? super V, Object[]> mapper,
-                                    Map<? extends K, ? extends V> map) {
-            map.forEach(mapper.andThen(args -> ft(template, args))::apply);
-            return this;
-        }
-
-        @Override
-        public String toString() {
-            return builder.toString();
         }
     }
 }
