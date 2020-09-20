@@ -26,7 +26,7 @@ import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.Set;
 
-public abstract class DraftBaseProcessor<A extends Annotation, T extends Element> extends AbstractProcessor {
+public abstract class DraftBaseProcessor<A extends Annotation, E extends Element> extends AbstractProcessor {
     protected final Class<? extends A> annotationClass;
 
     public DraftBaseProcessor(Class<? extends A> annotationClass) {
@@ -38,13 +38,13 @@ public abstract class DraftBaseProcessor<A extends Annotation, T extends Element
         Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(annotationClass);
         for (Element annotatedElement : annotatedElements) {
             @SuppressWarnings("unchecked")
-            T element = (T) annotatedElement;
+            E element = (E) annotatedElement;
             process(element);
         }
         return true;
     }
 
-    protected abstract void process(T annotatedElement);
+    protected abstract void process(E annotatedElement);
 
     protected void note(String message) {
         processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, message);
