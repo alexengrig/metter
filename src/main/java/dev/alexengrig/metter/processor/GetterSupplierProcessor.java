@@ -16,10 +16,8 @@
 
 package dev.alexengrig.metter.processor;
 
-import com.google.auto.service.AutoService;
 import dev.alexengrig.metter.annotation.GetterSupplier;
 
-import javax.annotation.processing.Processor;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.NoType;
@@ -41,7 +39,7 @@ import static java.lang.String.format;
  * @see dev.alexengrig.metter.annotation.GetterSupplier
  * @since 0.1.0
  */
-@AutoService(Processor.class)
+//@AutoService(Processor.class)
 public class GetterSupplierProcessor extends MethodSupplierProcessor {
     protected static final Class<GetterSupplier> ANNOTATION_TYPE = GetterSupplier.class;
 
