@@ -18,6 +18,7 @@ package dev.alexengrig.metter.processor.element.descriptor;
 
 
 import javax.lang.model.element.TypeElement;
+import java.lang.annotation.Annotation;
 import java.util.Set;
 
 public class TypeDescriptor {
@@ -77,5 +78,9 @@ public class TypeDescriptor {
         return getAnnotations().stream()
                 .map(AnnotationDescriptor::getQualifiedName)
                 .anyMatch(annotationQualifiedName::equals);
+    }
+
+    public <A extends Annotation> A getAnnotation(Class<? extends A> annotationClass) {
+        return typeElement.getAnnotation(annotationClass);
     }
 }

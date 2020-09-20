@@ -67,15 +67,4 @@ public class FieldDescriptor {
                 .map(AnnotationDescriptor::getQualifiedName)
                 .anyMatch(annotationQualifiedName::equals);
     }
-
-    public String getGetterMethodName() {
-        String methodNamePrefix = "boolean".equals(getClassName()) ? "is" : "get";
-        String name = getName();
-        return methodNamePrefix + name.substring(0, 1).toUpperCase() + name.substring(1);
-    }
-
-    public String getSetterMethodName() {
-        String name = getName();
-        return "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
-    }
 }
