@@ -16,138 +16,76 @@
 
 package dev.alexengrig.metter.processor;
 
+import com.google.auto.service.AutoService;
 import dev.alexengrig.metter.annotation.SetterSupplier;
+import dev.alexengrig.metter.processor.element.descriptor.FieldDescriptor;
+import dev.alexengrig.metter.processor.element.descriptor.TypeDescriptor;
+import dev.alexengrig.metter.processor.generator.SetterSupplierSourceGenerator;
 
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.NoType;
-import java.time.LocalDateTime;
+import javax.annotation.processing.Processor;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringJoiner;
-
-import static java.lang.String.format;
 
 /**
  * A supplier processor for setters.
  *
  * @author Grig Alex
  * @version 0.1.0
- * @see dev.alexengrig.metter.processor.MethodSupplierProcessor
+ * @see dev.alexengrig.metter.processor.BaseMethodSupplierProcessor
  * @see dev.alexengrig.metter.annotation.SetterSupplier
  * @since 0.1.0
  */
-//@AutoService(Processor.class)
-public class SetterSupplierProcessor extends MethodSupplierProcessor {
-    protected static final Class<SetterSupplier> ANNOTATION_TYPE = SetterSupplier.class;
-
+@AutoService(Processor.class)
+public class SetterSupplierProcessor extends BaseMethodSupplierProcessor<SetterSupplier> {
     public SetterSupplierProcessor() {
-        super(ANNOTATION_TYPE);
+        super(SetterSupplier.class);
     }
 
     @Override
-    protected MethodSupplierClassVisitor getMethodSupplierClassVisitor() {
-        return new SetterSupplierClassVisitor();
+    protected String getCustomClassNameFromAnnotation(TypeDescriptor type) {
+        SetterSupplier annotation = type.getAnnotation(annotationClass);
+        return annotation.value();
     }
 
-    protected String generateSource(String className, String domainClassName, Map<String, String> field2Setter) {
-        String packageName = getPackageName(className);
-        String simpleClassName = getSimpleName(className);
-        String simpleDomainClassName = getSimpleName(domainClassName);
-        StringJoiner joiner = new StringJoiner("\n");
-        if (packageName != null) {
-            joiner.add("package " + packageName + ";").add("");
-        }
-        joiner
-                .add("import javax.annotation.Generated;")
-                .add("import java.util.HashMap;")
-                .add("import java.util.Map;")
-                .add("import java.util.function.BiConsumer;")
-                .add("import java.util.function.Supplier;")
-                .add("")
-                .add(format("@Generated(value = \"%s\", date = \"%s\")",
-                        getClass().getName(), LocalDateTime.now().toString()))
-                .add(format("public class %s implements Supplier<Map<String, BiConsumer<%s, Object>>> {",
-                        simpleClassName, simpleDomainClassName))
-                .add(format("    protected final Map<String, BiConsumer<%s, Object>> setterByField;",
-                        simpleDomainClassName))
-                .add("")
-                .add(format("    public %s() {", simpleClassName))
-                .add("        this.setterByField = createMap();")
-                .add("    }")
-                .add("")
-                .add(format("    protected Map<String, BiConsumer<%s, Object>> createMap() {",
-                        simpleDomainClassName))
-                .add(format("        Map<String, BiConsumer<%s, Object>> map = new HashMap<>(%d);",
-                        simpleDomainClassName, field2Setter.size()));
-        field2Setter.forEach((field, setter) -> joiner.add(format("        map.put(\"%s\", %s);",
-                field, setter)));
-        return joiner
-                .add("        return map;")
-                .add("    }")
-                .add("")
-                .add("    @Override")
-                .add(format("    public Map<String, BiConsumer<%s, Object>> get() {",
-                        simpleDomainClassName))
-                .add("        return setterByField;")
-                .add("    }")
-                .add("}")
-                .toString();
+    @Override
+    protected Set<String> getIncludedFields(TypeDescriptor type) {
+        SetterSupplier annotation = type.getAnnotation(annotationClass);
+        return new HashSet<>(Arrays.asList(annotation.includedFields()));
     }
 
-    protected class SetterSupplierClassVisitor extends MethodSupplierClassVisitor {
-        protected static final String DEFAULT_PREFIX = "SetterSupplier";
+    @Override
+    protected Set<String> getExcludedFields(TypeDescriptor type) {
+        SetterSupplier annotation = type.getAnnotation(annotationClass);
+        return new HashSet<>(Arrays.asList(annotation.excludedFields()));
+    }
 
-        @Override
-        protected String defaultSourceClassName(String className) {
-            return className.concat(DEFAULT_PREFIX);
-        }
+    @Override
+    protected boolean hasAllMethods(TypeDescriptor type) {
+        return type.hasAnnotation("lombok.Data") || type.hasAnnotation("lombok.Setter");
+    }
 
-        @Override
-        protected String customClassName(TypeElement typeElement) {
-            SetterSupplier annotation = typeElement.getAnnotation(SetterSupplier.class);
-            return annotation.value();
-        }
+    @Override
+    protected String getMethodName(FieldDescriptor field) {
+        String name = field.getName();
+        return "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
+    }
 
-        @Override
-        protected InsideVisitor getField2MethodVisitor(TypeElement typeElement) {
-            SetterSupplier annotation = typeElement.getAnnotation(ANNOTATION_TYPE);
-            return new InsideVisitor(annotation.includedFields(), annotation.excludedFields());
-        }
+    @Override
+    protected boolean isTargetField(FieldDescriptor field) {
+        return field.hasAnnotation("lombok.Setter");
+    }
 
-        protected class InsideVisitor extends Field2MethodVisitor {
-            protected static final String SET = "set";
+    @Override
+    protected String getMethodView(TypeDescriptor type, FieldDescriptor field, String methodName) {
+        return String.format("(instance, value) -> instance.%s((%s) value)",
+                methodName, field.getClassName());
+    }
 
-            protected InsideVisitor(String[] includedFieldNames, String[] excludedFieldNames) {
-                this(new HashSet<>(Arrays.asList(includedFieldNames)), new HashSet<>(Arrays.asList(excludedFieldNames)));
-            }
-
-            protected InsideVisitor(Set<String> includedFieldNames, Set<String> excludedFieldNames) {
-                super(includedFieldNames, excludedFieldNames);
-            }
-
-            @Override
-            protected String getFieldFromMethod(String method) {
-                if (method.startsWith(SET)) {
-                    return method.substring(3, 4).toLowerCase() + method.substring(4);
-                }
-                throw new IllegalArgumentException("Unknown setter name construction (no set): " + method);
-            }
-
-            @Override
-            protected String getMethodForField(String field, String method) {
-                String fieldType = this.field2Type.get(field);
-                return format("(instance, value) -> instance.%s((%s) value)", method, fieldType);
-            }
-
-            @Override
-            protected boolean isTargetMethod(ExecutableElement executableElement) {
-                return executableElement.getParameters().size() == 1
-                        && executableElement.getSimpleName().toString().startsWith(SET)
-                        && executableElement.getReturnType() instanceof NoType;
-            }
-        }
+    @Override
+    protected String createSource(TypeDescriptor type, Map<Object, Object> field2Method, String sourceClassName) {
+        SetterSupplierSourceGenerator sourceGenerator = new SetterSupplierSourceGenerator();
+        return sourceGenerator.generate(sourceClassName, type.getQualifiedName(), field2Method);
     }
 }

@@ -17,7 +17,11 @@
 package dev.alexengrig.metter.processor;
 
 import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic;
 import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.Set;
@@ -30,24 +34,47 @@ import java.util.Set;
  * @see javax.annotation.processing.AbstractProcessor
  * @since 0.1.0
  */
-public abstract class BaseProcessor extends AbstractProcessor {
-    protected final Set<String> supportedAnnotationTypes;
+public abstract class BaseProcessor<A extends Annotation, E extends Element> extends AbstractProcessor {
+    protected final Class<? extends A> annotationClass;
 
-    protected BaseProcessor(Class<? extends Annotation> annotation) {
-        this(Collections.singleton(annotation.getName()));
-    }
-
-    protected BaseProcessor(Set<String> annotationTypes) {
-        this.supportedAnnotationTypes = annotationTypes;
+    public BaseProcessor(Class<? extends A> annotationClass) {
+        this.annotationClass = annotationClass;
     }
 
     @Override
-    public Set<String> getSupportedAnnotationTypes() {
-        return supportedAnnotationTypes;
+    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(annotationClass);
+        for (Element annotatedElement : annotatedElements) {
+            @SuppressWarnings("unchecked")
+            E element = (E) annotatedElement;
+            process(element);
+        }
+        return true;
+    }
+
+    protected abstract void process(E annotatedElement);
+
+    protected void note(String message) {
+        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, message);
+    }
+
+    protected void error(String message, Throwable throwable) {
+        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, message);
+        throwable.printStackTrace();
+    }
+
+    @Override
+    public Set<String> getSupportedOptions() {
+        return Collections.emptySet();
     }
 
     @Override
     public SourceVersion getSupportedSourceVersion() {
         return SourceVersion.RELEASE_8;
+    }
+
+    @Override
+    public Set<String> getSupportedAnnotationTypes() {
+        return Collections.singleton(annotationClass.getName());
     }
 }

@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends DraftBaseProcessor<A, TypeElement> {
+public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends BaseProcessor<A, TypeElement> {
     public BaseMethodSupplierProcessor(Class<? extends A> annotationClass) {
         super(annotationClass);
     }
