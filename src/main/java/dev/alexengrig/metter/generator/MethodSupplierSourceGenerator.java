@@ -16,7 +16,7 @@
 
 package dev.alexengrig.metter.generator;
 
-import dev.alexengrig.metter.processor.util.LineJoiner;
+import dev.alexengrig.metter.util.LineJoiner;
 
 import java.time.LocalDateTime;
 import java.util.Map;

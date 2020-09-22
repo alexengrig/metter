@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dev.alexengrig.metter.processor.util;
+package dev.alexengrig.metter.util;
 
 import java.util.Map;
 import java.util.function.BiFunction;
