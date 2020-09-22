@@ -17,6 +17,14 @@
 package dev.alexengrig.metter.generator;
 
 public class GetterSupplierSourceGenerator extends MethodSupplierSourceGenerator {
+    public GetterSupplierSourceGenerator() {
+        super();
+    }
+
+    protected GetterSupplierSourceGenerator(boolean withGeneratedDate) {
+        super(withGeneratedDate);
+    }
+
     @Override
     protected String getMapValueType(String className) {
         return String.format("java.util.function.Function<%s, java.lang.Object>", className);

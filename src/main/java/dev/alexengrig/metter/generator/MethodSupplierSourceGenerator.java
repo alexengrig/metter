@@ -22,14 +22,24 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 public abstract class MethodSupplierSourceGenerator {
-    public String generate(String className, String domainClassName, Map<Object, Object> field2Method) {
+    private final boolean withGeneratedDate;
+
+    public MethodSupplierSourceGenerator() {
+        this(true);
+    }
+
+    protected MethodSupplierSourceGenerator(boolean withGeneratedDate) {
+        this.withGeneratedDate = withGeneratedDate;
+    }
+
+    public String generate(String className, String domainClassName, Map<String, String> field2Method) {
         String packageName = getPackageName(className);
         String simpleClassName = getSimpleName(className);
         return new LineJoiner()
                 .ftIf(packageName != null, "package %s;\n", packageName)
                 .ln("@javax.annotation.Generated(")
-                .ft("        value = \"%s\",", getClass().getName())
-                .ft("        date = \"%s\")", LocalDateTime.now().toString())
+                .ftIf(withGeneratedDate, "        date = \"%s\",", LocalDateTime.now().toString())
+                .ft("        value = \"%s\")", getClass().getName())
                 .ft("public class %s implements", simpleClassName)
                 .ln("        java.util.function.Supplier<")
                 .ln("                java.util.Map<")

@@ -39,7 +39,7 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
         TypeDescriptor type = new TypeDescriptor(typeElement);
         String sourceClassName = createSourceClassName(type);
         JavaFileObject sourceFile = createSourceFile(sourceClassName);
-        Map<Object, Object> field2Method = createField2MethodMap(type);
+        Map<String, String> field2Method = createField2MethodMap(type);
         String source = createSource(type, field2Method, sourceClassName);
         writeSourceFile(sourceFile, source);
     }
@@ -77,8 +77,8 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
         }
     }
 
-    protected Map<Object, Object> createField2MethodMap(TypeDescriptor type) {
-        Map<Object, Object> field2Method = new HashMap<>();
+    protected Map<String, String> createField2MethodMap(TypeDescriptor type) {
+        Map<String, String> field2Method = new HashMap<>();
         Set<String> includedFields = getIncludedFields(type);
         Set<String> excludedFields = getExcludedFields(type);
         boolean hasAllMethods = hasAllMethods(type);
@@ -108,7 +108,7 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
     protected abstract String getMethodView(TypeDescriptor type, FieldDescriptor field, String methodName);
 
     protected abstract String createSource(TypeDescriptor type,
-                                           Map<Object, Object> field2Method,
+                                           Map<String, String> field2Method,
                                            String sourceClassName);
 
     protected void writeSourceFile(JavaFileObject sourceFile, String source) {

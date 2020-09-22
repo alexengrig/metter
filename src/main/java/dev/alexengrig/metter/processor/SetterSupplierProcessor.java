@@ -84,7 +84,7 @@ public class SetterSupplierProcessor extends BaseMethodSupplierProcessor<SetterS
     }
 
     @Override
-    protected String createSource(TypeDescriptor type, Map<Object, Object> field2Method, String sourceClassName) {
+    protected String createSource(TypeDescriptor type, Map<String, String> field2Method, String sourceClassName) {
         SetterSupplierSourceGenerator sourceGenerator = new SetterSupplierSourceGenerator();
         return sourceGenerator.generate(sourceClassName, type.getQualifiedName(), field2Method);
     }

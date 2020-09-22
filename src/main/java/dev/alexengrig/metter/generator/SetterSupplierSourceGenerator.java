@@ -17,6 +17,14 @@
 package dev.alexengrig.metter.generator;
 
 public class SetterSupplierSourceGenerator extends MethodSupplierSourceGenerator {
+    public SetterSupplierSourceGenerator() {
+        super();
+    }
+
+    protected SetterSupplierSourceGenerator(boolean withGeneratedDate) {
+        super(withGeneratedDate);
+    }
+
     @Override
     protected String getMapValueType(String className) {
         return String.format("java.util.function.BiConsumer<%s, java.lang.Object>", className);
