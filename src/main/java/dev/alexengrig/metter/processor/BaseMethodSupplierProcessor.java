@@ -40,8 +40,6 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
         String sourceClassName = createSourceClassName(type);
         JavaFileObject sourceFile = createSourceFile(sourceClassName);
         Map<Object, Object> field2Method = createField2MethodMap(type);
-        note(type.getQualifiedName() + ": ");
-        field2Method.forEach((k, v) -> note(k + " = " + v));
         String source = createSource(type, field2Method, sourceClassName);
         writeSourceFile(sourceFile, source);
     }
