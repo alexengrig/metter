@@ -25,7 +25,6 @@ import lombok.Setter;
 
 @GetterSupplier(excludedFields = "excluded")
 @SetterSupplier(excludedFields = "excluded")
-@Data
 public class Person {
     @SuppressWarnings("FieldCanBeLocal")
     private final int constant = 100;
