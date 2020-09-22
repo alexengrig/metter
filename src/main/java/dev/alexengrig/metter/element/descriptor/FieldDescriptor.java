@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package dev.alexengrig.metter.processor.element.descriptor;
+package dev.alexengrig.metter.element.descriptor;
 
-import dev.alexengrig.metter.processor.element.collector.VariableElementCollector;
+import dev.alexengrig.metter.element.collector.VariableElementCollector;
 
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;

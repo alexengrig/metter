@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dev.alexengrig.metter.processor.element.descriptor;
+package dev.alexengrig.metter.element.descriptor;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;

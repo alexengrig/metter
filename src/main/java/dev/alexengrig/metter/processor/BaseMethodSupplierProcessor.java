@@ -16,8 +16,8 @@
 
 package dev.alexengrig.metter.processor;
 
-import dev.alexengrig.metter.processor.element.descriptor.FieldDescriptor;
-import dev.alexengrig.metter.processor.element.descriptor.TypeDescriptor;
+import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
+import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
 
 import javax.lang.model.element.TypeElement;
 import javax.tools.JavaFileObject;

@@ -21,4 +21,4 @@
  * @version 0.1.0
  * @since 0.1.0
  */
-package dev.alexengrig.metter.processor.element;
+package dev.alexengrig.metter.element;

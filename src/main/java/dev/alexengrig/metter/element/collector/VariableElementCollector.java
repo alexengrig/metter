@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package dev.alexengrig.metter.processor.element.collector;
+package dev.alexengrig.metter.element.collector;
 
-import dev.alexengrig.metter.processor.element.BaseElementVisitor;
+import dev.alexengrig.metter.element.BaseElementVisitor;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
