@@ -15,7 +15,7 @@
  */
 
 /**
- * An annotation processor for generation meta-information (getters and setters).
+ * An annotation processor for generating meta-information (getters and setters).
  *
  * @author Grig Alex
  * @version 0.1.0

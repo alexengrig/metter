@@ -25,7 +25,7 @@
     <version>0.1.0-SNAPSHOT</version>
 
     <name>metter</name>
-    <description>An annotation processor for generation meta-information (getters and setters)</description>
+    <description>An annotation processor for generating meta-information (getters and setters)</description>
     <url>https://github.com/alexengrig/metter</url>
 
     <licenses>
