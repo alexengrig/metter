@@ -112,7 +112,7 @@ public class GetterSupplierSourceGeneratorTest {
             put("stringField", "MyDomain::getStringField");
         }};
         String source = generator.generate(className, domainClassName, field2Getter);
-        assertEquals("Source generated is invalid", SNAPSHOT_OF_SOURCE_WITHOUT_PACKAGE, source);
+        assertEquals("Source is invalid", SNAPSHOT_OF_SOURCE_WITHOUT_PACKAGE, source);
     }
 
     @Test
@@ -125,6 +125,6 @@ public class GetterSupplierSourceGeneratorTest {
             put("stringField", "my.company.MyDomain::getStringField");
         }};
         String source = generator.generate(className, domainClassName, field2Getter);
-        assertEquals("Source generated is invalid", SNAPSHOT_OF_SOURCE_WITH_PACKAGE, source);
+        assertEquals("Source is invalid", SNAPSHOT_OF_SOURCE_WITH_PACKAGE, source);
     }
 }
