@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dev.alexengrig.metter.processor.generator;
+package dev.alexengrig.metter.generator;
 
 import dev.alexengrig.metter.processor.util.LineJoiner;
 

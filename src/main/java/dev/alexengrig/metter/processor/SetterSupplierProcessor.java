@@ -18,9 +18,9 @@ package dev.alexengrig.metter.processor;
 
 import com.google.auto.service.AutoService;
 import dev.alexengrig.metter.annotation.SetterSupplier;
+import dev.alexengrig.metter.generator.SetterSupplierSourceGenerator;
 import dev.alexengrig.metter.processor.element.descriptor.FieldDescriptor;
 import dev.alexengrig.metter.processor.element.descriptor.TypeDescriptor;
-import dev.alexengrig.metter.processor.generator.SetterSupplierSourceGenerator;
 
 import javax.annotation.processing.Processor;
 import java.util.Arrays;

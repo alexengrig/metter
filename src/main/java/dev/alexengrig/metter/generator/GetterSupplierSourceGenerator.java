@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package dev.alexengrig.metter.processor.generator;
+package dev.alexengrig.metter.generator;
 
-public class SetterSupplierSourceGenerator extends MethodSupplierSourceGenerator {
+public class GetterSupplierSourceGenerator extends MethodSupplierSourceGenerator {
     @Override
     protected String getMapValueType(String className) {
-        return String.format("java.util.function.BiConsumer<%s, java.lang.Object>", className);
+        return String.format("java.util.function.Function<%s, java.lang.Object>", className);
     }
 }
