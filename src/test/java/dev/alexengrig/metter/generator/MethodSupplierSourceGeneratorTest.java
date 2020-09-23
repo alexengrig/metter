@@ -1,12 +1,28 @@
+/*
+ * Copyright 2020 Alexengrig Dev.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package dev.alexengrig.metter.generator;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MethodSupplierSourceGeneratorTest {
     private static final String SNAPSHOT_OF_SOURCE_WITHOUT_PACKAGE;
@@ -112,7 +128,7 @@ public class MethodSupplierSourceGeneratorTest {
             put("nullField", "null");
         }};
         String source = generator.generate(className, domainClassName, field2Method);
-        assertEquals("Source is invalid", SNAPSHOT_OF_SOURCE_WITHOUT_PACKAGE, source);
+        assertEquals(SNAPSHOT_OF_SOURCE_WITHOUT_PACKAGE, source, "Source is invalid");
     }
 
     @Test
@@ -132,15 +148,14 @@ public class MethodSupplierSourceGeneratorTest {
     public void should_return_packageName() {
         assertEquals("Package name is not equal 'my.company'",
                 "my.company", generator.getPackageName("my.company.MyClass"));
-        assertNull("Package name is not null",
-                generator.getPackageName("MyClass"));
+        assertNull(generator.getPackageName("MyClass"), "Package name is not null");
     }
 
     @Test
     public void should_return_simpleName() {
-        assertEquals("Simple name is not equal 'MyClass'",
-                "MyClass", generator.getSimpleName("my.company.MyClass"));
-        assertEquals("Simple name is not equal 'MyClass'",
-                "MyClass", generator.getSimpleName("MyClass"));
+        assertEquals("MyClass", generator.getSimpleName("my.company.MyClass"),
+                "Simple name is not equal 'MyClass'");
+        assertEquals("MyClass", generator.getSimpleName("MyClass"),
+                "Simple name is not equal 'MyClass'");
     }
 }
