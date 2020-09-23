@@ -16,7 +16,7 @@
 
 package dev.alexengrig.metter.element.descriptor;
 
-import dev.alexengrig.metter.element.collector.ExecutableElementCollector;
+import dev.alexengrig.metter.element.collector.MethodCollector;
 
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
@@ -32,8 +32,8 @@ public class MethodDescriptor {
     }
 
     public static Set<MethodDescriptor> of(TypeElement typeElement) {
-        ExecutableElementCollector methodCollector = new ExecutableElementCollector(typeElement);
-        return methodCollector.getExecutableElements().stream().map(MethodDescriptor::new).collect(Collectors.toSet());
+        MethodCollector methodCollector = new MethodCollector(typeElement);
+        return methodCollector.getChildren().stream().map(MethodDescriptor::new).collect(Collectors.toSet());
     }
 
     public String getName() {

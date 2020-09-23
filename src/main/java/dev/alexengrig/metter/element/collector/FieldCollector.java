@@ -16,34 +16,16 @@
 
 package dev.alexengrig.metter.element.collector;
 
-import dev.alexengrig.metter.element.BaseElementVisitor;
-
-import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import java.util.HashSet;
-import java.util.Set;
 
-public class VariableElementCollector extends BaseElementVisitor {
-    protected final TypeElement typeElement;
-    protected transient Set<VariableElement> variableElements;
-
-    public VariableElementCollector(TypeElement typeElement) {
-        this.typeElement = typeElement;
-    }
-
-    public Set<VariableElement> getVariableElements() {
-        if (variableElements == null) {
-            variableElements = new HashSet<>();
-            for (Element enclosedElement : typeElement.getEnclosedElements()) {
-                enclosedElement.accept(this, null);
-            }
-        }
-        return variableElements;
+public class FieldCollector extends BaseEnclosedElementCollector<TypeElement, VariableElement> {
+    public FieldCollector(TypeElement parent) {
+        super(parent);
     }
 
     @Override
     public void visitVariable(VariableElement variableElement) {
-        variableElements.add(variableElement);
+        children.add(variableElement);
     }
 }

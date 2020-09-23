@@ -16,35 +16,16 @@
 
 package dev.alexengrig.metter.element.collector;
 
-import dev.alexengrig.metter.element.BaseElementVisitor;
-
-import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
-import java.util.HashSet;
-import java.util.Set;
 
-public class ExecutableElementCollector extends BaseElementVisitor {
-    protected final TypeElement typeElement;
-    protected transient Set<ExecutableElement> executableElements;
-
-    public ExecutableElementCollector(TypeElement typeElement) {
-        this.typeElement = typeElement;
-
-    }
-
-    public Set<ExecutableElement> getExecutableElements() {
-        if (executableElements == null) {
-            executableElements = new HashSet<>();
-            for (Element enclosedElement : typeElement.getEnclosedElements()) {
-                enclosedElement.accept(this, null);
-            }
-        }
-        return executableElements;
+public class MethodCollector extends BaseEnclosedElementCollector<TypeElement, ExecutableElement> {
+    public MethodCollector(TypeElement parent) {
+        super(parent);
     }
 
     @Override
     public void visitExecutable(ExecutableElement executableElement) {
-        executableElements.add(executableElement);
+        children.add(executableElement);
     }
 }

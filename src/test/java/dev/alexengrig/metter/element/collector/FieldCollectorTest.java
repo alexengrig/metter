@@ -16,7 +16,6 @@
 
 package dev.alexengrig.metter.element.collector;
 
-
 import dev.alexengrig.metter.element.ElementMocks;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -29,16 +28,16 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-class ExecutableElementCollectorTest {
+class FieldCollectorTest {
     @Test
-    void should_return_allMethods() {
+    public void should_return_allFields() {
         VariableElement field1 = ElementMocks.variableElementMock();
         VariableElement field2 = ElementMocks.variableElementMock();
         ExecutableElement method1 = ElementMocks.executableElementMock();
         ExecutableElement method2 = ElementMocks.executableElementMock();
         List<Element> enclosedElements = Arrays.asList(field1, method1, field2, method2);
         TypeElement type = ElementMocks.typeElement(enclosedElements);
-        ExecutableElementCollector collector = new ExecutableElementCollector(type);
-        Assertions.assertEquals(new HashSet<>(Arrays.asList(method1, method2)), collector.getExecutableElements());
+        FieldCollector collector = new FieldCollector(type);
+        Assertions.assertEquals(new HashSet<>(Arrays.asList(field1, field2)), collector.getChildren());
     }
 }

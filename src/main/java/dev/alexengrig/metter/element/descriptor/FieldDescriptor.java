@@ -16,7 +16,7 @@
 
 package dev.alexengrig.metter.element.descriptor;
 
-import dev.alexengrig.metter.element.collector.VariableElementCollector;
+import dev.alexengrig.metter.element.collector.FieldCollector;
 
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
@@ -34,8 +34,8 @@ public class FieldDescriptor {
     }
 
     public static Set<FieldDescriptor> of(TypeElement typeElement) {
-        VariableElementCollector fieldCollector = new VariableElementCollector(typeElement);
-        return fieldCollector.getVariableElements().stream()
+        FieldCollector fieldCollector = new FieldCollector(typeElement);
+        return fieldCollector.getChildren().stream()
                 .map(FieldDescriptor::new)
                 .collect(Collectors.toSet());
     }
