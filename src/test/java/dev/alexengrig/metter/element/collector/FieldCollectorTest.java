@@ -17,7 +17,6 @@
 package dev.alexengrig.metter.element.collector;
 
 import dev.alexengrig.metter.element.ElementMocks;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import javax.lang.model.element.Element;
@@ -27,6 +26,9 @@ import javax.lang.model.element.VariableElement;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
 
 class FieldCollectorTest {
     @Test
@@ -38,6 +40,9 @@ class FieldCollectorTest {
         List<Element> enclosedElements = Arrays.asList(field1, method1, field2, method2);
         TypeElement type = ElementMocks.typeElement(enclosedElements);
         FieldCollector collector = new FieldCollector(type);
-        Assertions.assertEquals(new HashSet<>(Arrays.asList(field1, field2)), collector.getChildren());
+        assertEquals(new HashSet<>(Arrays.asList(field1, field2)), collector.getChildren(),
+                "Invalid set of fields");
+        collector.getChildren();
+        verify(type).getEnclosedElements();
     }
 }
