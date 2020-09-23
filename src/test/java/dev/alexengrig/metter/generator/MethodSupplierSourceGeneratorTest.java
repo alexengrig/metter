@@ -141,13 +141,13 @@ public class MethodSupplierSourceGeneratorTest {
             put("stringField", "my.company.MyDomain::getStringField");
         }};
         String source = generator.generate(className, domainClassName, field2Method);
-        assertEquals("Source is invalid", SNAPSHOT_OF_SOURCE_WITH_PACKAGE, source);
+        assertEquals(SNAPSHOT_OF_SOURCE_WITH_PACKAGE, source, "Source is invalid");
     }
 
     @Test
     public void should_return_packageName() {
-        assertEquals("Package name is not equal 'my.company'",
-                "my.company", generator.getPackageName("my.company.MyClass"));
+        assertEquals("my.company", generator.getPackageName("my.company.MyClass"),
+                "Package name is not equal 'my.company'");
         assertNull(generator.getPackageName("MyClass"), "Package name is not null");
     }
 
