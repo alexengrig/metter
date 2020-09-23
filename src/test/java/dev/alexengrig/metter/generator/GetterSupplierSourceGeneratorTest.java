@@ -23,9 +23,9 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class GetterSupplierSourceGeneratorTest {
-    public static final String SNAPSHOT_OF_SOURCE_WITHOUT_PACKAGE;
-    public static final String SNAPSHOT_OF_SOURCE_WITH_PACKAGE;
+class GetterSupplierSourceGeneratorTest {
+    static final String SNAPSHOT_OF_SOURCE_WITHOUT_PACKAGE;
+    static final String SNAPSHOT_OF_SOURCE_WITH_PACKAGE;
 
     static {
         SNAPSHOT_OF_SOURCE_WITHOUT_PACKAGE = "" +
@@ -116,10 +116,10 @@ public class GetterSupplierSourceGeneratorTest {
                 "}\n";
     }
 
-    private final GetterSupplierSourceGenerator generator = new GetterSupplierSourceGenerator(false);
+    final GetterSupplierSourceGenerator generator = new GetterSupplierSourceGenerator(false);
 
     @Test
-    public void should_generate_sourceWithoutPackage() {
+    void should_generate_sourceWithoutPackage() {
         String className = "MyClass";
         String domainClassName = "MyDomain";
         Map<String, String> field2Getter = new HashMap<String, String>() {{
@@ -132,7 +132,7 @@ public class GetterSupplierSourceGeneratorTest {
     }
 
     @Test
-    public void should_generate_sourceWithPackage() {
+    void should_generate_sourceWithPackage() {
         String className = "my.company.MyClass";
         String domainClassName = "my.company.MyDomain";
         Map<String, String> field2Getter = new HashMap<String, String>() {{

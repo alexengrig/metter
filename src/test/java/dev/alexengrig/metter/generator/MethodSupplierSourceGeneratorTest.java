@@ -24,9 +24,9 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class MethodSupplierSourceGeneratorTest {
-    private static final String SNAPSHOT_OF_SOURCE_WITHOUT_PACKAGE;
-    private static final String SNAPSHOT_OF_SOURCE_WITH_PACKAGE;
+class MethodSupplierSourceGeneratorTest {
+    static final String SNAPSHOT_OF_SOURCE_WITHOUT_PACKAGE;
+    static final String SNAPSHOT_OF_SOURCE_WITH_PACKAGE;
 
     static {
         SNAPSHOT_OF_SOURCE_WITHOUT_PACKAGE = "" +
@@ -113,7 +113,7 @@ public class MethodSupplierSourceGeneratorTest {
                 "}\n";
     }
 
-    private final MethodSupplierSourceGenerator generator = new MethodSupplierSourceGenerator(false) {
+    final MethodSupplierSourceGenerator generator = new MethodSupplierSourceGenerator(false) {
         @Override
         protected String getMapValueType(String className) {
             return "Object";
@@ -121,7 +121,7 @@ public class MethodSupplierSourceGeneratorTest {
     };
 
     @Test
-    public void should_generate_source_withoutPackage() {
+    void should_generate_source_withoutPackage() {
         String className = "MyClass";
         String domainClassName = "MyDomain";
         Map<String, String> field2Method = new HashMap<String, String>() {{
@@ -132,7 +132,7 @@ public class MethodSupplierSourceGeneratorTest {
     }
 
     @Test
-    public void should_generate_sourceWithPackage() {
+    void should_generate_sourceWithPackage() {
         String className = "my.company.MyClass";
         String domainClassName = "my.company.MyDomain";
         Map<String, String> field2Method = new HashMap<String, String>() {{
@@ -145,14 +145,14 @@ public class MethodSupplierSourceGeneratorTest {
     }
 
     @Test
-    public void should_return_packageName() {
+    void should_return_packageName() {
         assertEquals("my.company", generator.getPackageName("my.company.MyClass"),
                 "Package name is not equal 'my.company'");
         assertNull(generator.getPackageName("MyClass"), "Package name is not null");
     }
 
     @Test
-    public void should_return_simpleName() {
+    void should_return_simpleName() {
         assertEquals("MyClass", generator.getSimpleName("my.company.MyClass"),
                 "Simple name is not equal 'MyClass'");
         assertEquals("MyClass", generator.getSimpleName("MyClass"),

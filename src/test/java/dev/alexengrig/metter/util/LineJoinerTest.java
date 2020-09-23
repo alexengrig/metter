@@ -23,30 +23,30 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class LineJoinerTest {
+class LineJoinerTest {
     @Test
-    public void should_create_lines() {
+    void should_create_lines() {
         assertEquals("\n\n", new LineJoiner().ln().ln().toString(), "No two lines");
     }
 
     @Test
-    public void should_create_lines_with_text() {
+    void should_create_lines_with_text() {
         assertEquals("1\n2\n", new LineJoiner().ln("1").ln("2").toString(), "No two lines with numbers");
     }
 
     @Test
-    public void should_create_formatLines() {
+    void should_create_formatLines() {
         assertEquals("1\n2\n", new LineJoiner().ft("%d", 1).ft("%d", 2).toString(), "No two lines with numbers");
     }
 
     @Test
-    public void should_create_formatLines_by_condition() {
+    void should_create_formatLines_by_condition() {
         assertEquals("1\n2\n", new LineJoiner().ftIf(true, "%d", 1).ftIf(false, "%d", 3).ftIf(true, "%d", 2).toString(),
                 "No two lines with numbers");
     }
 
     @Test
-    public void should_create_lines_from_map() {
+    void should_create_lines_from_map() {
         Map<Integer, String> map = new LinkedHashMap<Integer, String>(2) {{
             put(1, "one");
             put(2, "two");
