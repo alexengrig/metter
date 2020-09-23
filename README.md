@@ -348,3 +348,9 @@ The generation solution is faster than the reflection solution (reflection is sl
 ## License
 
 This project is [licensed](LICENSE) under [Apache License, version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+
+[JetBrains Mono typeface](https://www.jetbrains.com/lp/mono)
+used in [logo](docs/images/metter-logo.png)
+and [preview](docs/images/metter-preview.png)
+is [licensed](https://www.jetbrains.com/lp/mono/#license)
+under [Apache License, version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
