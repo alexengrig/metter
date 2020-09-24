@@ -20,14 +20,17 @@ import dev.alexengrig.metter.element.collector.FieldCollector;
 
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class FieldDescriptor {
     protected final VariableElement variableElement;
     protected transient String name;
-    protected transient String className;
+    protected transient String typeName;
     protected transient Set<AnnotationDescriptor> annotations;
+    protected transient Map<String, Boolean> hasAnnotationByQualifiedNameMap;
 
     public FieldDescriptor(VariableElement variableElement) {
         this.variableElement = variableElement;
@@ -47,11 +50,11 @@ public class FieldDescriptor {
         return name;
     }
 
-    public String getClassName() {
-        if (className == null) {
-            className = variableElement.asType().toString();
+    public String getTypeName() {
+        if (typeName == null) {
+            typeName = variableElement.asType().toString();
         }
-        return className;
+        return typeName;
     }
 
     public Set<AnnotationDescriptor> getAnnotations() {
@@ -62,9 +65,15 @@ public class FieldDescriptor {
     }
 
     public boolean hasAnnotation(String annotationQualifiedName) {
-        //FIXME: TypeDescriptor#hasAnnotation
-        return getAnnotations().stream()
+        if (hasAnnotationByQualifiedNameMap == null) {
+            hasAnnotationByQualifiedNameMap = new HashMap<>();
+        } else if (hasAnnotationByQualifiedNameMap.containsKey(annotationQualifiedName)) {
+            return hasAnnotationByQualifiedNameMap.get(annotationQualifiedName);
+        }
+        boolean hasAnnotation = getAnnotations().stream()
                 .map(AnnotationDescriptor::getQualifiedName)
                 .anyMatch(annotationQualifiedName::equals);
+        hasAnnotationByQualifiedNameMap.put(annotationQualifiedName, hasAnnotation);
+        return hasAnnotation;
     }
 }

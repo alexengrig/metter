@@ -80,7 +80,7 @@ public class SetterSupplierProcessor extends BaseMethodSupplierProcessor<SetterS
     @Override
     protected String getMethodView(TypeDescriptor type, FieldDescriptor field, String methodName) {
         return String.format("(instance, value) -> instance.%s((%s) value)",
-                methodName, field.getClassName());
+                methodName, field.getTypeName());
     }
 
     @Override

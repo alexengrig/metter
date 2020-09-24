@@ -38,7 +38,7 @@ class MethodCollectorTest {
         ExecutableElement method1 = ElementMocks.executableElementMock();
         ExecutableElement method2 = ElementMocks.executableElementMock();
         List<Element> enclosedElements = Arrays.asList(field1, method1, field2, method2);
-        TypeElement type = ElementMocks.typeElement(enclosedElements);
+        TypeElement type = ElementMocks.typeElementMock(enclosedElements);
         MethodCollector collector = new MethodCollector(type);
         assertEquals(new HashSet<>(Arrays.asList(method1, method2)), collector.getChildren(),
                 "Invalid set of methods");

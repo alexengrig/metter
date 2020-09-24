@@ -68,7 +68,7 @@ public class GetterSupplierProcessor extends BaseMethodSupplierProcessor<GetterS
 
     @Override
     protected String getMethodName(FieldDescriptor field) {
-        String methodNamePrefix = "boolean".equals(field.getClassName()) ? "is" : "get";
+        String methodNamePrefix = "boolean".equals(field.getTypeName()) ? "is" : "get";
         String name = field.getName();
         return methodNamePrefix + name.substring(0, 1).toUpperCase() + name.substring(1);
     }

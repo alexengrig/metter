@@ -38,7 +38,7 @@ class FieldCollectorTest {
         ExecutableElement method1 = ElementMocks.executableElementMock();
         ExecutableElement method2 = ElementMocks.executableElementMock();
         List<Element> enclosedElements = Arrays.asList(field1, method1, field2, method2);
-        TypeElement type = ElementMocks.typeElement(enclosedElements);
+        TypeElement type = ElementMocks.typeElementMock(enclosedElements);
         FieldCollector collector = new FieldCollector(type);
         assertEquals(new HashSet<>(Arrays.asList(field1, field2)), collector.getChildren(),
                 "Invalid set of fields");
