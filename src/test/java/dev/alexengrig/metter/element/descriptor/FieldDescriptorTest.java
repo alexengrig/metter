@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
 
 public class FieldDescriptorTest {
     @Test
@@ -33,6 +34,8 @@ public class FieldDescriptorTest {
         VariableElement variableElement = ElementMocks.variableElementMock(fieldName);
         FieldDescriptor descriptor = new FieldDescriptor(variableElement);
         assertEquals(fieldName, descriptor.getName(), "Field name is not equal to 'someField'");
+        descriptor.getName();
+        verify(variableElement).getSimpleName();
     }
 
     @Test
@@ -40,6 +43,8 @@ public class FieldDescriptorTest {
         VariableElement variableElement = ElementMocks.variableElementMock(String.class);
         FieldDescriptor descriptor = new FieldDescriptor(variableElement);
         assertEquals("java.lang.String", descriptor.getTypeName(), "Field type is not equal to 'java.lang.String'");
+        descriptor.getTypeName();
+        verify(variableElement).asType();
     }
 
     @Test
@@ -52,5 +57,7 @@ public class FieldDescriptorTest {
                 .collect(Collectors.toList());
         assertEquals(expected, actual,
                 "Annotations of field are not 'java.lang.Deprecated' and 'java.lang.SuppressWarnings'");
+        descriptor.getAnnotations();
+        verify(variableElement).getAnnotationMirrors();
     }
 }
