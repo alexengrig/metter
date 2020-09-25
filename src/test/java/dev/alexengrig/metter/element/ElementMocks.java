@@ -103,6 +103,15 @@ public final class ElementMocks {
         return mock;
     }
 
+    public static <T> TypeElement typeElementMock(Class<? extends T> type) {
+        TypeElement mock = mock(TypeElement.class);
+        Name qualifiedName = nameMock(type.getName());
+        when(mock.getQualifiedName()).thenReturn(qualifiedName);
+        Name simpleName = nameMock(type.getSimpleName());
+        when(mock.getSimpleName()).thenReturn(simpleName);
+        return mock;
+    }
+
 //    Types
 
     public static <T> DeclaredType declaredTypeMock(Class<? extends T> type) {
