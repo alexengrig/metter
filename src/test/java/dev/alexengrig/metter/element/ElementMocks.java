@@ -48,6 +48,13 @@ public final class ElementMocks {
         return mock;
     }
 
+    public static ExecutableElement executableElementMock(String methodName) {
+        ExecutableElement mock = executableElementMock();
+        Name name = nameMock(methodName);
+        when(mock.getSimpleName()).thenReturn(name);
+        return mock;
+    }
+
     public static VariableElement variableElementMock() {
         VariableElement mock = mock(VariableElement.class);
         when(mock.accept(any(), any())).then(invocationOnMock -> {

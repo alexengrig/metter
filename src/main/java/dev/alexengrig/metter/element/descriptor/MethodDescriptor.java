@@ -33,7 +33,9 @@ public class MethodDescriptor {
 
     public static Set<MethodDescriptor> of(TypeElement typeElement) {
         MethodCollector methodCollector = new MethodCollector(typeElement);
-        return methodCollector.getChildren().stream().map(MethodDescriptor::new).collect(Collectors.toSet());
+        return methodCollector.getChildren().stream()
+                .map(MethodDescriptor::new)
+                .collect(Collectors.toSet());
     }
 
     public String getName() {
