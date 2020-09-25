@@ -28,8 +28,10 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import java.lang.annotation.Annotation;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -38,23 +40,21 @@ import static org.mockito.Mockito.when;
 public final class ElementMocks {
     public static ExecutableElement executableElementMock() {
         ExecutableElement mock = mock(ExecutableElement.class);
-        when(mock.accept(any(), any()))
-                .then(invocationOnMock -> {
-                    ElementVisitor<Object, Object> visitor = invocationOnMock.getArgument(0);
-                    Object parameter = invocationOnMock.getArgument(1);
-                    return visitor.visitExecutable(mock, parameter);
-                });
+        when(mock.accept(any(), any())).then(invocationOnMock -> {
+            ElementVisitor<Object, Object> visitor = invocationOnMock.getArgument(0);
+            Object parameter = invocationOnMock.getArgument(1);
+            return visitor.visitExecutable(mock, parameter);
+        });
         return mock;
     }
 
     public static VariableElement variableElementMock() {
         VariableElement mock = mock(VariableElement.class);
-        when(mock.accept(any(), any()))
-                .then(invocationOnMock -> {
-                    ElementVisitor<Object, Object> visitor = invocationOnMock.getArgument(0);
-                    Object parameter = invocationOnMock.getArgument(1);
-                    return visitor.visitVariable(mock, parameter);
-                });
+        when(mock.accept(any(), any())).then(invocationOnMock -> {
+            ElementVisitor<Object, Object> visitor = invocationOnMock.getArgument(0);
+            Object parameter = invocationOnMock.getArgument(1);
+            return visitor.visitVariable(mock, parameter);
+        });
         return mock;
     }
 
@@ -75,12 +75,11 @@ public final class ElementMocks {
     @SafeVarargs
     public static <T extends Annotation> VariableElement variableElementMock(Class<? extends T> type,
                                                                              Class<? extends T>... types) {
-        VariableElement mock = variableElementMock();
-        Mockito.<List<? extends AnnotationMirror>>when(mock.getAnnotationMirrors())
-                .thenReturn(Collections.emptyList());
-//                        Stream.concat(Stream.of(type), Arrays.stream(types))
-//                        .map(ElementMocks::annotationMirrorMock)
-//                        .collect(Collectors.toList()));
+        VariableElement mock = mock(VariableElement.class);
+        List<AnnotationMirror> annotationMirrors = Stream.concat(Stream.of(type), Arrays.stream(types))
+                .map(ElementMocks::annotationMirrorMock)
+                .collect(Collectors.toList());
+        Mockito.<List<? extends AnnotationMirror>>when(mock.getAnnotationMirrors()).thenReturn(annotationMirrors);
         return mock;
     }
 
