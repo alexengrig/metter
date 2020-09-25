@@ -27,9 +27,9 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 
-public class FieldDescriptorTest {
+class FieldDescriptorTest {
     @Test
-    public void should_return_name() {
+    void should_return_name() {
         String fieldName = "someField";
         VariableElement variableElement = ElementMocks.variableElementMock(fieldName);
         FieldDescriptor descriptor = new FieldDescriptor(variableElement);
