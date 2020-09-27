@@ -28,6 +28,7 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -118,11 +119,23 @@ public final class ElementMocks {
     public static <T extends Annotation> TypeElement typeElementMock(Class<? extends T> annotationType,
                                                                      Class<? extends T>... annotationTypes) {
         TypeElement mock = mock(TypeElement.class);
-        List<AnnotationMirror> annotationMirrors =
-                Stream.concat(Stream.of(annotationType), Arrays.stream(annotationTypes))
-                        .map(ElementMocks::annotationMirrorMock)
-                        .collect(Collectors.toList());
+        List<Class<? extends T>> annotationList = new ArrayList<Class<? extends T>>(1 + annotationTypes.length) {{
+            add(annotationType);
+            addAll(Arrays.asList(annotationTypes));
+        }};
+        List<AnnotationMirror> annotationMirrors = annotationList.stream()
+                .map(ElementMocks::annotationMirrorMock)
+                .collect(Collectors.toList());
         Mockito.<List<? extends AnnotationMirror>>when(mock.getAnnotationMirrors()).thenReturn(annotationMirrors);
+        when(mock.getAnnotation(any())).then(invocation -> {
+            Class<? extends Annotation> type = invocation.getArgument(0);
+            if (annotationList.contains(type)) {
+                Annotation annotationMock = mock(type);
+                Mockito.<Class<? extends Annotation>>when(annotationMock.annotationType()).thenReturn(type);
+                return annotationMock;
+            }
+            return null;
+        });
         return mock;
     }
 

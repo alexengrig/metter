@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 
 class FieldDescriptorTest {
@@ -59,6 +60,19 @@ class FieldDescriptorTest {
         assertEquals(new HashSet<>(expected), new HashSet<>(actual),
                 "Annotations of field are not 'java.lang.Deprecated' and 'java.lang.SuppressWarnings'");
         descriptor.getAnnotations();
+        verify(variableElement).getAnnotationMirrors();
+    }
+
+    @Test
+    void should_check_hasAnnotation() {
+        VariableElement variableElement = ElementMocks.variableElementMock(Deprecated.class, SuppressWarnings.class);
+        FieldDescriptor descriptor = new FieldDescriptor(variableElement);
+        assertTrue(descriptor.hasAnnotation("java.lang.Deprecated"),
+                "Field has no 'java.lang.Deprecated' annotation");
+        assertTrue(descriptor.hasAnnotation("java.lang.Deprecated"),
+                "Second time: Field has no 'java.lang.Deprecated' annotation");
+        assertTrue(descriptor.hasAnnotation("java.lang.SuppressWarnings"),
+                "Field has no 'java.lang.SuppressWarnings' annotation");
         verify(variableElement).getAnnotationMirrors();
     }
 }

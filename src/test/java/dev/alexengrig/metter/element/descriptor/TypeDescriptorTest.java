@@ -33,6 +33,7 @@ import static dev.alexengrig.metter.element.ElementMocks.variableElementMock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 class TypeDescriptorTest {
@@ -94,6 +95,7 @@ class TypeDescriptorTest {
         TypeElement typeElement = typeElementMock(Arrays.asList(method1, method2));
         TypeDescriptor descriptor = new TypeDescriptor(typeElement);
         assertTrue(descriptor.hasMethod("getOne"), "Class has no 'getOne' method");
+        assertTrue(descriptor.hasMethod("getOne"), "Second time: Class has no 'getOne' method");
         assertTrue(descriptor.hasMethod("getTwo"), "Class has no 'getTwo' method");
         assertFalse(descriptor.hasMethod("getThree"), "Class has 'getThree' method");
         verify(typeElement).getEnclosedElements();
@@ -119,10 +121,24 @@ class TypeDescriptorTest {
         TypeDescriptor descriptor = new TypeDescriptor(typeElement);
         assertTrue(descriptor.hasAnnotation("java.lang.Deprecated"),
                 "Class has no 'java.lang.Deprecated' annotation");
+        assertTrue(descriptor.hasAnnotation("java.lang.Deprecated"),
+                "Second time: Class has no 'java.lang.Deprecated' annotation");
         assertTrue(descriptor.hasAnnotation("java.lang.SuppressWarnings"),
                 "Class has no 'java.lang.SuppressWarnings' annotation");
         assertFalse(descriptor.hasAnnotation("java.lang.Override"),
                 "Class has 'java.lang.Override' annotation");
         verify(typeElement).getAnnotationMirrors();
+    }
+
+    @Test
+    void should_return_annotation() {
+        TypeElement typeElement = ElementMocks.typeElementMock(Deprecated.class, SuppressWarnings.class);
+        TypeDescriptor descriptor = new TypeDescriptor(typeElement);
+        assertEquals(Deprecated.class, descriptor.getAnnotation(Deprecated.class).annotationType(),
+                "Class has no 'java.lang.Deprecated' annotation");
+        assertEquals(SuppressWarnings.class, descriptor.getAnnotation(SuppressWarnings.class).annotationType(),
+                "Class has no 'java.lang.SuppressWarnings' annotation");
+        verify(typeElement).getAnnotation(eq(Deprecated.class));
+        verify(typeElement).getAnnotation(eq(SuppressWarnings.class));
     }
 }
