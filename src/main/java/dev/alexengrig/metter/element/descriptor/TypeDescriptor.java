@@ -19,6 +19,8 @@ package dev.alexengrig.metter.element.descriptor;
 
 import javax.lang.model.element.TypeElement;
 import java.lang.annotation.Annotation;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class TypeDescriptor {
@@ -28,6 +30,8 @@ public class TypeDescriptor {
     protected transient Set<FieldDescriptor> fields;
     protected transient Set<MethodDescriptor> methods;
     protected transient Set<AnnotationDescriptor> annotations;
+    protected transient Map<String, Boolean> hasMethodByNameMap;
+    protected transient Map<String, Boolean> hasAnnotationByQualifiedNameMap;
 
     public TypeDescriptor(TypeElement typeElement) {
         this.typeElement = typeElement;
@@ -62,9 +66,16 @@ public class TypeDescriptor {
     }
 
     public boolean hasMethod(String methodName) {
-        return getMethods().stream()
+        if (hasMethodByNameMap == null) {
+            hasMethodByNameMap = new HashMap<>();
+        } else if (hasMethodByNameMap.containsKey(methodName)) {
+            return hasMethodByNameMap.get(methodName);
+        }
+        boolean hasMethod = getMethods().stream()
                 .map(MethodDescriptor::getName)
                 .anyMatch(methodName::equals);
+        hasMethodByNameMap.put(methodName, hasMethod);
+        return hasMethod;
     }
 
     public Set<AnnotationDescriptor> getAnnotations() {
@@ -75,12 +86,19 @@ public class TypeDescriptor {
     }
 
     public boolean hasAnnotation(String annotationQualifiedName) {
-        return getAnnotations().stream()
+        if (hasAnnotationByQualifiedNameMap == null) {
+            hasAnnotationByQualifiedNameMap = new HashMap<>();
+        } else if (hasAnnotationByQualifiedNameMap.containsKey(annotationQualifiedName)) {
+            return hasAnnotationByQualifiedNameMap.get(annotationQualifiedName);
+        }
+        boolean hasAnnotation = getAnnotations().stream()
                 .map(AnnotationDescriptor::getQualifiedName)
                 .anyMatch(annotationQualifiedName::equals);
+        hasAnnotationByQualifiedNameMap.put(annotationQualifiedName, hasAnnotation);
+        return hasAnnotation;
     }
 
-    public <A extends Annotation> A getAnnotation(Class<? extends A> annotationClass) {
-        return typeElement.getAnnotation(annotationClass);
+    public <T extends Annotation> T getAnnotation(Class<? extends T> annotationType) {
+        return typeElement.getAnnotation(annotationType);
     }
 }

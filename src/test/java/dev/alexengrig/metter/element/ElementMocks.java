@@ -80,12 +80,13 @@ public final class ElementMocks {
     }
 
     @SafeVarargs
-    public static <T extends Annotation> VariableElement variableElementMock(Class<? extends T> type,
-                                                                             Class<? extends T>... types) {
+    public static <T extends Annotation> VariableElement variableElementMock(Class<? extends T> annotationType,
+                                                                             Class<? extends T>... annotationTypes) {
         VariableElement mock = mock(VariableElement.class);
-        List<AnnotationMirror> annotationMirrors = Stream.concat(Stream.of(type), Arrays.stream(types))
-                .map(ElementMocks::annotationMirrorMock)
-                .collect(Collectors.toList());
+        List<AnnotationMirror> annotationMirrors =
+                Stream.concat(Stream.of(annotationType), Arrays.stream(annotationTypes))
+                        .map(ElementMocks::annotationMirrorMock)
+                        .collect(Collectors.toList());
         Mockito.<List<? extends AnnotationMirror>>when(mock.getAnnotationMirrors()).thenReturn(annotationMirrors);
         return mock;
     }
@@ -112,6 +113,19 @@ public final class ElementMocks {
         return mock;
     }
 
+
+    @SafeVarargs
+    public static <T extends Annotation> TypeElement typeElementMock(Class<? extends T> annotationType,
+                                                                     Class<? extends T>... annotationTypes) {
+        TypeElement mock = mock(TypeElement.class);
+        List<AnnotationMirror> annotationMirrors =
+                Stream.concat(Stream.of(annotationType), Arrays.stream(annotationTypes))
+                        .map(ElementMocks::annotationMirrorMock)
+                        .collect(Collectors.toList());
+        Mockito.<List<? extends AnnotationMirror>>when(mock.getAnnotationMirrors()).thenReturn(annotationMirrors);
+        return mock;
+    }
+
 //    Types
 
     public static <T> DeclaredType declaredTypeMock(Class<? extends T> type) {
@@ -128,9 +142,9 @@ public final class ElementMocks {
         return mock;
     }
 
-    public static <T extends Annotation> AnnotationMirror annotationMirrorMock(Class<? extends T> type) {
+    public static <T extends Annotation> AnnotationMirror annotationMirrorMock(Class<? extends T> annotationType) {
         AnnotationMirror mock = mock(AnnotationMirror.class);
-        DeclaredType declaredType = declaredTypeMock(type);
+        DeclaredType declaredType = declaredTypeMock(annotationType);
         when(mock.getAnnotationType()).thenReturn(declaredType);
         return mock;
     }
