@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.lang.model.element.VariableElement;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,7 +56,7 @@ class FieldDescriptorTest {
         List<String> actual = descriptor.getAnnotations().stream()
                 .map(AnnotationDescriptor::getQualifiedName)
                 .collect(Collectors.toList());
-        assertEquals(expected, actual,
+        assertEquals(new HashSet<>(expected), new HashSet<>(actual),
                 "Annotations of field are not 'java.lang.Deprecated' and 'java.lang.SuppressWarnings'");
         descriptor.getAnnotations();
         verify(variableElement).getAnnotationMirrors();
