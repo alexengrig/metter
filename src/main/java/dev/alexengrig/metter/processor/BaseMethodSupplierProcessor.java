@@ -113,7 +113,7 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
 
     protected void writeSourceFile(JavaFileObject sourceFile, String source) {
         try (PrintWriter sourcePrinter = new PrintWriter(sourceFile.openWriter())) {
-            sourcePrinter.println(source);
+            sourcePrinter.print(source);
         } catch (IOException e) {
             error("Exception of source file writing", e);
         }
