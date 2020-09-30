@@ -43,6 +43,9 @@ public abstract class BaseProcessor<A extends Annotation, E extends Element> ext
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        if (roundEnv.processingOver()) {
+            return false;
+        }
         Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(annotationClass);
         for (Element annotatedElement : annotatedElements) {
             @SuppressWarnings("unchecked")
