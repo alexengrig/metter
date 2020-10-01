@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class MethodSupplierSourceGeneratorTest {
@@ -119,6 +120,18 @@ class MethodSupplierSourceGeneratorTest {
             return "Object";
         }
     };
+
+    @Test
+    void should_create_instance() {
+        // coverage
+        MethodSupplierSourceGenerator generator = new MethodSupplierSourceGenerator() {
+            @Override
+            protected String getMapValueType(String className) {
+                return null;
+            }
+        };
+        assertNotNull(generator);
+    }
 
     @Test
     void should_generate_source_withoutPackage() {

@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class SetterSupplierSourceGeneratorTest {
     static final String SNAPSHOT_OF_SOURCE_WITHOUT_PACKAGE;
@@ -117,6 +118,13 @@ class SetterSupplierSourceGeneratorTest {
     }
 
     final SetterSupplierSourceGenerator generator = new SetterSupplierSourceGenerator(false);
+
+    @Test
+    void should_create_instance() {
+        // coverage
+        SetterSupplierSourceGenerator generator = new SetterSupplierSourceGenerator();
+        assertNotNull(generator);
+    }
 
     @Test
     void should_generate_sourceWithoutPackage() {
