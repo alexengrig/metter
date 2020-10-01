@@ -92,6 +92,10 @@ public final class ElementMocks {
         return mock;
     }
 
+    public static TypeElement typeElementMock() {
+        return mock(TypeElement.class);
+    }
+
     public static <T extends Element> TypeElement typeElementMock(List<T> enclosedElements) {
         TypeElement mock = mock(TypeElement.class);
         when(mock.accept(any(), any())).then(invocationOnMock -> {
