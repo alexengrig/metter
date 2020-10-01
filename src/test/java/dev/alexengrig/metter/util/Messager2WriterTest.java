@@ -34,5 +34,8 @@ class Messager2WriterTest {
         PrintWriter writer = messager2Writer.errorWriter();
         writer.println("Error message");
         verify(messager).printMessage(Diagnostic.Kind.ERROR, "Error message");
+        // coverage
+        writer.flush();
+        writer.close();
     }
 }
