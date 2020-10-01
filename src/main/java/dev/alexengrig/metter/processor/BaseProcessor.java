@@ -16,6 +16,8 @@
 
 package dev.alexengrig.metter.processor;
 
+import dev.alexengrig.metter.util.Messager2Writer;
+
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
@@ -36,6 +38,7 @@ import java.util.Set;
  */
 public abstract class BaseProcessor<A extends Annotation, E extends Element> extends AbstractProcessor {
     protected final Class<? extends A> annotationClass;
+    protected transient Messager2Writer messager;
 
     public BaseProcessor(Class<? extends A> annotationClass) {
         this.annotationClass = annotationClass;
@@ -63,7 +66,14 @@ public abstract class BaseProcessor<A extends Annotation, E extends Element> ext
 
     protected void error(String message, Throwable throwable) {
         processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, message);
-        throwable.printStackTrace();
+        throwable.printStackTrace(prepareMessager().errorWriter());
+    }
+
+    protected Messager2Writer prepareMessager() {
+        if (messager == null) {
+            messager = new Messager2Writer(processingEnv.getMessager());
+        }
+        return messager;
     }
 
     @Override

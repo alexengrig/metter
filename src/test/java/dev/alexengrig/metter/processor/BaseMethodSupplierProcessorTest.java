@@ -19,12 +19,13 @@ package dev.alexengrig.metter.processor;
 import dev.alexengrig.metter.element.ElementMocks;
 import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
 import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import javax.annotation.processing.Filer;
+import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -35,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class BaseMethodSupplierProcessorTest {
@@ -92,13 +94,6 @@ class BaseMethodSupplierProcessorTest {
         sourceFile = mock(JavaFileObject.class);
     }
 
-    @BeforeAll
-    static void setUp() throws IOException {
-        Filer filer = mock(Filer.class);
-        when(filer.createSourceFile(any())).thenReturn(sourceFile);
-        when(environment.getFiler()).thenReturn(filer);
-    }
-
     @Test
     void should_create_defaultClassName() {
         TypeElement typeElement = ElementMocks.typeElementMock(String.class);
@@ -107,8 +102,12 @@ class BaseMethodSupplierProcessorTest {
     }
 
     @Test
-    void should_create_sourceFile() {
+    void should_create_sourceFile() throws IOException {
+        Filer filer = mock(Filer.class);
+        when(filer.createSourceFile(any())).thenReturn(sourceFile);
+        when(environment.getFiler()).thenReturn(filer);
         assertSame(sourceFile, processor.createSourceFile("MySource"));
+        verify(filer).createSourceFile("MySource");
     }
 
     @Test
@@ -118,5 +117,26 @@ class BaseMethodSupplierProcessorTest {
         when(file.openWriter()).thenReturn(writer);
         processor.writeSourceFile(file, "My test source");
         assertEquals("My test source", writer.getBuffer().toString(), "Written text is not equal to 'My test source'");
+    }
+
+    @Test
+    void should_print_noteMessage() {
+        Messager messager = mock(Messager.class);
+        when(environment.getMessager()).thenReturn(messager);
+        processor.note("Note message");
+        verify(messager).printMessage(Diagnostic.Kind.NOTE, "Note message");
+    }
+
+    @Test
+    void should_print_errorMessage() {
+        Messager messager = mock(Messager.class);
+        when(environment.getMessager()).thenReturn(messager);
+        RuntimeException exception = new RuntimeException();
+        processor.error("Error message", exception);
+        verify(messager).printMessage(Diagnostic.Kind.ERROR, "Error message");
+        verify(messager).printMessage(Diagnostic.Kind.ERROR, "java.lang.RuntimeException");
+        verify(messager).printMessage(Diagnostic.Kind.ERROR, "\tat " +
+                "dev.alexengrig.metter.processor.BaseMethodSupplierProcessorTest.should_print_errorMessage" +
+                "(BaseMethodSupplierProcessorTest.java:136)");
     }
 }
