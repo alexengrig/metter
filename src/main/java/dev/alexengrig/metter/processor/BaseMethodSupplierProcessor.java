@@ -73,7 +73,7 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
         try {
             return processingEnv.getFiler().createSourceFile(className);
         } catch (IOException e) {
-            throw new IllegalArgumentException("Exception of source file creation for:" + className);
+            throw new IllegalArgumentException("Exception of source file creation for:" + className, e);
         }
     }
 
