@@ -4,7 +4,7 @@
 [![BCH compliance](https://bettercodehub.com/edge/badge/alexengrig/metter?branch=master)](https://bettercodehub.com/)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Falexengrig%2Fmetter.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Falexengrig%2Fmetter?ref=badge_shield)
 
-Metter is an annotation processor for generating meta-information (getters and setters).
+Metter is an annotation processor for generating getter and setter suppliers.
 
 ## Get Started
 
