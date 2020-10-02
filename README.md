@@ -1,9 +1,26 @@
 # metter
 
 [![Build Status](https://travis-ci.com/alexengrig/metter.svg?branch=master)](https://travis-ci.com/alexengrig/metter)
+[![BCH compliance](https://bettercodehub.com/edge/badge/alexengrig/metter?branch=master)](https://bettercodehub.com/)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Falexengrig%2Fmetter.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Falexengrig%2Fmetter?ref=badge_shield)
 
-Metter is an annotation processor for generating meta-information (getters and setters).
+Metter is an annotation processor for generating getter and setter suppliers.
+
+## Table of Contents
+
+-   [Get Started](#get-started)
+    -   [Install](#install)
+        -   [Gradle](#gradle)
+        -   [Maven](#maven)
+    -   [Using](#using)
+-   [Motivation](#motivation)
+    -   [Problem](#problem)
+    -   [Solution](#solution)
+        -   [Manual](#manual)
+        -   [Reflection](#reflection)
+        -   [Generation](#generation)
+    -   [Conclusion](#conclusion)
+-   [License](#license)
 
 ## Get Started
 
@@ -208,9 +225,7 @@ age: 18  -> 19
 
 ### Solution
 
-[See full code](src/test/java/dev/alexengrig/metter/motivation).
-
-#### Manual solution
+#### Manual
 
 Each field:
 
@@ -266,7 +281,7 @@ class MapManChangeLogGenerator extends ManualManChangeLogGenerator {
 }
 ```
 
-#### Reflection solution
+#### Reflection
 
 ```java
 import java.lang.reflect.*;
@@ -314,7 +329,7 @@ class ReflectionManChangeLogGenerator extends MapManChangeLogGenerator {
 }
 ```
 
-#### Generation solution
+#### Generation
 
 Add `@GetterSupplier` annotation:
 
