@@ -80,6 +80,15 @@ public final class ElementMocks {
         return mock;
     }
 
+    public static VariableElement variableElementMock(String fieldName, Class<?> fieldType) {
+        VariableElement mock = variableElementMock();
+        Name name = nameMock(fieldName);
+        when(mock.getSimpleName()).thenReturn(name);
+        TypeMirror typeMirror = typeMirrorMock(fieldType);
+        when(mock.asType()).thenReturn(typeMirror);
+        return mock;
+    }
+
     @SafeVarargs
     public static <T extends Annotation> VariableElement variableElementMock(Class<? extends T> annotationType,
                                                                              Class<? extends T>... annotationTypes) {
@@ -120,8 +129,9 @@ public final class ElementMocks {
 
 
     @SafeVarargs
-    public static <T extends Annotation> TypeElement typeElementMock(Class<? extends T> annotationType,
-                                                                     Class<? extends T>... annotationTypes) {
+    public static <T extends Annotation> TypeElement typeElementMockWithAnnotations(
+            Class<? extends T> annotationType,
+            Class<? extends T>... annotationTypes) {
         TypeElement mock = mock(TypeElement.class);
         List<Class<? extends T>> annotationList = new ArrayList<Class<? extends T>>(1 + annotationTypes.length) {{
             add(annotationType);

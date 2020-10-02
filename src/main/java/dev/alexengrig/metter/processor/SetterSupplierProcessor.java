@@ -25,7 +25,6 @@ import dev.alexengrig.metter.generator.SetterSupplierSourceGenerator;
 import javax.annotation.processing.Processor;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -44,7 +43,12 @@ public class SetterSupplierProcessor extends BaseMethodSupplierProcessor<SetterS
     }
 
     @Override
-    protected String getCustomClassNameFromAnnotation(TypeDescriptor type) {
+    protected SetterSupplierSourceGenerator getSourceGenerator() {
+        return new SetterSupplierSourceGenerator();
+    }
+
+    @Override
+    protected String getCustomClassName(TypeDescriptor type) {
         SetterSupplier annotation = type.getAnnotation(annotationClass);
         return annotation.value();
     }
@@ -81,11 +85,5 @@ public class SetterSupplierProcessor extends BaseMethodSupplierProcessor<SetterS
     protected String getMethodView(TypeDescriptor type, FieldDescriptor field, String methodName) {
         return String.format("(instance, value) -> instance.%s((%s) value)",
                 methodName, field.getTypeName());
-    }
-
-    @Override
-    protected String createSource(TypeDescriptor type, Map<String, String> field2Method, String sourceClassName) {
-        SetterSupplierSourceGenerator sourceGenerator = new SetterSupplierSourceGenerator();
-        return sourceGenerator.generate(sourceClassName, type.getQualifiedName(), field2Method);
     }
 }

@@ -19,6 +19,7 @@ package dev.alexengrig.metter.processor;
 import dev.alexengrig.metter.element.ElementMocks;
 import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
 import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
+import dev.alexengrig.metter.generator.MethodSupplierSourceGenerator;
 import org.junit.jupiter.api.Test;
 
 import javax.annotation.processing.Filer;
@@ -53,7 +54,12 @@ class BaseMethodSupplierProcessorTest {
             }
 
             @Override
-            protected String getCustomClassNameFromAnnotation(TypeDescriptor type) {
+            protected MethodSupplierSourceGenerator getSourceGenerator() {
+                return null;
+            }
+
+            @Override
+            protected String getCustomClassName(TypeDescriptor type) {
                 return null;
             }
 

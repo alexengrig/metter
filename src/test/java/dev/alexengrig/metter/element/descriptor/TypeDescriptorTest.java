@@ -103,7 +103,7 @@ class TypeDescriptorTest {
 
     @Test
     void should_return_annotations() {
-        TypeElement typeElement = ElementMocks.typeElementMock(Deprecated.class, SuppressWarnings.class);
+        TypeElement typeElement = ElementMocks.typeElementMockWithAnnotations(Deprecated.class, SuppressWarnings.class);
         HashSet<String> expected = new HashSet<>(Arrays.asList("java.lang.Deprecated", "java.lang.SuppressWarnings"));
         TypeDescriptor descriptor = new TypeDescriptor(typeElement);
         Set<String> actual = descriptor.getAnnotations().stream()
@@ -117,7 +117,7 @@ class TypeDescriptorTest {
 
     @Test
     void should_check_hasAnnotation() {
-        TypeElement typeElement = ElementMocks.typeElementMock(Deprecated.class, SuppressWarnings.class);
+        TypeElement typeElement = ElementMocks.typeElementMockWithAnnotations(Deprecated.class, SuppressWarnings.class);
         TypeDescriptor descriptor = new TypeDescriptor(typeElement);
         assertTrue(descriptor.hasAnnotation("java.lang.Deprecated"),
                 "Class has no 'java.lang.Deprecated' annotation");
@@ -132,7 +132,7 @@ class TypeDescriptorTest {
 
     @Test
     void should_return_annotation() {
-        TypeElement typeElement = ElementMocks.typeElementMock(Deprecated.class, SuppressWarnings.class);
+        TypeElement typeElement = ElementMocks.typeElementMockWithAnnotations(Deprecated.class, SuppressWarnings.class);
         TypeDescriptor descriptor = new TypeDescriptor(typeElement);
         assertEquals(Deprecated.class, descriptor.getAnnotation(Deprecated.class).annotationType(),
                 "Class has no 'java.lang.Deprecated' annotation");

@@ -18,6 +18,7 @@ package dev.alexengrig.metter.processor;
 
 import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
 import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
+import dev.alexengrig.metter.generator.MethodSupplierSourceGenerator;
 
 import javax.lang.model.element.TypeElement;
 import javax.tools.JavaFileObject;
@@ -30,9 +31,14 @@ import java.util.Optional;
 import java.util.Set;
 
 public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends BaseProcessor<A, TypeElement> {
+    protected final MethodSupplierSourceGenerator sourceGenerator;
+
     public BaseMethodSupplierProcessor(Class<? extends A> annotationClass) {
         super(annotationClass);
+        this.sourceGenerator = getSourceGenerator();
     }
+
+    protected abstract MethodSupplierSourceGenerator getSourceGenerator();
 
     @Override
     protected void process(TypeElement typeElement) {
@@ -45,11 +51,11 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
     }
 
     protected String createSourceClassName(TypeDescriptor type) {
-        return getCustomClassName(type).orElseGet(() -> getDefaultClassName(type));
+        return getClassName(type).orElseGet(() -> getDefaultClassName(type));
     }
 
-    protected Optional<String> getCustomClassName(TypeDescriptor type) {
-        String customClassName = getCustomClassNameFromAnnotation(type);
+    protected Optional<String> getClassName(TypeDescriptor type) {
+        String customClassName = getCustomClassName(type);
         if (customClassName.isEmpty()) {
             return Optional.empty();
         }
@@ -62,7 +68,7 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
         return Optional.of(packageName.concat(".").concat(customClassName));
     }
 
-    protected abstract String getCustomClassNameFromAnnotation(TypeDescriptor type);
+    protected abstract String getCustomClassName(TypeDescriptor type);
 
     protected String getDefaultClassName(TypeDescriptor type) {
         String className = type.getQualifiedName();
@@ -107,9 +113,9 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
 
     protected abstract String getMethodView(TypeDescriptor type, FieldDescriptor field, String methodName);
 
-    protected abstract String createSource(TypeDescriptor type,
-                                           Map<String, String> field2Method,
-                                           String sourceClassName);
+    protected String createSource(TypeDescriptor type, Map<String, String> field2Method, String sourceClassName) {
+        return sourceGenerator.generate(sourceClassName, type.getQualifiedName(), field2Method);
+    }
 
     protected void writeSourceFile(JavaFileObject sourceFile, String source) {
         try (PrintWriter sourcePrinter = new PrintWriter(sourceFile.openWriter())) {
