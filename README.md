@@ -6,6 +6,22 @@
 
 Metter is an annotation processor for generating getter and setter suppliers.
 
+## Table of Contents
+
+-   [Get Started](#get-started)
+    -   [Install](#install)
+        -   [Gradle](#gradle)
+        -   [Maven](#maven)
+    -   [Using](#using)
+-   [Motivation](#motivation)
+    -   [Problem](#problem)
+    -   [Solution](#solution)
+        -   [Manual](#manual)
+        -   [Reflection](#reflection)
+        -   [Generation](#generation)
+    -   [Conclusion](#conclusion)
+-   [License](#license)
+
 ## Get Started
 
 ### Install
@@ -209,9 +225,7 @@ age: 18  -> 19
 
 ### Solution
 
-[See full code](src/test/java/dev/alexengrig/metter/motivation).
-
-#### Manual solution
+#### Manual
 
 Each field:
 
@@ -267,7 +281,7 @@ class MapManChangeLogGenerator extends ManualManChangeLogGenerator {
 }
 ```
 
-#### Reflection solution
+#### Reflection
 
 ```java
 import java.lang.reflect.*;
@@ -315,7 +329,7 @@ class ReflectionManChangeLogGenerator extends MapManChangeLogGenerator {
 }
 ```
 
-#### Generation solution
+#### Generation
 
 Add `@GetterSupplier` annotation:
 
