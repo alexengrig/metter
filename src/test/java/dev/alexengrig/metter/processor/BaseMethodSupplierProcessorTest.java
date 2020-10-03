@@ -30,13 +30,17 @@ import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -55,12 +59,77 @@ class BaseMethodSupplierProcessorTest {
 
             @Override
             protected MethodSupplierSourceGenerator getSourceGenerator() {
+                MethodSupplierSourceGenerator mock = mock(MethodSupplierSourceGenerator.class);
+                when(mock.generate(any(), any(), anyMap())).thenReturn("generated source");
+                return mock;
+            }
+
+            @Override
+            protected String getCustomClassName(TypeDescriptor type) {
+                return "CustomClassName";
+            }
+
+            @Override
+            protected Set<String> getIncludedFields(TypeDescriptor type) {
+                return null;
+            }
+
+            @Override
+            protected Set<String> getExcludedFields(TypeDescriptor type) {
+                return null;
+            }
+
+            @Override
+            protected boolean hasAllMethods(TypeDescriptor type) {
+                return false;
+            }
+
+            @Override
+            protected String getMethodName(FieldDescriptor field) {
+                return null;
+            }
+
+            @Override
+            protected boolean isTargetField(FieldDescriptor field) {
+                return false;
+            }
+
+            @Override
+            protected String getMethodView(TypeDescriptor type, FieldDescriptor field, String methodName) {
+                return null;
+            }
+        };
+        sourceFile = mock(JavaFileObject.class);
+    }
+
+    @Test
+    void should_create_customClassName() {
+        TypeElement typ = ElementMocks.typeElementMock(String.class);
+        TypeDescriptor typeDescriptor = new TypeDescriptor(typ);
+        Optional<String> className = processor.getClassName(typeDescriptor);
+        assertTrue(className.isPresent(), "Class name created");
+        assertEquals("java.lang.CustomClassName", className.get(),
+                "Class name does not equal 'java.lang.CustomClassName'");
+    }
+
+    @Test
+    void should_create_defaultClassName() {
+        TypeElement typeElement = ElementMocks.typeElementMock(String.class);
+        TypeDescriptor typeDescriptor = new TypeDescriptor(typeElement);
+        assertEquals("java.lang.StringDeprecated", processor.getDefaultClassName(typeDescriptor));
+    }
+
+    @Test
+    void should_create_sourceClassName() {
+        BaseMethodSupplierProcessor<Deprecated> processor = new BaseMethodSupplierProcessor<Deprecated>(Deprecated.class) {
+            @Override
+            protected MethodSupplierSourceGenerator getSourceGenerator() {
                 return null;
             }
 
             @Override
             protected String getCustomClassName(TypeDescriptor type) {
-                return null;
+                return "";
             }
 
             @Override
@@ -98,14 +167,11 @@ class BaseMethodSupplierProcessorTest {
                 return null;
             }
         };
-        sourceFile = mock(JavaFileObject.class);
-    }
-
-    @Test
-    void should_create_defaultClassName() {
-        TypeElement typeElement = ElementMocks.typeElementMock(String.class);
-        TypeDescriptor typeDescriptor = new TypeDescriptor(typeElement);
-        assertEquals("java.lang.StringDeprecated", processor.getDefaultClassName(typeDescriptor));
+        TypeElement typ = ElementMocks.typeElementMock(String.class);
+        TypeDescriptor typeDescriptor = new TypeDescriptor(typ);
+        String className = processor.createSourceClassName(typeDescriptor);
+        assertEquals("java.lang.StringDeprecated", className,
+                "Class name does not equal 'java.lang.StringDeprecated'");
     }
 
     @Test
@@ -142,5 +208,13 @@ class BaseMethodSupplierProcessorTest {
         when(environment.getMessager()).thenReturn(messager);
         processor.writeSourceFile(file, "ignore");
         verify(messager).printMessage(Diagnostic.Kind.ERROR, "Exception of source file writing");
+    }
+
+    @Test
+    void should_create_source() {
+        TypeElement typeElement = ElementMocks.typeElementMock(String.class);
+        TypeDescriptor typeDescriptor = new TypeDescriptor(typeElement);
+        assertEquals("generated source", processor.createSource(typeDescriptor, Collections.emptyMap(), "ignore"),
+                "Source does not equal to 'generated source'");
     }
 }
