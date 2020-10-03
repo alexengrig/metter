@@ -21,16 +21,20 @@ import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
 import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
 import dev.alexengrig.metter.generator.MethodSupplierSourceGenerator;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
+import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -71,12 +75,12 @@ class BaseMethodSupplierProcessorTest {
 
             @Override
             protected Set<String> getIncludedFields(TypeDescriptor type) {
-                return null;
+                return Collections.emptySet();
             }
 
             @Override
             protected Set<String> getExcludedFields(TypeDescriptor type) {
-                return null;
+                return Collections.emptySet();
             }
 
             @Override
@@ -86,17 +90,17 @@ class BaseMethodSupplierProcessorTest {
 
             @Override
             protected String getMethodName(FieldDescriptor field) {
-                return null;
+                return "methodName";
             }
 
             @Override
             protected boolean isTargetField(FieldDescriptor field) {
-                return false;
+                return true;
             }
 
             @Override
             protected String getMethodView(TypeDescriptor type, FieldDescriptor field, String methodName) {
-                return null;
+                return "methodView";
             }
         };
         sourceFile = mock(JavaFileObject.class);
@@ -216,5 +220,22 @@ class BaseMethodSupplierProcessorTest {
         TypeDescriptor typeDescriptor = new TypeDescriptor(typeElement);
         assertEquals("generated source", processor.createSource(typeDescriptor, Collections.emptyMap(), "ignore"),
                 "Source does not equal to 'generated source'");
+    }
+
+    @Test
+    void should_process() throws IOException {
+        StringWriter writer = new StringWriter();
+        JavaFileObject file = mock(JavaFileObject.class);
+        when(file.openWriter()).thenReturn(writer);
+        Filer filer = mock(Filer.class);
+        when(filer.createSourceFile(any())).thenReturn(file);
+        when(environment.getFiler()).thenReturn(filer);
+        VariableElement variableElement = ElementMocks.variableElementMock("field", String.class);
+        TypeElement typeElement = ElementMocks.typeElementMock(String.class);
+        Mockito.<List<? extends Element>>when(typeElement.getEnclosedElements())
+                .thenReturn(Collections.singletonList(variableElement));
+        processor.process(typeElement);
+        assertEquals("generated source", writer.getBuffer().toString(),
+                "Generated source does not equal to 'generated source'");
     }
 }

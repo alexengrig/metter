@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends BaseProcessor<A, TypeElement> {
     protected final MethodSupplierSourceGenerator sourceGenerator;
@@ -85,20 +86,30 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
 
     protected Map<String, String> createField2MethodMap(TypeDescriptor type) {
         Map<String, String> field2Method = new HashMap<>();
-        Set<String> includedFields = getIncludedFields(type);
-        Set<String> excludedFields = getExcludedFields(type);
+        Set<FieldDescriptor> fields = getFields(type);
         boolean hasAllMethods = hasAllMethods(type);
-        for (FieldDescriptor field : type.getFields()) {
+        for (FieldDescriptor field : fields) {
             String fieldName = field.getName();
-            if ((!includedFields.isEmpty() && includedFields.contains(fieldName))
-                    || (!excludedFields.isEmpty() && !excludedFields.contains(fieldName))) {
-                String methodName = getMethodName(field);
-                if (isTargetField(field) || hasAllMethods || type.hasMethod(methodName)) {
-                    field2Method.put(fieldName, getMethodView(type, field, methodName));
-                }
+            String methodName = getMethodName(field);
+            if (isTargetField(field) || hasAllMethods || type.hasMethod(methodName)) {
+                field2Method.put(fieldName, getMethodView(type, field, methodName));
             }
         }
         return field2Method;
+    }
+
+    protected Set<FieldDescriptor> getFields(TypeDescriptor type) {
+        Set<FieldDescriptor> fields = type.getFields();
+        Set<String> includedFields = getIncludedFields(type);
+        Set<String> excludedFields = getExcludedFields(type);
+        if (includedFields.isEmpty() && excludedFields.isEmpty()) {
+            return fields;
+        }
+        if (!includedFields.isEmpty()) {
+            return fields.stream().filter(f -> includedFields.contains(f.getName())).collect(Collectors.toSet());
+        } else {
+            return fields.stream().filter(f -> !excludedFields.contains(f.getName())).collect(Collectors.toSet());
+        }
     }
 
     protected abstract Set<String> getIncludedFields(TypeDescriptor type);
