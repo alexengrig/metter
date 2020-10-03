@@ -42,7 +42,7 @@ class TypeDescriptorTest {
         TypeElement typeElement = typeElementMock(String.class);
         TypeDescriptor descriptor = new TypeDescriptor(typeElement);
         assertEquals("java.lang.String", descriptor.getQualifiedName(),
-                "Qualified name is not equal to 'java.lang.String'");
+                "Qualified name does not equal to 'java.lang.String'");
         descriptor.getQualifiedName();
         verify(typeElement).getQualifiedName();
     }
@@ -51,7 +51,7 @@ class TypeDescriptorTest {
     void should_return_simpleName() {
         TypeElement typeElement = typeElementMock(String.class);
         TypeDescriptor descriptor = new TypeDescriptor(typeElement);
-        assertEquals("String", descriptor.getSimpleName(), "Simple name is not equal to 'String'");
+        assertEquals("String", descriptor.getSimpleName(), "Simple name does not equal to 'String'");
         descriptor.getSimpleName();
         verify(typeElement).getSimpleName();
     }

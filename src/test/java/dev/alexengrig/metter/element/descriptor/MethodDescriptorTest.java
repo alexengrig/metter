@@ -29,7 +29,7 @@ class MethodDescriptorTest {
     void should_return_name() {
         ExecutableElement executableElement = executableElementMock("getText");
         MethodDescriptor descriptor = new MethodDescriptor(executableElement);
-        assertEquals("getText", descriptor.getName(), "Method name is not equal to 'getText'");
+        assertEquals("getText", descriptor.getName(), "Method name does not equal to 'getText'");
         descriptor.getName();
         verify(executableElement).getSimpleName();
     }

@@ -98,9 +98,9 @@ class BaseProcessorTest {
         verify(messager, atLeast(3)).printMessage(eq(Diagnostic.Kind.ERROR), any());
         assertTrue(messages.size() > 3, "Number of messages less than 3");
         assertEquals("Error message", messages.get(0),
-                "First message is not equal to 'Error message'");
+                "First message does not equal to 'Error message'");
         assertEquals("java.lang.RuntimeException", messages.get(1),
-                "Second message is not equal to 'java.lang.RuntimeException'");
+                "Second message does not equal to 'java.lang.RuntimeException'");
         String stackTracePart = "\tat " +
                 "dev.alexengrig.metter.processor.BaseProcessorTest.should_print_errorMessage" +
                 "(BaseProcessorTest.java:";
@@ -116,7 +116,7 @@ class BaseProcessorTest {
     @Test
     void should_return_supportedVersion() {
         assertEquals(SourceVersion.RELEASE_8, processor.getSupportedSourceVersion(),
-                "Supported source version is not equal to 8");
+                "Supported source version does not equal to 8");
     }
 
     @Test

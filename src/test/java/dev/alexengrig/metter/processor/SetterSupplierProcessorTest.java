@@ -77,7 +77,7 @@ class SetterSupplierProcessorTest {
         when(typeElement.getAnnotation(SetterSupplier.class)).thenReturn(annotation);
         TypeDescriptor typeDescriptor = new TypeDescriptor(typeElement);
         assertEquals("MyCustomClassName", processor.getCustomClassName(typeDescriptor),
-                "Custom class name is not equal to 'MyCustomClassName'");
+                "Custom class name does not equal to 'MyCustomClassName'");
     }
 
     @Test
@@ -186,11 +186,11 @@ class SetterSupplierProcessorTest {
         VariableElement booleanField = ElementMocks.variableElementMock("booleanField", boolean.class);
         FieldDescriptor booleanFieldDescriptor = new FieldDescriptor(booleanField);
         assertEquals("setBooleanField", processor.getMethodName(booleanFieldDescriptor),
-                "Method name is not equal to 'setBooleanField'");
+                "Method name does not equal to 'setBooleanField'");
         VariableElement stringField = ElementMocks.variableElementMock("stringField", String.class);
         FieldDescriptor stringFieldDescriptor = new FieldDescriptor(stringField);
         assertEquals("setStringField", processor.getMethodName(stringFieldDescriptor),
-                "Method name is not equal to 'setStringField'");
+                "Method name does not equal to 'setStringField'");
     }
 
     @Test

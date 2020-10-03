@@ -197,7 +197,7 @@ class BaseMethodSupplierProcessorTest {
         StringWriter writer = new StringWriter();
         when(file.openWriter()).thenReturn(writer);
         processor.writeSourceFile(file, "My test source");
-        assertEquals("My test source", writer.getBuffer().toString(), "Written text is not equal to 'My test source'");
+        assertEquals("My test source", writer.getBuffer().toString(), "Written text does not equal to 'My test source'");
     }
 
     @Test

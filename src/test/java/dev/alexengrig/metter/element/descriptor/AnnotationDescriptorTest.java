@@ -30,7 +30,7 @@ class AnnotationDescriptorTest {
         AnnotationMirror annotationMirror = ElementMocks.annotationMirrorMock(Deprecated.class);
         AnnotationDescriptor descriptor = new AnnotationDescriptor(annotationMirror);
         assertEquals("java.lang.Deprecated", descriptor.getQualifiedName(),
-                "Annotation qualified name is not equal to 'java.lang.Deprecated'");
+                "Annotation qualified name does not equal to 'java.lang.Deprecated'");
         descriptor.getQualifiedName();
         verify(annotationMirror).getAnnotationType();
     }

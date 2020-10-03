@@ -35,7 +35,7 @@ class FieldDescriptorTest {
         String fieldName = "someField";
         VariableElement variableElement = ElementMocks.variableElementMock(fieldName);
         FieldDescriptor descriptor = new FieldDescriptor(variableElement);
-        assertEquals(fieldName, descriptor.getName(), "Field name is not equal to 'someField'");
+        assertEquals(fieldName, descriptor.getName(), "Field name does not equal to 'someField'");
         descriptor.getName();
         verify(variableElement).getSimpleName();
     }
@@ -44,7 +44,7 @@ class FieldDescriptorTest {
     void should_return_type() {
         VariableElement variableElement = ElementMocks.variableElementMock(String.class);
         FieldDescriptor descriptor = new FieldDescriptor(variableElement);
-        assertEquals("java.lang.String", descriptor.getTypeName(), "Field type is not equal to 'java.lang.String'");
+        assertEquals("java.lang.String", descriptor.getTypeName(), "Field type does not equal to 'java.lang.String'");
         descriptor.getTypeName();
         verify(variableElement).asType();
     }
