@@ -13,6 +13,9 @@ Metter is an annotation processor for generating getter and setter suppliers.
         -   [Gradle](#gradle)
         -   [Maven](#maven)
     -   [Using](#using)
+        -   [Instance](#instance)
+        -   [Inheritance](#inheritance)
+        -   [Bean](#bean)
 -   [Motivation](#motivation)
     -   [Problem](#problem)
     -   [Solution](#solution)
@@ -122,6 +125,8 @@ All fields that have getters/setter will be added to
 the map that `DomainGetterSupplier`/`DomainSetterSupplier` stores.
 You can set included/excluded field names using the annotation parameters `includeFields`/`excludeFields`.
 
+#### Instance
+
 The generated suppliers implement the
 [Supplier](https://docs.oracle.com/javase/8/docs/api/java/util/function/Supplier.html)
 functional interface and to get the map of getters/setters, you need to call `Supplier#get`:
@@ -145,7 +150,9 @@ public class DomainService {
 }
 ```
 
-Or you can extend:
+#### Inheritance
+
+You can extend:
 
 ```java
 import java.util.Collections;
@@ -166,7 +173,9 @@ public class CustomDomainGetterSupplier extends DomainGetterSupplier {
 }
 ```
 
-Or you can create a bean (e.g. [Spring](https://github.com/spring-projects/spring-framework)):
+#### Bean
+
+You can create a bean (e.g. [Spring](https://github.com/spring-projects/spring-framework)):
 
 ```java
 import org.springframework.context.annotation.Bean;
