@@ -33,7 +33,9 @@ import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -237,5 +239,120 @@ class BaseMethodSupplierProcessorTest {
         processor.process(typeElement);
         assertEquals("generated source", writer.getBuffer().toString(),
                 "Generated source does not equal to 'generated source'");
+    }
+
+    @Test
+    void should_return_fields() {
+        TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
+        FieldDescriptor field = new FieldDescriptor(ElementMocks.variableElementMock("field"));
+        when(typeDescriptor.getFields()).thenReturn(Collections.singleton(field));
+        Set<FieldDescriptor> fields = processor.getFields(typeDescriptor);
+        assertEquals(1, fields.size(), "Number of fields does not equal to 1");
+        assertEquals("field", fields.iterator().next().getName(), "Field name does not equal to 'field'");
+    }
+
+    @Test
+    void should_return_includedFields() {
+        TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
+        FieldDescriptor field = new FieldDescriptor(ElementMocks.variableElementMock("field"));
+        FieldDescriptor included = new FieldDescriptor(ElementMocks.variableElementMock("included"));
+        when(typeDescriptor.getFields()).thenReturn(new HashSet<>(Arrays.asList(field, included)));
+        BaseMethodSupplierProcessor<Deprecated> processor = new BaseMethodSupplierProcessor<Deprecated>(Deprecated.class) {
+            @Override
+            protected MethodSupplierSourceGenerator getSourceGenerator() {
+                return null;
+            }
+
+            @Override
+            protected String getCustomClassName(TypeDescriptor type) {
+                return null;
+            }
+
+            @Override
+            protected Set<String> getIncludedFields(TypeDescriptor type) {
+                return Collections.singleton("included");
+            }
+
+            @Override
+            protected Set<String> getExcludedFields(TypeDescriptor type) {
+                return null;
+            }
+
+            @Override
+            protected boolean hasAllMethods(TypeDescriptor type) {
+                return false;
+            }
+
+            @Override
+            protected String getMethodName(FieldDescriptor field) {
+                return null;
+            }
+
+            @Override
+            protected boolean isTargetField(FieldDescriptor field) {
+                return false;
+            }
+
+            @Override
+            protected String getMethodView(TypeDescriptor type, FieldDescriptor field, String methodName) {
+                return null;
+            }
+        };
+        Set<FieldDescriptor> fields = processor.getFields(typeDescriptor);
+        assertEquals(1, fields.size(), "Number of fields does not equal to 1");
+        assertEquals("included", fields.iterator().next().getName(), "Field name does not equal to 'included'");
+    }
+
+    @Test
+    void should_return_notExcludedFields() {
+        TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
+        FieldDescriptor field = new FieldDescriptor(ElementMocks.variableElementMock("field"));
+        FieldDescriptor excluded = new FieldDescriptor(ElementMocks.variableElementMock("excluded"));
+        when(typeDescriptor.getFields()).thenReturn(new HashSet<>(Arrays.asList(field, excluded)));
+        BaseMethodSupplierProcessor<Deprecated> processor
+                = new BaseMethodSupplierProcessor<Deprecated>(Deprecated.class) {
+            @Override
+            protected MethodSupplierSourceGenerator getSourceGenerator() {
+                return null;
+            }
+
+            @Override
+            protected String getCustomClassName(TypeDescriptor type) {
+                return null;
+            }
+
+            @Override
+            protected Set<String> getIncludedFields(TypeDescriptor type) {
+                return Collections.emptySet();
+            }
+
+            @Override
+            protected Set<String> getExcludedFields(TypeDescriptor type) {
+                return Collections.singleton("excluded");
+            }
+
+            @Override
+            protected boolean hasAllMethods(TypeDescriptor type) {
+                return false;
+            }
+
+            @Override
+            protected String getMethodName(FieldDescriptor field) {
+                return null;
+            }
+
+            @Override
+            protected boolean isTargetField(FieldDescriptor field) {
+                return false;
+            }
+
+            @Override
+            protected String getMethodView(TypeDescriptor type, FieldDescriptor field, String methodName) {
+                return null;
+            }
+        };
+        Set<FieldDescriptor> fields = processor.getFields(typeDescriptor);
+        assertEquals(1, fields.size(), "Number of fields does not equal to 1");
+        assertEquals("field", fields.iterator().next().getName(), "Field name does not equal to 'field'");
     }
 }
