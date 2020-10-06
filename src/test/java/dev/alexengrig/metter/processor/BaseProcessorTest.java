@@ -95,17 +95,12 @@ class BaseProcessorTest {
         }).when(messager).printMessage(eq(Diagnostic.Kind.ERROR), any());
         RuntimeException exception = new RuntimeException();
         processor.error("Error message", exception);
-        verify(messager, atLeast(3)).printMessage(eq(Diagnostic.Kind.ERROR), any());
-        assertTrue(messages.size() > 3, "Number of messages less than 3");
+        verify(messager, atLeast(2)).printMessage(eq(Diagnostic.Kind.ERROR), any());
+        assertTrue(messages.size() > 2, "Number of messages less than 2");
         assertEquals("Error message", messages.get(0),
                 "First message does not equal to 'Error message'");
         assertEquals("java.lang.RuntimeException", messages.get(1),
                 "Second message does not equal to 'java.lang.RuntimeException'");
-        String stackTracePart = "\tat " +
-                "dev.alexengrig.metter.processor.BaseProcessorTest.should_print_errorMessage" +
-                "(BaseProcessorTest.java:";
-        assertTrue(messages.get(2).startsWith(stackTracePart),
-                "Third message is not start with '" + stackTracePart + "'");
     }
 
     @Test
