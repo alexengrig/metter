@@ -20,7 +20,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public abstract class ChangeLogGeneratorTest {
+public abstract class ManChangeLogGeneratorTest {
     protected abstract ChangeLogGenerator<Man> createGenerator();
 
     @Test

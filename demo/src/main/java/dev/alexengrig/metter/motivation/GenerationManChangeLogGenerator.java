@@ -16,9 +16,12 @@
 
 package dev.alexengrig.metter.motivation;
 
-public class MapManChangeLogGeneratorTest extends ManChangeLogGeneratorTest {
+import java.util.Map;
+import java.util.function.Function;
+
+class GenerationManChangeLogGenerator extends MapManChangeLogGenerator {
     @Override
-    protected MapManChangeLogGenerator createGenerator() {
-        return new MapManChangeLogGenerator();
+    protected Map<String, Function<Man, Object>> createMap() {
+        return new ManGetterSupplier().get();
     }
 }

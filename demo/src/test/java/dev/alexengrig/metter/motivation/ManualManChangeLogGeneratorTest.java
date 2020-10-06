@@ -16,7 +16,7 @@
 
 package dev.alexengrig.metter.motivation;
 
-public class ManualManChangeLogGeneratorTest extends ChangeLogGeneratorTest {
+public class ManualManChangeLogGeneratorTest extends ManChangeLogGeneratorTest {
     @Override
     protected ManualManChangeLogGenerator createGenerator() {
         return new ManualManChangeLogGenerator();

@@ -16,6 +16,9 @@
 
 package dev.alexengrig.metter.motivation;
 
+import dev.alexengrig.metter.annotation.GetterSupplier;
+
+@GetterSupplier
 class Man {
     private String name;
     private int age;
