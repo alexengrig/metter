@@ -22,13 +22,12 @@ group 'dev.alexengrig'
 version '0-SNAPSHOT'
 
 repositories {
-    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
-    compileOnly 'dev.alexengrig:metter:0.1.0-SNAPSHOT'
-    annotationProcessor 'dev.alexengrig:metter:0.1.0-SNAPSHOT'
+    compileOnly files('../target/metter-0.1.0-SNAPSHOT.jar')
+    annotationProcessor files('../target/metter-0.1.0-SNAPSHOT.jar')
 
     compileOnly 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
