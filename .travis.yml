@@ -3,3 +3,5 @@ jdk:
   - openjdk8
 install:
   - mvn install -Dgpg.skip=true -B -V
+  - cd demo
+  - gradle test
