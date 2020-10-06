@@ -206,21 +206,7 @@ class Man {
     private String name;
     private int age;
 
-    String getName() {
-        return name;
-    }
-
-    void setName(String name) {
-        this.name = name;
-    }
-
-    int getAge() {
-        return age;
-    }
-
-    void setAge(int age) {
-        this.age = age;
-    }
+    /*Getters and Setters*/
 }
 ```
 
@@ -228,11 +214,13 @@ Need a change journal:
 
 ```
 // field: Old value -> New value
-name: Tom -> Tomas
+name: Tomas -> Tom
 age: 18  -> 19
 ```
 
 ### Solution
+
+[See full code](demo/src/main/java/dev/alexengrig/metter/motivation).
 
 #### Manual
 
@@ -241,20 +229,17 @@ Each field:
 ```java
 import java.util.StringJoiner;
 
-class ManualManChangeLogGenerator {
-    String generate(Man man, Man newMan) {
+class ManualManChangeLogGenerator extends BaseChangeLogGenerator<Man> {
+    @Override
+    public String generate(Man man, Man newMan) {
         StringJoiner joiner = new StringJoiner("\n");
         if (!man.getName().equals(newMan.getName())) {
-            joiner.add(change("name", man.getName(), newMan.getName()));
+            joiner.add(changeLog("name", man.getName(), newMan.getName()));
         }
         if (man.getAge() != newMan.getAge()) {
-            joiner.add(change("age", man.getAge(), newMan.getAge()));
+            joiner.add(changeLog("age", man.getAge(), newMan.getAge()));
         }
         return joiner.toString();
-    }
-
-    String change(String field, Object value, Object newValue) {
-        return field + ": " + value.toString() + " -> " + newValue.toString();
     }
 }
 ```
@@ -265,24 +250,24 @@ Using `Map`:
 import java.util.*;
 import java.util.function.Function;
 
-class MapManChangeLogGenerator extends ManualManChangeLogGenerator {
-    Map<String, Function<Man, Object>> getterByField = createMap();
+class MapManChangeLogGenerator extends BaseChangeLogGenerator<Man> {
+    protected Map<String, Function<Man, Object>> getterByField = createMap();
 
-    Map<String, Function<Man, Object>> createMap() {
-        return new HashMap<>() {{
+    protected Map<String, Function<Man, Object>> createMap() {
+        return new HashMap<String, Function<Man, Object>>() {{
             put("name", Man::getName);
             put("age", Man::getAge);
         }};
     }
 
     @Override
-    String generate(Man man, Man newMan) {
+    public String generate(Man man, Man newMan) {
         StringJoiner joiner = new StringJoiner("\n");
         getterByField.forEach((field, getter) -> {
             Object value = getter.apply(man);
             Object newValue = getter.apply(newMan);
             if (!Objects.equals(value, newValue)) {
-                joiner.add(change(field, value, newValue));
+                joiner.add(changeLog(field, value, newValue));
             }
         });
         return joiner.toString();
@@ -292,24 +277,25 @@ class MapManChangeLogGenerator extends ManualManChangeLogGenerator {
 
 #### Reflection
 
+Each field via Java Reflection:
+
 ```java
 import java.lang.reflect.*;
-import java.util.HashMap;
+import java.util.*;
 import java.util.function.Function;
 
 class ReflectionManChangeLogGenerator extends MapManChangeLogGenerator {
     @Override
-    HashMap<String, Function<Man, Object>> createMap() {
-        HashMap<String, Function<Man, Object>> map = new HashMap<>();
+    protected Map<String, Function<Man, Object>> createMap() {
         Field[] fields = Man.class.getDeclaredFields();
-        this.getterByField = new HashMap<>(fields.length);
+        HashMap<String, Function<Man, Object>> map = new HashMap<>(fields.length);
         for (Field field : fields) {
             String fieldName = field.getName();
             String capitalizedFieldName = getCapitalized(fieldName);
             for (Method method : Man.class.getDeclaredMethods()) {
                 String methodName = method.getName();
                 if (isGetter(methodName, capitalizedFieldName)) {
-                    this.getterByField.put(fieldName, createGetter(method));
+                    map.put(fieldName, createGetter(method));
                     break;
                 }
             }
@@ -317,21 +303,21 @@ class ReflectionManChangeLogGenerator extends MapManChangeLogGenerator {
         return map;
     }
 
-    String getCapitalized(String name) {
+    private String getCapitalized(String name) {
         return name.substring(0, 1).toUpperCase() + name.substring(1);
     }
 
-    boolean isGetter(String methodName, String lastMethodNamePart) {
+    private boolean isGetter(String methodName, String lastMethodNamePart) {
         return (methodName.startsWith("get") && methodName.equals("get" + lastMethodNamePart))
                 || (methodName.startsWith("is") && methodName.equals("is" + lastMethodNamePart));
     }
 
-    Function<Man, Object> createGetter(Method method) {
+    private Function<Man, Object> createGetter(Method method) {
         return instance -> {
             try {
                 return method.invoke(instance);
             } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new IllegalArgumentException(instance.toString());
+                throw new IllegalArgumentException(instance.toString(), e);
             }
         };
     }
@@ -355,9 +341,9 @@ Using `ManGetterSupplier`:
 import java.util.Map;
 import java.util.function.Function;
 
-class GeneratedManChangeLogGenerator extends MapManChangeLogGenerator {
+class GenerationManChangeLogGenerator extends MapManChangeLogGenerator {
     @Override
-    Map<String, Function<Man, Object>> createMap() {
+    protected Map<String, Function<Man, Object>> createMap() {
         return new ManGetterSupplier().get();
     }
 }
