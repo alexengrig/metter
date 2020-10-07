@@ -14,42 +14,21 @@
  * limitations under the License.
  */
 
-package dev.alexengrig.metter.demo;
+package dev.alexengrig.metter.demo.excluding;
 
 import dev.alexengrig.metter.annotation.GetterSupplier;
 import dev.alexengrig.metter.annotation.SetterSupplier;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 @GetterSupplier(excludedFields = "excluded")
 @SetterSupplier(excludedFields = "excluded")
-public class Person {
-    @SuppressWarnings("FieldCanBeLocal")
-    private final int constant = 100;
+public class ExcludedDomain {
     private int integer;
-    private String string;
-    private boolean enable;
-    @SuppressWarnings({"unused", "RedundantSuppression"})
-    private boolean withoutGetterAndSetter;
-    private String excluded;
-    @Getter(value = AccessLevel.PACKAGE)
-    @Setter
-    private String lombok;
-    @Getter
-    @Setter
-    private boolean booleanLombok;
-    @Getter
-    @Setter
-    private Boolean boxedBooleanLombok;
+    private int excluded;
+    private byte noGetterAndSetter;
 
-    public boolean isEnable() {
-        return enable;
-    }
-
-    public void setEnable(boolean enable) {
-        this.enable = enable;
+    public ExcludedDomain(int integer, int excluded) {
+        this.integer = integer;
+        this.excluded = excluded;
     }
 
     public int getInteger() {
@@ -60,23 +39,11 @@ public class Person {
         this.integer = integer;
     }
 
-    public String getString() {
-        return string;
-    }
-
-    public void setString(String string) {
-        this.string = string;
-    }
-
-    public int getConstant() {
-        return constant;
-    }
-
-    public String getExcluded() {
+    public int getExcluded() {
         return excluded;
     }
 
-    public void setExcluded(String excluded) {
+    public void setExcluded(int excluded) {
         this.excluded = excluded;
     }
 }

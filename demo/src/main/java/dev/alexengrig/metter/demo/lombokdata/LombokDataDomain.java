@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package dev.alexengrig.metter.demo;
+package dev.alexengrig.metter.demo.lombokdata;
 
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Supplier;
+import dev.alexengrig.metter.annotation.GetterSupplier;
+import dev.alexengrig.metter.annotation.SetterSupplier;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-public class ManualPersonSetterSupplierTest extends PersonSetterSupplierTester {
-    @Override
-    protected Supplier<Map<String, BiConsumer<Person, Object>>> getSetterSupplier() {
-        return new ManualPersonSetterSupplier();
-    }
+@Data
+@GetterSupplier
+@SetterSupplier
+@AllArgsConstructor
+public class LombokDataDomain {
+    private int integer;
+    private boolean bool;
 }

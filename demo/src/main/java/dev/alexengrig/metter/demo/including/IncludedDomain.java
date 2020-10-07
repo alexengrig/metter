@@ -14,46 +14,36 @@
  * limitations under the License.
  */
 
-package dev.alexengrig.metter.demo.simple;
+package dev.alexengrig.metter.demo.including;
 
 import dev.alexengrig.metter.annotation.GetterSupplier;
 import dev.alexengrig.metter.annotation.SetterSupplier;
 
-@GetterSupplier
-@SetterSupplier
-public class SimpleDomain {
-    private int integer;
-    private boolean bool;
-    private String string;
+@GetterSupplier(includedFields = "included")
+@SetterSupplier(includedFields = "included")
+public class IncludedDomain {
+    private int included;
+    private int ignored;
     private byte noGetterAndSetter;
 
-    public SimpleDomain(int integer, boolean bool, String string) {
-        this.integer = integer;
-        this.bool = bool;
-        this.string = string;
+    public IncludedDomain(int included, int ignored) {
+        this.included = included;
+        this.ignored = ignored;
     }
 
-    public int getInteger() {
-        return integer;
+    public int getIncluded() {
+        return included;
     }
 
-    public void setInteger(int integer) {
-        this.integer = integer;
+    public void setIncluded(int included) {
+        this.included = included;
     }
 
-    public boolean isBool() {
-        return bool;
+    public int getIgnored() {
+        return ignored;
     }
 
-    public void setBool(boolean bool) {
-        this.bool = bool;
-    }
-
-    public String getString() {
-        return string;
-    }
-
-    public void setString(String string) {
-        this.string = string;
+    public void setIgnored(int ignored) {
+        this.ignored = ignored;
     }
 }

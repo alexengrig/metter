@@ -14,15 +14,27 @@
  * limitations under the License.
  */
 
-package dev.alexengrig.metter.demo;
+package dev.alexengrig.metter.demo.naming;
 
-import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
-public class GeneratedPersonGetterSupplierTest extends PersonGetterSupplierTester {
-    @Override
-    protected Supplier<Map<String, Function<Person, Object>>> getGetterSupplier() {
-        return new PersonGetterSupplier();
+import dev.alexengrig.metter.annotation.GetterSupplier;
+import dev.alexengrig.metter.annotation.SetterSupplier;
+
+@GetterSupplier("MyDomainGetterSupplier")
+@SetterSupplier("MyDomainSetterSupplier")
+public class NamedDomain {
+    private int integer;
+    private byte noGetterAndSetter;
+
+    public NamedDomain(int integer) {
+        this.integer = integer;
+    }
+
+    public int getInteger() {
+        return integer;
+    }
+
+    public void setInteger(int integer) {
+        this.integer = integer;
     }
 }

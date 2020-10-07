@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-package dev.alexengrig.metter.demo.simple;
-
 import org.junit.Test;
 
 import java.util.Map;
@@ -26,38 +24,26 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class SimpleDomainTest {
+public class NoPackageDomainTest {
     @Test
     public void should_contains_allGetters() {
-        Map<String, Function<SimpleDomain, Object>> getterByField = new SimpleDomainGetterSupplier().get();
+        Map<String, Function<NoPackageDomain, Object>> getterByField = new NoPackageDomainGetterSupplier().get();
         assertNotNull("Map is null", getterByField);
-        assertEquals("Map size not equal to 3", 3, getterByField.size());
+        assertEquals("Map size not equal to 1", 1, getterByField.size());
         assertTrue("Map not contain getter for 'integer' field", getterByField.containsKey("integer"));
-        assertTrue("Map not contain getter for 'bool' field", getterByField.containsKey("bool"));
-        assertTrue("Map not contain getter for 'string' field", getterByField.containsKey("string"));
-        SimpleDomain domain = new SimpleDomain(1, true, "text");
+        NoPackageDomain domain = new NoPackageDomain(1);
         assertEquals("Getter for 'integer' field returns wrong value",
                 1, getterByField.get("integer").apply(domain));
-        assertEquals("Getter for 'bool' field returns wrong value",
-                true, getterByField.get("bool").apply(domain));
-        assertEquals("Getter for 'string' field returns wrong value",
-                "text", getterByField.get("string").apply(domain));
     }
 
     @Test
     public void should_contains_allSetters() {
-        Map<String, BiConsumer<SimpleDomain, Object>> setterByField = new SimpleDomainSetterSupplier().get();
+        Map<String, BiConsumer<NoPackageDomain, Object>> setterByField = new NoPackageDomainSetterSupplier().get();
         assertNotNull("Map is null", setterByField);
-        assertEquals("Map size not equal to 3", 3, setterByField.size());
+        assertEquals("Map size not equal to 1", 1, setterByField.size());
         assertTrue("Map not contain setter for 'integer' field", setterByField.containsKey("integer"));
-        assertTrue("Map not contain setter for 'bool' field", setterByField.containsKey("bool"));
-        assertTrue("Map not contain setter for 'string' field", setterByField.containsKey("string"));
-        SimpleDomain domain = new SimpleDomain(0, false, "");
+        NoPackageDomain domain = new NoPackageDomain(0);
         setterByField.get("integer").accept(domain, 1);
         assertEquals("Setter for 'integer' field sets wrong value", 1, domain.getInteger());
-        setterByField.get("bool").accept(domain, true);
-        assertTrue("Setter for 'bool' field sets wrong value", domain.isBool());
-        setterByField.get("string").accept(domain, "text");
-        assertEquals("Setter for 'string' field sets wrong value", "text", domain.getString());
     }
 }

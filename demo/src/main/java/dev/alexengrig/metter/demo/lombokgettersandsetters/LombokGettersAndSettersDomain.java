@@ -14,15 +14,27 @@
  * limitations under the License.
  */
 
-package dev.alexengrig.metter.demo;
+package dev.alexengrig.metter.demo.lombokgettersandsetters;
 
-import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import dev.alexengrig.metter.annotation.GetterSupplier;
+import dev.alexengrig.metter.annotation.SetterSupplier;
+import lombok.Getter;
+import lombok.Setter;
 
-public class ReflectionPersonGetterSupplierTest extends PersonGetterSupplierTester {
-    @Override
-    protected Supplier<Map<String, Function<Person, Object>>> getGetterSupplier() {
-        return new ReflectionPersonGetterSupplier();
+@GetterSupplier
+@SetterSupplier
+public class LombokGettersAndSettersDomain {
+    private final int ignored;
+    @Getter
+    @Setter
+    private int integer;
+    @Getter
+    @Setter
+    private boolean bool;
+
+    public LombokGettersAndSettersDomain(int integer, boolean bool, int ignored) {
+        this.integer = integer;
+        this.bool = bool;
+        this.ignored = ignored;
     }
 }

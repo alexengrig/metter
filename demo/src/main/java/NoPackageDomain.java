@@ -14,15 +14,23 @@
  * limitations under the License.
  */
 
-package dev.alexengrig.metter.demo;
+import dev.alexengrig.metter.annotation.GetterSupplier;
+import dev.alexengrig.metter.annotation.SetterSupplier;
 
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Supplier;
+@GetterSupplier
+@SetterSupplier
+public class NoPackageDomain {
+    private int integer;
 
-public class ReflectionPersonSetterSupplierTest extends PersonSetterSupplierTester {
-    @Override
-    protected Supplier<Map<String, BiConsumer<Person, Object>>> getSetterSupplier() {
-        return new ReflectionPersonSetterSupplier();
+    public NoPackageDomain(int integer) {
+        this.integer = integer;
+    }
+
+    public int getInteger() {
+        return integer;
+    }
+
+    public void setInteger(int integer) {
+        this.integer = integer;
     }
 }
