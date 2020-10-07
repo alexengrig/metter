@@ -29,21 +29,45 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- * A base processor.
+ * Base processor.
  *
+ * @param <A> type of annotation
+ * @param <E> type of element
  * @author Grig Alex
  * @version 0.1.0
  * @see javax.annotation.processing.AbstractProcessor
  * @since 0.1.0
  */
 public abstract class BaseProcessor<A extends Annotation, E extends Element> extends AbstractProcessor {
+    /**
+     * Annotation class.
+     *
+     * @since 0.1.0
+     */
     protected final Class<? extends A> annotationClass;
+    /**
+     * Adapter of messager.
+     *
+     * @since 0.1.0
+     */
     protected transient Messager2Writer messager;
 
+    /**
+     * Constructs with an annotation class.
+     *
+     * @param annotationClass annotation class
+     * @since 0.1.0
+     */
     public BaseProcessor(Class<? extends A> annotationClass) {
         this.annotationClass = annotationClass;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @see #process(Element)
+     * @since 0.1.0
+     */
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         if (roundEnv.processingOver()) {
@@ -57,17 +81,42 @@ public abstract class BaseProcessor<A extends Annotation, E extends Element> ext
         return true;
     }
 
+    /**
+     * Processes a annotated element.
+     *
+     * @param annotatedElement annotated element
+     * @since 0.1.0
+     */
     protected abstract void process(E annotatedElement);
 
+    /**
+     * Prints a note message.
+     *
+     * @param message message text
+     * @since 0.1.0
+     */
     protected void note(String message) {
         processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, message);
     }
 
+    /**
+     * Prints an error message.
+     *
+     * @param message   message text
+     * @param throwable exception
+     * @since 0.1.0
+     */
     protected void error(String message, Throwable throwable) {
         processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, message);
         throwable.printStackTrace(prepareMessager().errorWriter());
     }
 
+    /**
+     * Prepares adapter of messager.
+     *
+     * @return adapter of messager
+     * @since 0.1.0
+     */
     protected Messager2Writer prepareMessager() {
         if (messager == null) {
             messager = new Messager2Writer(processingEnv.getMessager());
@@ -75,16 +124,34 @@ public abstract class BaseProcessor<A extends Annotation, E extends Element> ext
         return messager;
     }
 
+    /**
+     * Returns an empty set.
+     *
+     * @return empty set
+     * @since 0.1.0
+     */
     @Override
     public Set<String> getSupportedOptions() {
         return Collections.emptySet();
     }
 
+    /**
+     * Returns 1.8 version.
+     *
+     * @return 1.8 version
+     * @since 0.1.0
+     */
     @Override
     public SourceVersion getSupportedSourceVersion() {
         return SourceVersion.RELEASE_8;
     }
 
+    /**
+     * Returns a set with an annotation class name.
+     *
+     * @return set with an annotation class name.
+     * @since 0.1.0
+     */
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         return Collections.singleton(annotationClass.getName());

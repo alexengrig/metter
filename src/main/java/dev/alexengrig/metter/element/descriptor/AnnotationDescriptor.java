@@ -21,20 +21,56 @@ import javax.lang.model.element.Element;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * A descriptor of annotation.
+ *
+ * @author Grig Alex
+ * @version 0.1.0
+ * @since 0.1.0
+ */
 public class AnnotationDescriptor {
+    /**
+     * Annotation mirror.
+     *
+     * @since 0.1.0
+     */
     protected final AnnotationMirror annotationMirror;
+    /**
+     * Qualified name.
+     *
+     * @since 0.1.0
+     */
     protected transient String qualifiedName;
 
+    /**
+     * Constructs with an annotation mirror.
+     *
+     * @param annotationMirror annotation mirror
+     * @since 0.1.0
+     */
     public AnnotationDescriptor(AnnotationMirror annotationMirror) {
         this.annotationMirror = annotationMirror;
     }
 
-    static Set<AnnotationDescriptor> of(Element element) {
+    /**
+     * Creates a set from an element.
+     *
+     * @param element element
+     * @return set from {@code element}
+     * @since 0.1.0
+     */
+    public static Set<AnnotationDescriptor> of(Element element) {
         return element.getAnnotationMirrors().stream()
                 .map(AnnotationDescriptor::new)
                 .collect(Collectors.toSet());
     }
 
+    /**
+     * Returns an qualified name.
+     *
+     * @return qualified name
+     * @since 0.1.0
+     */
     public String getQualifiedName() {
         if (qualifiedName == null) {
             qualifiedName = annotationMirror.getAnnotationType().toString();

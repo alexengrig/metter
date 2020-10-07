@@ -28,59 +28,123 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A supplier processor for setters.
+ * Processor of setter supplier.
  *
  * @author Grig Alex
  * @version 0.1.0
- * @see dev.alexengrig.metter.processor.BaseMethodSupplierProcessor
  * @see dev.alexengrig.metter.annotation.SetterSupplier
  * @since 0.1.0
  */
 @AutoService(Processor.class)
 public class SetterSupplierProcessor extends BaseMethodSupplierProcessor<SetterSupplier> {
+    /**
+     * Constructs.
+     *
+     * @since 0.1.0
+     */
     public SetterSupplierProcessor() {
         super(SetterSupplier.class);
     }
 
+    /**
+     * Returns a generator source of setter supplier.
+     *
+     * @return generator source of setter supplier
+     * @since 0.1.0
+     */
     @Override
     protected SetterSupplierSourceGenerator getSourceGenerator() {
         return new SetterSupplierSourceGenerator();
     }
 
+    /**
+     * Returns a custom class name from {@link dev.alexengrig.metter.annotation.SetterSupplier#value()}.
+     *
+     * @param type descriptor
+     * @return custom class name from {@link dev.alexengrig.metter.annotation.SetterSupplier#value()}
+     * @since 0.1.0
+     */
     @Override
     protected String getCustomClassName(TypeDescriptor type) {
         SetterSupplier annotation = type.getAnnotation(annotationClass);
         return annotation.value();
     }
 
+    /**
+     * Returns included fields from {@link dev.alexengrig.metter.annotation.SetterSupplier#includedFields()}.
+     *
+     * @param type descriptor
+     * @return included fields from {@link dev.alexengrig.metter.annotation.SetterSupplier#includedFields()}
+     * @since 0.1.0
+     */
     @Override
     protected Set<String> getIncludedFields(TypeDescriptor type) {
         SetterSupplier annotation = type.getAnnotation(annotationClass);
         return new HashSet<>(Arrays.asList(annotation.includedFields()));
     }
 
+    /**
+     * Returns excluded fields from {@link dev.alexengrig.metter.annotation.SetterSupplier#excludedFields()}.
+     *
+     * @param type descriptor
+     * @return excluded fields from {@link dev.alexengrig.metter.annotation.SetterSupplier#excludedFields()}
+     * @since 0.1.0
+     */
     @Override
     protected Set<String> getExcludedFields(TypeDescriptor type) {
         SetterSupplier annotation = type.getAnnotation(annotationClass);
         return new HashSet<>(Arrays.asList(annotation.excludedFields()));
     }
 
+    /**
+     * Checks if a type descriptor has {@code lombok.Data} or {@code lombok.Setter} annotations.
+     *
+     * @param type descriptor
+     * @return if a type descriptor has {@code lombok.Data} or {@code lombok.Setter} annotations
+     * @since 0.1.0
+     */
     @Override
     protected boolean hasAllMethods(TypeDescriptor type) {
         return type.hasAnnotation("lombok.Data") || type.hasAnnotation("lombok.Setter");
     }
 
+    /**
+     * Returns a method name from a field descriptor: {@code set} prefix name.
+     *
+     * @param field descriptor
+     * @return method name from {@code field}
+     * @since 0.1.0
+     */
     @Override
     protected String getMethodName(FieldDescriptor field) {
         String name = field.getName();
         return "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
     }
 
+    /**
+     * Checks if a field descriptor has {@code lombok.Setter} annotation.
+     *
+     * @param field descriptor
+     * @return if a field descriptor has {@code lombok.Setter} annotation
+     * @since 0.1.0
+     */
     @Override
     protected boolean isTargetField(FieldDescriptor field) {
         return field.hasAnnotation("lombok.Setter");
     }
 
+    /**
+     * Returns a method view from a type name of a field descriptor and a method name:
+     * <pre>{@code
+     * (instance, value) -> instance.methodName((FieldType) value)
+     * }</pre>
+     *
+     * @param type       descriptor
+     * @param field      descriptor
+     * @param methodName method name
+     * @return method view from a type name of {@code field} and {@code methodName}
+     * @since 0.1.0
+     */
     @Override
     protected String getMethodView(TypeDescriptor type, FieldDescriptor field, String methodName) {
         return String.format("(instance, value) -> instance.%s((%s) value)",

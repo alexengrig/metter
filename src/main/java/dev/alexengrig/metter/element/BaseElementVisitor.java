@@ -25,18 +25,17 @@ import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.element.VariableElement;
 
 /**
- * A base element visitor without actions.
+ * Base element visitor without a parameter and a result value.
  *
  * @author Grig Alex
  * @version 0.1.0
- * @see javax.lang.model.element.ElementVisitor
  * @since 0.1.0
  */
 public class BaseElementVisitor implements ElementVisitor<Void, Void> {
     /**
      * Visits an element, with no actions.
      *
-     * @param element the element to visit
+     * @param element element to visit
      * @see javax.lang.model.element.ElementVisitor#visit(Element)
      * @see javax.lang.model.element.ElementVisitor#visit(Element, Object)
      * @since 0.1.0
@@ -48,7 +47,7 @@ public class BaseElementVisitor implements ElementVisitor<Void, Void> {
     /**
      * Visits a package element, with no actions.
      *
-     * @param packageElement the package element to visit
+     * @param packageElement package element to visit
      * @see javax.lang.model.element.ElementVisitor#visitPackage(PackageElement, Object)
      * @since 0.1.0
      */
@@ -59,7 +58,7 @@ public class BaseElementVisitor implements ElementVisitor<Void, Void> {
     /**
      * Visits a type element, with no actions.
      *
-     * @param typeElement the type element to visit
+     * @param typeElement type element to visit
      * @see javax.lang.model.element.ElementVisitor#visitType(TypeElement, Object)
      * @since 0.1.0
      */
@@ -70,7 +69,7 @@ public class BaseElementVisitor implements ElementVisitor<Void, Void> {
     /**
      * Visits a variable element, with no actions.
      *
-     * @param variableElement the variable element to visit
+     * @param variableElement variable element to visit
      * @see javax.lang.model.element.ElementVisitor#visitVariable(VariableElement, Object)
      * @since 0.1.0
      */
@@ -81,7 +80,7 @@ public class BaseElementVisitor implements ElementVisitor<Void, Void> {
     /**
      * Visits an executable element, with no actions.
      *
-     * @param executableElement the executable element to visit
+     * @param executableElement executable element to visit
      * @see javax.lang.model.element.ElementVisitor#visitExecutable(ExecutableElement, Object)
      * @since 0.1.0
      */
@@ -92,7 +91,7 @@ public class BaseElementVisitor implements ElementVisitor<Void, Void> {
     /**
      * Visits a type parameter element, with no actions.
      *
-     * @param typeParameterElement the type parameter element to visit
+     * @param typeParameterElement type parameter element to visit
      * @see javax.lang.model.element.ElementVisitor#visitTypeParameter(TypeParameterElement, Object)
      * @since 0.1.0
      */
@@ -103,7 +102,7 @@ public class BaseElementVisitor implements ElementVisitor<Void, Void> {
     /**
      * Visits an unknown kind of element, with no actions.
      *
-     * @param element the element to visit
+     * @param element element to visit
      * @see javax.lang.model.element.ElementVisitor#visitUnknown(Element, Object)
      * @since 0.1.0
      */
@@ -112,7 +111,7 @@ public class BaseElementVisitor implements ElementVisitor<Void, Void> {
     }
 
     /**
-     * See {@link javax.lang.model.element.ElementVisitor#visit(Element, Object)}.
+     * {@inheritDoc}
      *
      * @since 0.1.0
      */
@@ -123,7 +122,7 @@ public class BaseElementVisitor implements ElementVisitor<Void, Void> {
     }
 
     /**
-     * See {@link javax.lang.model.element.ElementVisitor#visit(Element)}.
+     * {@inheritDoc}
      *
      * @since 0.1.0
      */
@@ -134,7 +133,7 @@ public class BaseElementVisitor implements ElementVisitor<Void, Void> {
     }
 
     /**
-     * See {@link javax.lang.model.element.ElementVisitor#visitPackage(PackageElement, Object)}.
+     * {@inheritDoc}
      *
      * @since 0.1.0
      */
@@ -145,7 +144,7 @@ public class BaseElementVisitor implements ElementVisitor<Void, Void> {
     }
 
     /**
-     * See {@link javax.lang.model.element.ElementVisitor#visit(Element, Object)}.
+     * {@inheritDoc}
      *
      * @since 0.1.0
      */
@@ -156,7 +155,7 @@ public class BaseElementVisitor implements ElementVisitor<Void, Void> {
     }
 
     /**
-     * See {@link javax.lang.model.element.ElementVisitor#visitVariable(VariableElement, Object)}.
+     * {@inheritDoc}
      *
      * @since 0.1.0
      */
@@ -167,7 +166,7 @@ public class BaseElementVisitor implements ElementVisitor<Void, Void> {
     }
 
     /**
-     * See {@link javax.lang.model.element.ElementVisitor#visitExecutable(ExecutableElement, Object)}.
+     * {@inheritDoc}
      *
      * @since 0.1.0
      */
@@ -178,7 +177,7 @@ public class BaseElementVisitor implements ElementVisitor<Void, Void> {
     }
 
     /**
-     * See {@link javax.lang.model.element.ElementVisitor#visitTypeParameter(TypeParameterElement, Object)}.
+     * {@inheritDoc}
      *
      * @since 0.1.0
      */
@@ -189,7 +188,7 @@ public class BaseElementVisitor implements ElementVisitor<Void, Void> {
     }
 
     /**
-     * See {@link javax.lang.model.element.ElementVisitor#visitUnknown(Element, Object)}.
+     * {@inheritDoc}
      *
      * @since 0.1.0
      */

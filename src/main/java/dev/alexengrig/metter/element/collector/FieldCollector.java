@@ -19,11 +19,30 @@ package dev.alexengrig.metter.element.collector;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 
+/**
+ * Field collector.
+ *
+ * @author Grig Alex
+ * @version 0.1.0
+ * @since 0.1.0
+ */
 public class FieldCollector extends BaseEnclosedElementCollector<TypeElement, VariableElement> {
+    /**
+     * Constructs for a type element.
+     *
+     * @param parent type element
+     * @since 0.1.0
+     */
     public FieldCollector(TypeElement parent) {
         super(parent);
     }
 
+    /**
+     * Collects a variable element.
+     *
+     * @param variableElement variable element to visit
+     * @since 0.1.0
+     */
     @Override
     public void visitVariable(VariableElement variableElement) {
         children.add(variableElement);

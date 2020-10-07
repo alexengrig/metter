@@ -116,7 +116,7 @@ class MethodSupplierSourceGeneratorTest {
 
     final MethodSupplierSourceGenerator generator = new MethodSupplierSourceGenerator(false) {
         @Override
-        protected String getMapValueType(String className) {
+        protected String getMapValueType(String domainClassName) {
             return "Object";
         }
     };
@@ -126,7 +126,7 @@ class MethodSupplierSourceGeneratorTest {
         // coverage
         MethodSupplierSourceGenerator generator = new MethodSupplierSourceGenerator() {
             @Override
-            protected String getMapValueType(String className) {
+            protected String getMapValueType(String domainClassName) {
                 return null;
             }
         };

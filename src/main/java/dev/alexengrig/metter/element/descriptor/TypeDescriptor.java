@@ -23,20 +23,79 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * A descriptor of type.
+ *
+ * @author Grig Alex
+ * @version 0.1.0
+ * @since 0.1.0
+ */
 public class TypeDescriptor {
+    /**
+     * Type element.
+     *
+     * @since 0.1.0
+     */
     protected final TypeElement typeElement;
+    /**
+     * Qualified name.
+     *
+     * @since 0.1.0
+     */
     protected transient String qualifiedName;
+    /**
+     * Simple name.
+     *
+     * @since 0.1.0
+     */
     protected transient String simpleName;
+    /**
+     * Set of field descriptors.
+     *
+     * @since 0.1.0
+     */
     protected transient Set<FieldDescriptor> fields;
+    /**
+     * Set of method descriptors.
+     *
+     * @since 0.1.0
+     */
     protected transient Set<MethodDescriptor> methods;
+    /**
+     * Set of annotation descriptors.
+     *
+     * @since 0.1.0
+     */
     protected transient Set<AnnotationDescriptor> annotations;
+    /**
+     * Map of method name to mark about presence
+     *
+     * @since 0.1.0
+     */
     protected transient Map<String, Boolean> hasMethodByNameMap;
+    /**
+     * Map of annotation qualified name to mark about presence
+     *
+     * @since 0.1.0
+     */
     protected transient Map<String, Boolean> hasAnnotationByQualifiedNameMap;
 
+    /**
+     * Constructs with a type element.
+     *
+     * @param typeElement type element
+     * @since 0.1.0
+     */
     public TypeDescriptor(TypeElement typeElement) {
         this.typeElement = typeElement;
     }
 
+    /**
+     * Returns an qualified name.
+     *
+     * @return qualified name
+     * @since 0.1.0
+     */
     public String getQualifiedName() {
         if (qualifiedName == null) {
             qualifiedName = typeElement.getQualifiedName().toString();
@@ -44,6 +103,12 @@ public class TypeDescriptor {
         return qualifiedName;
     }
 
+    /**
+     * Returns a simple name.
+     *
+     * @return simple name
+     * @since 0.1.0
+     */
     public String getSimpleName() {
         if (simpleName == null) {
             simpleName = typeElement.getSimpleName().toString();
@@ -51,6 +116,12 @@ public class TypeDescriptor {
         return simpleName;
     }
 
+    /**
+     * Returns a set of field descriptors.
+     *
+     * @return set of field descriptors
+     * @since 0.1.0
+     */
     public Set<FieldDescriptor> getFields() {
         if (fields == null) {
             fields = FieldDescriptor.of(typeElement);
@@ -58,6 +129,12 @@ public class TypeDescriptor {
         return fields;
     }
 
+    /**
+     * Returns a set of method descriptors.
+     *
+     * @return set of method descriptors
+     * @since 0.1.0
+     */
     public Set<MethodDescriptor> getMethods() {
         if (methods == null) {
             methods = MethodDescriptor.of(typeElement);
@@ -65,6 +142,13 @@ public class TypeDescriptor {
         return methods;
     }
 
+    /**
+     * Check if has a method by a name.
+     *
+     * @param methodName annotation qualified name
+     * @return if has a method by {@code methodName}
+     * @since 0.1.0
+     */
     public boolean hasMethod(String methodName) {
         if (hasMethodByNameMap == null) {
             hasMethodByNameMap = new HashMap<>();
@@ -78,6 +162,12 @@ public class TypeDescriptor {
         return hasMethod;
     }
 
+    /**
+     * Returns a set of annotation descriptors.
+     *
+     * @return set of annotation descriptors
+     * @since 0.1.0
+     */
     public Set<AnnotationDescriptor> getAnnotations() {
         if (annotations == null) {
             annotations = AnnotationDescriptor.of(typeElement);
@@ -85,6 +175,13 @@ public class TypeDescriptor {
         return annotations;
     }
 
+    /**
+     * Checks if has an annotation by an qualified name.
+     *
+     * @param annotationQualifiedName annotation qualified name
+     * @return if has an annotation by an qualified name
+     * @since 0.1.0
+     */
     public boolean hasAnnotation(String annotationQualifiedName) {
         if (hasAnnotationByQualifiedNameMap == null) {
             hasAnnotationByQualifiedNameMap = new HashMap<>();
@@ -98,6 +195,14 @@ public class TypeDescriptor {
         return hasAnnotation;
     }
 
+    /**
+     * Returns an annotation by a type if present, else {@code null}.
+     *
+     * @param annotationType annotation type
+     * @param <T>            type of annotation
+     * @return annotation by {@code annotationType} if present, else {@code null}
+     * @since 0.1.0
+     */
     public <T extends Annotation> T getAnnotation(Class<? extends T> annotationType) {
         return typeElement.getAnnotation(annotationType);
     }

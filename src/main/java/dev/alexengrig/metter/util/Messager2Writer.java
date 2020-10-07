@@ -22,14 +22,43 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Arrays;
 
+/**
+ * An adapter of {@link javax.annotation.processing.Messager} for {@link java.io.PrintWriter}.
+ *
+ * @author Grig Alex
+ * @version 0.1.0
+ * @since 0.1.0
+ */
 public class Messager2Writer {
+    /**
+     * Messager.
+     *
+     * @since 0.1.0
+     */
     protected final Messager messager;
-    private transient PrintWriter errorWriter;
+    /**
+     * Error print writer.
+     *
+     * @since 0.1.0
+     */
+    protected transient PrintWriter errorWriter;
 
+    /**
+     * Constructs for a messager.
+     *
+     * @param messager target messager for adapting
+     * @since 0.1.0
+     */
     public Messager2Writer(Messager messager) {
         this.messager = messager;
     }
 
+    /**
+     * Returns an error print writer.
+     *
+     * @return error print writer
+     * @since 0.1.0
+     */
     public PrintWriter errorWriter() {
         if (errorWriter == null) {
             errorWriter = new PrintWriter(new Writer() {

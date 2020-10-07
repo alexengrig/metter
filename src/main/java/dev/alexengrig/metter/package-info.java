@@ -15,7 +15,11 @@
  */
 
 /**
- * An annotation processor for generating meta-information (getters and setters).
+ * Metter is an annotation processor for generating getter and setter suppliers.
+ * <p>
+ * {@link dev.alexengrig.metter.annotation.GetterSupplier} for generation getter supplier.
+ * <p>
+ * {@link dev.alexengrig.metter.annotation.SetterSupplier} for generation setter supplier.
  *
  * @author Grig Alex
  * @version 0.1.0

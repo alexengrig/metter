@@ -34,6 +34,7 @@ import java.lang.annotation.Target;
 public @interface SetterSupplier {
     /**
      * A supplier class name.
+     * <p>
      * Default value consisting of a prefix as an annotated class name
      * and a suffix as the supplier name: {@code ${CLASS_NAME}SetterSupplier}.
      *

@@ -19,11 +19,30 @@ package dev.alexengrig.metter.element.collector;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 
+/**
+ * Method collector.
+ *
+ * @author Grig Alex
+ * @version 0.1.0
+ * @since 0.1.0
+ */
 public class MethodCollector extends BaseEnclosedElementCollector<TypeElement, ExecutableElement> {
+    /**
+     * Constructs for a type element.
+     *
+     * @param parent type element
+     * @since 0.1.0
+     */
     public MethodCollector(TypeElement parent) {
         super(parent);
     }
 
+    /**
+     * Collects an executable element
+     *
+     * @param executableElement executable element
+     * @since 0.1.0
+     */
     @Override
     public void visitExecutable(ExecutableElement executableElement) {
         children.add(executableElement);

@@ -25,17 +25,62 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * A descriptor of field.
+ *
+ * @author Grig Alex
+ * @version 0.1.0
+ * @since 0.1.0
+ */
 public class FieldDescriptor {
+    /**
+     * Variable element.
+     *
+     * @since 0.1.0
+     */
     protected final VariableElement variableElement;
+    /**
+     * Name.
+     *
+     * @since 0.1.0
+     */
     protected transient String name;
+    /**
+     * Type name.
+     *
+     * @since 0.1.0
+     */
     protected transient String typeName;
+    /**
+     * Set of annotation descriptors.
+     *
+     * @since 0.1.0
+     */
     protected transient Set<AnnotationDescriptor> annotations;
+    /**
+     * Map of annotation qualified name to mark about presence.
+     *
+     * @since 0.1.0
+     */
     protected transient Map<String, Boolean> hasAnnotationByQualifiedNameMap;
 
+    /**
+     * Constructs with a variable element.
+     *
+     * @param variableElement variable element
+     * @since 0.1.0
+     */
     public FieldDescriptor(VariableElement variableElement) {
         this.variableElement = variableElement;
     }
 
+    /**
+     * Creates a set from a type element.
+     *
+     * @param typeElement type element
+     * @return set from {@code typeElement}
+     * @since 0.1.0
+     */
     public static Set<FieldDescriptor> of(TypeElement typeElement) {
         FieldCollector fieldCollector = new FieldCollector(typeElement);
         return fieldCollector.getChildren().stream()
@@ -43,6 +88,12 @@ public class FieldDescriptor {
                 .collect(Collectors.toSet());
     }
 
+    /**
+     * Returns a name.
+     *
+     * @return name
+     * @since 0.1.0
+     */
     public String getName() {
         if (name == null) {
             name = variableElement.getSimpleName().toString();
@@ -50,6 +101,12 @@ public class FieldDescriptor {
         return name;
     }
 
+    /**
+     * Returns a type name.
+     *
+     * @return type name
+     * @since 0.1.0
+     */
     public String getTypeName() {
         if (typeName == null) {
             typeName = variableElement.asType().toString();
@@ -57,6 +114,12 @@ public class FieldDescriptor {
         return typeName;
     }
 
+    /**
+     * Returns a set of annotation descriptors.
+     *
+     * @return set of annotation descriptors
+     * @since 0.1.0
+     */
     public Set<AnnotationDescriptor> getAnnotations() {
         if (annotations == null) {
             annotations = AnnotationDescriptor.of(variableElement);
@@ -64,6 +127,13 @@ public class FieldDescriptor {
         return annotations;
     }
 
+    /**
+     * Check if has a annotation by an qualified name.
+     *
+     * @param annotationQualifiedName annotation qualified name
+     * @return if has a annotation by {@code annotationQualifiedName}
+     * @since 0.1.0
+     */
     public boolean hasAnnotation(String annotationQualifiedName) {
         if (hasAnnotationByQualifiedNameMap == null) {
             hasAnnotationByQualifiedNameMap = new HashMap<>();

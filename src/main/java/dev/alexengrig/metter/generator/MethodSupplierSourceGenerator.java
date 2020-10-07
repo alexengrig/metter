@@ -21,17 +21,49 @@ import dev.alexengrig.metter.util.LineJoiner;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+/**
+ * Base generator source of method supplier.
+ *
+ * @author Grig Alex
+ * @version 0.1.0
+ * @since 0.1.0
+ */
 public abstract class MethodSupplierSourceGenerator {
+    /**
+     * Mark about adding generated date to {@link javax.annotation.Generated#date()}.
+     *
+     * @since 0.1.0
+     */
     private final boolean withGeneratedDate;
 
+    /**
+     * Constructs generator with generated date.
+     *
+     * @since 0.1.0
+     */
     public MethodSupplierSourceGenerator() {
         this(true);
     }
 
+    /**
+     * Constructs generator.
+     *
+     * @param withGeneratedDate mark about adding generated date
+     * @since 0.1.0
+     */
     protected MethodSupplierSourceGenerator(boolean withGeneratedDate) {
         this.withGeneratedDate = withGeneratedDate;
     }
 
+    /**
+     * Generates method supplier source.
+     *
+     * @param className       supplier class name
+     * @param domainClassName domain class name
+     * @param field2Method    map of field to method
+     * @return method supplier source
+     * @since 0.1.0
+     */
     public String generate(String className, String domainClassName, Map<String, String> field2Method) {
         String packageName = getPackageName(className);
         String simpleClassName = getSimpleName(className);
@@ -78,6 +110,13 @@ public abstract class MethodSupplierSourceGenerator {
                 .toString();
     }
 
+    /**
+     * Returns a package name from a class name
+     *
+     * @param className class name
+     * @return package name
+     * @since 0.1.0
+     */
     protected String getPackageName(String className) {
         int lastIndexOfDot = className.lastIndexOf('.');
         if (lastIndexOfDot > 0) {
@@ -86,10 +125,24 @@ public abstract class MethodSupplierSourceGenerator {
         return null;
     }
 
+    /**
+     * Returns simple class name (without a package name).
+     *
+     * @param className class name
+     * @return simple class name (without a package name)
+     * @since 0.1.0
+     */
     protected String getSimpleName(String className) {
         int lastIndexOfDot = className.lastIndexOf('.');
         return className.substring(lastIndexOfDot + 1);
     }
 
-    protected abstract String getMapValueType(String className);
+    /**
+     * Returns a type of map value from a domain class name.
+     *
+     * @param domainClassName domain class name
+     * @return type of map value
+     * @since 0.1.0
+     */
+    protected abstract String getMapValueType(String domainClassName);
 }

@@ -22,14 +22,45 @@ import javax.lang.model.element.Element;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Base enclosed element collector.
+ *
+ * @param <E> type of parent element
+ * @param <T> type of child element
+ * @author Grig Alex
+ * @version 0.1.0
+ * @since 0.1.0
+ */
 public abstract class BaseEnclosedElementCollector<E extends Element, T extends Element> extends BaseElementVisitor {
+    /**
+     * Parent element.
+     *
+     * @since 0.1.0
+     */
     protected final E parent;
+    /**
+     * Children of element.
+     *
+     * @since 0.1.0
+     */
     protected transient Set<T> children;
 
+    /**
+     * Constructs for an element.
+     *
+     * @param parent element
+     * @since 0.1.0
+     */
     public BaseEnclosedElementCollector(E parent) {
         this.parent = parent;
     }
 
+    /**
+     * Returns children.
+     *
+     * @return children
+     * @since 0.1.0
+     */
     public Set<T> getChildren() {
         if (children == null) {
             children = new HashSet<>();

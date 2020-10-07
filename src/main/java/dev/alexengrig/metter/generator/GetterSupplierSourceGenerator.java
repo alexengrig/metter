@@ -16,17 +16,44 @@
 
 package dev.alexengrig.metter.generator;
 
+/**
+ * Generator source of getter supplier.
+ *
+ * @author Grig Alex
+ * @version 0.1.0
+ * @since 0.1.0
+ */
 public class GetterSupplierSourceGenerator extends MethodSupplierSourceGenerator {
+    /**
+     * Constructs.
+     *
+     * @since 0.1.0
+     */
     public GetterSupplierSourceGenerator() {
         super();
     }
 
+    /**
+     * Constructs with mark about adding generated date.
+     *
+     * @param withGeneratedDate mark about adding generated date
+     * @since 0.1.0
+     */
     protected GetterSupplierSourceGenerator(boolean withGeneratedDate) {
         super(withGeneratedDate);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * <pre>{@code
+     * java.util.Function<DomainClass, java.lang.Object>
+     * }</pre>
+     *
+     * @since 0.1.0
+     */
     @Override
-    protected String getMapValueType(String className) {
-        return String.format("java.util.function.Function<%s, java.lang.Object>", className);
+    protected String getMapValueType(String domainClassName) {
+        return String.format("java.util.function.Function<%s, java.lang.Object>", domainClassName);
     }
 }

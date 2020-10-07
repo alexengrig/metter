@@ -23,14 +23,45 @@ import javax.lang.model.element.TypeElement;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * A descriptor of method.
+ *
+ * @author Grig Alex
+ * @version 0.1.0
+ * @since 0.1.0
+ */
 public class MethodDescriptor {
+    /**
+     * Executable element.
+     *
+     * @since 0.1.0
+     */
     protected final ExecutableElement executableElement;
+    /**
+     * Name.
+     *
+     * @since 0.1.0
+     */
+
     protected transient String name;
 
+    /**
+     * Constructs with an executable element.
+     *
+     * @param executableElement executable element
+     * @since 0.1.0
+     */
     public MethodDescriptor(ExecutableElement executableElement) {
         this.executableElement = executableElement;
     }
 
+    /**
+     * Creates a set from a type element.
+     *
+     * @param typeElement type element
+     * @return set from {@code typeElement}
+     * @since 0.1.0
+     */
     public static Set<MethodDescriptor> of(TypeElement typeElement) {
         MethodCollector methodCollector = new MethodCollector(typeElement);
         return methodCollector.getChildren().stream()
@@ -38,6 +69,12 @@ public class MethodDescriptor {
                 .collect(Collectors.toSet());
     }
 
+    /**
+     * Returns a name.
+     *
+     * @return name
+     * @since 0.1.0
+     */
     public String getName() {
         if (name == null) {
             name = executableElement.getSimpleName().toString();
