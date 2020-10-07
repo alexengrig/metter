@@ -19,15 +19,15 @@ plugins {
 }
 
 group 'dev.alexengrig'
-version '0.1.0-SNAPSHOT'
+version '0.1.0'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    compileOnly files('../target/metter-0.1.0-SNAPSHOT.jar')
-    annotationProcessor files('../target/metter-0.1.0-SNAPSHOT.jar')
+    compileOnly files('../target/metter-0.1.0.jar')
+    annotationProcessor files('../target/metter-0.1.0.jar')
 
     compileOnly 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
