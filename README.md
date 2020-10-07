@@ -1,5 +1,9 @@
 # metter
 
+[![Maven Central](https://img.shields.io/maven-central/v/dev.alexengrig/metter.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22dev.alexengrig%22%20AND%20a:%22metter%22)
+[![Javadocs](https://www.javadoc.io/badge/dev.alexengrig/metter.svg)](https://www.javadoc.io/doc/dev.alexengrig/metter)
+[![GitHub](https://img.shields.io/github/license/alexengrig/metter?style=flat&&color=informational)](LICENSE)
+
 [![Build Status](https://travis-ci.com/alexengrig/metter.svg?branch=master)](https://travis-ci.com/alexengrig/metter)
 [![BCH compliance](https://bettercodehub.com/edge/badge/alexengrig/metter?branch=master)](https://bettercodehub.com/)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Falexengrig%2Fmetter.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Falexengrig%2Fmetter?ref=badge_shield)
