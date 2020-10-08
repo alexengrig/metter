@@ -1,5 +1,6 @@
 # metter
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ebbf5747b92f4a0b87c5775b56a5c398)](https://app.codacy.com/gh/alexengrig/metter?utm_source=github.com&utm_medium=referral&utm_content=alexengrig/metter&utm_campaign=Badge_Grade_Settings)
 [![Maven Central](https://img.shields.io/maven-central/v/dev.alexengrig/metter.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22dev.alexengrig%22%20AND%20a:%22metter%22)
 [![Javadocs](https://www.javadoc.io/badge/dev.alexengrig/metter.svg)](https://www.javadoc.io/doc/dev.alexengrig/metter)
 [![GitHub](https://img.shields.io/github/license/alexengrig/metter?style=flat&&color=informational)](LICENSE)
