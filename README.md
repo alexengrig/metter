@@ -10,6 +10,8 @@
 
 Metter is an annotation processor for generating getter and setter suppliers.
 
+Supports [Lombok](https://github.com/rzwitserloot/lombok) annotations: `@Data`, `@Getter` and `@Setter`.
+
 ## Table of Contents
 
 -   [Get Started](#get-started)
@@ -27,6 +29,9 @@ Metter is an annotation processor for generating getter and setter suppliers.
         -   [Reflection](#reflection)
         -   [Generation](#generation)
     -   [Conclusion](#conclusion)
+-   [API](#api)
+    -   [GetterSupplier](#gettersupplier)
+    -   [SetterSupplier](#settersupplier)
 -   [License](#license)
 
 ## Get Started
@@ -359,6 +364,28 @@ If you add a new field to `Man`,
 then the reflection solution and the generation solution will continue to work,
 unlike the manual solution.
 The generation solution is faster than the reflection solution (reflection is slow).
+
+## API
+
+### GetterSupplier
+
+An annotation for to generate a getters supplier.
+
+| Field          | Type       | Default                       | Description                                |
+|----------------|------------|-------------------------------|--------------------------------------------|
+| value          | `String`   | `${CLASS_NAME}GetterSupplier` | Supplier class name                        |
+| includedFields | `String[]` | empty                         | Array of fields to include in the supplier |
+| excludedFields | `String[]` | empty                         | Array of fields to exclude in the supplier |
+
+### SetterSupplier
+
+An annotation for to generate a setters supplier.
+
+| Field          | Type       | Default                       | Description                                |
+|----------------|------------|-------------------------------|--------------------------------------------|
+| value          | `String`   | `${CLASS_NAME}SetterSupplier` | Supplier class name                        |
+| includedFields | `String[]` | empty                         | Array of fields to include in the supplier |
+| excludedFields | `String[]` | empty                         | Array of fields to exclude in the supplier |
 
 ## License
 
