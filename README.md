@@ -1,6 +1,5 @@
 # metter
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ebbf5747b92f4a0b87c5775b56a5c398)](https://app.codacy.com/gh/alexengrig/metter?utm_source=github.com&utm_medium=referral&utm_content=alexengrig/metter&utm_campaign=Badge_Grade_Settings)
 [![Maven Central](https://img.shields.io/maven-central/v/dev.alexengrig/metter.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22dev.alexengrig%22%20AND%20a:%22metter%22)
 [![Javadocs](https://www.javadoc.io/badge/dev.alexengrig/metter.svg)](https://www.javadoc.io/doc/dev.alexengrig/metter)
 [![GitHub](https://img.shields.io/github/license/alexengrig/metter?style=flat&&color=informational)](LICENSE)
@@ -8,6 +7,8 @@
 [![Build Status](https://travis-ci.com/alexengrig/metter.svg?branch=master)](https://travis-ci.com/alexengrig/metter)
 [![Codecov Coverage Status](https://codecov.io/gh/alexengrig/metter/branch/master/graph/badge.svg)](https://codecov.io/gh/alexengrig/metter)
 [![Coveralls Coverage Status](https://coveralls.io/repos/github/alexengrig/metter/badge.svg?branch=master)](https://coveralls.io/github/alexengrig/metter?branch=master)
+[![Codacy Coverage Status](https://app.codacy.com/project/badge/Coverage/a90d2d32c03e4d83860bf4d73eae47bb)](https://www.codacy.com/gh/alexengrig/metter/dashboard?utm_source=github.com&utm_medium=referral&utm_content=alexengrig/metter&utm_campaign=Badge_Coverage)
+[![Codacy Compliance](https://api.codacy.com/project/badge/Grade/ebbf5747b92f4a0b87c5775b56a5c398)](https://app.codacy.com/gh/alexengrig/metter?utm_source=github.com&utm_medium=referral&utm_content=alexengrig/metter&utm_campaign=Badge_Grade_Settings)
 [![BCH Compliance](https://bettercodehub.com/edge/badge/alexengrig/metter?branch=master)](https://bettercodehub.com/)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Falexengrig%2Fmetter.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Falexengrig%2Fmetter?ref=badge_shield)
 
