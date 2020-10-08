@@ -5,8 +5,9 @@
 [![GitHub](https://img.shields.io/github/license/alexengrig/metter?style=flat&&color=informational)](LICENSE)
 
 [![Build Status](https://travis-ci.com/alexengrig/metter.svg?branch=master)](https://travis-ci.com/alexengrig/metter)
-[![Codecov](https://codecov.io/gh/alexengrig/metter/branch/master/graph/badge.svg)](https://codecov.io/gh/alexengrig/metter)
-[![BCH compliance](https://bettercodehub.com/edge/badge/alexengrig/metter?branch=master)](https://bettercodehub.com/)
+[![Codecov Coverage Status](https://codecov.io/gh/alexengrig/metter/branch/master/graph/badge.svg)](https://codecov.io/gh/alexengrig/metter)
+[![Coveralls Coverage Status](https://coveralls.io/repos/github/alexengrig/metter/badge.svg?branch=master)](https://coveralls.io/github/alexengrig/metter?branch=master)
+[![BCH Compliance](https://bettercodehub.com/edge/badge/alexengrig/metter?branch=master)](https://bettercodehub.com/)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Falexengrig%2Fmetter.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Falexengrig%2Fmetter?ref=badge_shield)
 
 Metter is an annotation processor for generating getter and setter suppliers.
