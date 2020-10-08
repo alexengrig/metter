@@ -7,7 +7,4 @@ install:
   - gradle test
   - cd ..
 after_success:
-  - mvn jacoco:report
-  - mvn codecov:upload
-  - mvn coveralls:report
-  - mvn codacy:coverage
+  - mvn jacoco:report codecov:upload coveralls:report codacy:coverage
