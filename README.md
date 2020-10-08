@@ -26,6 +26,9 @@ Supports [Lombok](https://github.com/rzwitserloot/lombok) annotations: `@Data`, 
         -   [Instance](#instance)
         -   [Inheritance](#inheritance)
         -   [Bean](#bean)
+-   [API](#api)
+    -   [GetterSupplier](#gettersupplier)
+    -   [SetterSupplier](#settersupplier)
 -   [Motivation](#motivation)
     -   [Problem](#problem)
     -   [Solution](#solution)
@@ -33,9 +36,6 @@ Supports [Lombok](https://github.com/rzwitserloot/lombok) annotations: `@Data`, 
         -   [Reflection](#reflection)
         -   [Generation](#generation)
     -   [Conclusion](#conclusion)
--   [API](#api)
-    -   [GetterSupplier](#gettersupplier)
-    -   [SetterSupplier](#settersupplier)
 -   [License](#license)
 
 ## Get Started
@@ -208,6 +208,28 @@ public class ApplicationConfiguration {
 }
 ```
 
+## API
+
+### GetterSupplier
+
+An annotation for to generate a getters supplier.
+
+| Field          | Type       | Default                       | Description                                |
+|----------------|------------|-------------------------------|--------------------------------------------|
+| value          | `String`   | `${CLASS_NAME}GetterSupplier` | Supplier class name                        |
+| includedFields | `String[]` | empty                         | Array of fields to include in the supplier |
+| excludedFields | `String[]` | empty                         | Array of fields to exclude in the supplier |
+
+### SetterSupplier
+
+An annotation for to generate a setters supplier.
+
+| Field          | Type       | Default                       | Description                                |
+|----------------|------------|-------------------------------|--------------------------------------------|
+| value          | `String`   | `${CLASS_NAME}SetterSupplier` | Supplier class name                        |
+| includedFields | `String[]` | empty                         | Array of fields to include in the supplier |
+| excludedFields | `String[]` | empty                         | Array of fields to exclude in the supplier |
+
 ## Motivation
 
 ### Problem
@@ -369,28 +391,6 @@ then the reflection solution and the generation solution will continue to work,
 unlike the manual solution.
 The generation solution is faster than the reflection solution (reflection is slow).
 
-## API
-
-### GetterSupplier
-
-An annotation for to generate a getters supplier.
-
-| Field          | Type       | Default                       | Description                                |
-|----------------|------------|-------------------------------|--------------------------------------------|
-| value          | `String`   | `${CLASS_NAME}GetterSupplier` | Supplier class name                        |
-| includedFields | `String[]` | empty                         | Array of fields to include in the supplier |
-| excludedFields | `String[]` | empty                         | Array of fields to exclude in the supplier |
-
-### SetterSupplier
-
-An annotation for to generate a setters supplier.
-
-| Field          | Type       | Default                       | Description                                |
-|----------------|------------|-------------------------------|--------------------------------------------|
-| value          | `String`   | `${CLASS_NAME}SetterSupplier` | Supplier class name                        |
-| includedFields | `String[]` | empty                         | Array of fields to include in the supplier |
-| excludedFields | `String[]` | empty                         | Array of fields to exclude in the supplier |
-
 ## License
 
 This project is [licensed](LICENSE) under [Apache License, version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
@@ -400,6 +400,5 @@ used in [logo](docs/images/metter-logo.png)
 and [preview](docs/images/metter-preview.png)
 is [licensed](https://www.jetbrains.com/lp/mono/#license)
 under [Apache License, version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
-
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Falexengrig%2Fmetter.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Falexengrig%2Fmetter?ref=badge_large)
