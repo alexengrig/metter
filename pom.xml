@@ -174,12 +174,22 @@
                 <groupId>org.eluder.coveralls</groupId>
                 <artifactId>coveralls-maven-plugin</artifactId>
                 <version>4.3.0</version>
+                <configuration>
+                    <repoToken>${env.$COVERALLS_TOKEN}</repoToken>
+                </configuration>
             </plugin>
             <!--    Codacy    -->
             <plugin>
                 <groupId>com.gavinmogan</groupId>
                 <artifactId>codacy-maven-plugin</artifactId>
                 <version>1.2.0</version>
+                <configuration>
+                    <apiToken>${env.$CODACY_API_TOKEN}</apiToken>
+                    <projectToken>${env.CODACY_PROJECT_TOKEN}</projectToken>
+                    <commit>${env.TRAVIS_COMMIT}</commit>
+                    <coverageReportFile>${project.reporting.outputDirectory}/jacoco.xml</coverageReportFile>
+                    <failOnMissingReportFile>false</failOnMissingReportFile>
+                </configuration>
             </plugin>
             <!--    Codecov    -->
             <plugin>

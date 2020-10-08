@@ -9,5 +9,5 @@ install:
 after_success:
   - mvn jacoco:report
   - mvn codecov:upload
-  - mvn coveralls:report -DrepoToken=$COVERALLS_TOKEN
-  - mvn codacy:coverage -DapiToken=$CODACY_PROJECT_TOKEN
+  - mvn coveralls:report
+  - mvn codacy:coverage
