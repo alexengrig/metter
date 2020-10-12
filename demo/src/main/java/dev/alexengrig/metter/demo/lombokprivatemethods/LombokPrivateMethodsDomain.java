@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-plugins {
-    id 'java'
-}
+package dev.alexengrig.metter.demo.lombokprivatemethods;
 
-group 'dev.alexengrig'
-version '0.1.1'
+import dev.alexengrig.metter.annotation.GetterSupplier;
+import dev.alexengrig.metter.annotation.SetterSupplier;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-repositories {
-    mavenCentral()
-}
+@Data
+@GetterSupplier
+@SetterSupplier
+@AllArgsConstructor
+public class LombokPrivateMethodsDomain {
+    private int integer;
 
-dependencies {
-    compileOnly files('../target/metter-0.1.1.jar')
-    annotationProcessor files('../target/metter-0.1.1.jar')
-
-    compileOnly 'org.projectlombok:lombok:1.18.12'
-    annotationProcessor 'org.projectlombok:lombok:1.18.12'
-
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    @Getter(AccessLevel.PRIVATE)
+    @Setter(AccessLevel.PRIVATE)
+    private int ignored;
 }
