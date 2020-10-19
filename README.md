@@ -1,3 +1,5 @@
+<img alt="Metter Logo" src="/docs/images/metter-logo.png" width="100" />
+
 # metter
 
 [![Maven Central](https://img.shields.io/maven-central/v/dev.alexengrig/metter.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22dev.alexengrig%22%20AND%20a:%22metter%22)
