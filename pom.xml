@@ -22,7 +22,7 @@
 
     <groupId>dev.alexengrig</groupId>
     <artifactId>metter</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1-SNAPSHOT</version>
 
     <name>metter</name>
     <description>An annotation processor for generating getter and setter suppliers</description>
