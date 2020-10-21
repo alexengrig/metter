@@ -18,10 +18,12 @@ package dev.alexengrig.metter.element.descriptor;
 
 import dev.alexengrig.metter.element.collector.FieldCollector;
 
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,7 +31,7 @@ import java.util.stream.Collectors;
  * A descriptor of field.
  *
  * @author Grig Alex
- * @version 0.1.0
+ * @version 0.1.1
  * @since 0.1.0
  */
 public class FieldDescriptor {
@@ -39,6 +41,12 @@ public class FieldDescriptor {
      * @since 0.1.0
      */
     protected final VariableElement variableElement;
+    /**
+     * Parent - type descriptor.
+     *
+     * @since 0.1.1
+     */
+    protected transient TypeDescriptor parent;
     /**
      * Name.
      *
@@ -71,6 +79,10 @@ public class FieldDescriptor {
      * @since 0.1.0
      */
     public FieldDescriptor(VariableElement variableElement) {
+        Objects.requireNonNull(variableElement, "Variable element must not be null");
+        if (variableElement.getKind() != ElementKind.FIELD) {
+            throw new IllegalArgumentException("Variable element must be field kind");
+        }
         this.variableElement = variableElement;
     }
 
@@ -86,6 +98,19 @@ public class FieldDescriptor {
         return fieldCollector.getChildren().stream()
                 .map(FieldDescriptor::new)
                 .collect(Collectors.toSet());
+    }
+
+    /**
+     * Returns a parent - class.
+     *
+     * @return parent - class
+     * @since 0.1.1
+     */
+    public TypeDescriptor getParent() {
+        if (parent == null) {
+            parent = new TypeDescriptor((TypeElement) variableElement.getEnclosingElement());
+        }
+        return parent;
     }
 
     /**
