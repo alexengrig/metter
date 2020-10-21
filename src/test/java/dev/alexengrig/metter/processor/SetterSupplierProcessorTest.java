@@ -20,6 +20,7 @@ import dev.alexengrig.metter.annotation.SetterSupplier;
 import dev.alexengrig.metter.element.ElementMocks;
 import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
 import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
 import org.junit.jupiter.api.Test;
@@ -183,11 +184,11 @@ class SetterSupplierProcessorTest {
 
     @Test
     void should_return_methodName() {
-        VariableElement booleanField = ElementMocks.variableElementMock("booleanField", boolean.class);
+        VariableElement booleanField = ElementMocks.fieldElementMock("booleanField", boolean.class);
         FieldDescriptor booleanFieldDescriptor = new FieldDescriptor(booleanField);
         assertEquals("setBooleanField", processor.getMethodName(booleanFieldDescriptor),
                 "Method name does not equal to 'setBooleanField'");
-        VariableElement stringField = ElementMocks.variableElementMock("stringField", String.class);
+        VariableElement stringField = ElementMocks.fieldElementMock("stringField", String.class);
         FieldDescriptor stringFieldDescriptor = new FieldDescriptor(stringField);
         assertEquals("setStringField", processor.getMethodName(stringFieldDescriptor),
                 "Method name does not equal to 'setStringField'");
@@ -195,10 +196,29 @@ class SetterSupplierProcessorTest {
 
     @Test
     void should_check_isTargetField_with_Setter_annotation() {
-        VariableElement variableElement = mock(VariableElement.class);
-        AnnotationMirror setter = ElementMocks.annotationMirrorMock(Setter.class);
-        Mockito.<List<? extends AnnotationMirror>>when(variableElement.getAnnotationMirrors())
-                .thenReturn(Collections.singletonList(setter));
+        VariableElement variableElement = ElementMocks.fieldElementMock();
+        Setter annotation = new Setter() {
+            @Override
+            public AccessLevel value() {
+                return AccessLevel.PUBLIC;
+            }
+
+            @Override
+            public AnyAnnotation[] onMethod() {
+                return new AnyAnnotation[0];
+            }
+
+            @Override
+            public AnyAnnotation[] onParam() {
+                return new AnyAnnotation[0];
+            }
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return null;
+            }
+        };
+        when(variableElement.getAnnotation(Setter.class)).thenReturn(annotation);
         FieldDescriptor fieldDescriptor = new FieldDescriptor(variableElement);
         assertTrue(processor.isTargetField(fieldDescriptor),
                 "Field with lombok Setter annotation must be target");
@@ -206,9 +226,12 @@ class SetterSupplierProcessorTest {
 
     @Test
     void should_check_isTargetField_without_Setter_annotation() {
-        VariableElement variableElement = mock(VariableElement.class);
-        Mockito.<List<? extends AnnotationMirror>>when(variableElement.getAnnotationMirrors())
-                .thenReturn(Collections.emptyList());
+        VariableElement variableElement = ElementMocks.fieldElementMock("field");
+        when(variableElement.getAnnotation(Setter.class)).thenReturn(null);
+        TypeElement typeElement = ElementMocks.typeElementMock();
+        when(typeElement.getAnnotation(Setter.class)).thenReturn(null);
+        when(typeElement.getAnnotation(Data.class)).thenReturn(null);
+        when(variableElement.getEnclosingElement()).thenReturn(typeElement);
         FieldDescriptor fieldDescriptor = new FieldDescriptor(variableElement);
         assertFalse(processor.isTargetField(fieldDescriptor),
                 "Field without lombok Setter annotation must not be target");
@@ -216,7 +239,7 @@ class SetterSupplierProcessorTest {
 
     @Test
     void should_return_methodView() {
-        VariableElement variableElement = ElementMocks.variableElementMock(String.class);
+        VariableElement variableElement = ElementMocks.fieldElementMock(String.class);
         FieldDescriptor fieldDescriptor = new FieldDescriptor(variableElement);
         assertEquals("(instance, value) -> instance.setName((java.lang.String) value)",
                 processor.getMethodView(null, fieldDescriptor, "setName"),

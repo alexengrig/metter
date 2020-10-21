@@ -22,6 +22,7 @@ import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A descriptor of type.
@@ -143,6 +144,18 @@ public class TypeDescriptor {
     }
 
     /**
+     * Returns a set of method descriptors by a name.
+     *
+     * @return set of method descriptors by a name
+     * @since 0.1.1
+     */
+    public Set<MethodDescriptor> getMethods(String methodName) {
+        return getMethods().stream()
+                .filter(method -> methodName.equals(method.getName()))
+                .collect(Collectors.toSet());
+    }
+
+    /**
      * Check if has a method by a name.
      *
      * @param methodName annotation qualified name
@@ -193,6 +206,10 @@ public class TypeDescriptor {
                 .anyMatch(annotationQualifiedName::equals);
         hasAnnotationByQualifiedNameMap.put(annotationQualifiedName, hasAnnotation);
         return hasAnnotation;
+    }
+
+    public <T extends Annotation> boolean hasAnnotation(Class<? extends T> annotationType) {
+        return typeElement.getAnnotation(annotationType) != null;
     }
 
     /**

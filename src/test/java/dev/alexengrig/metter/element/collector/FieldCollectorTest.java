@@ -33,11 +33,12 @@ import static org.mockito.Mockito.verify;
 class FieldCollectorTest {
     @Test
     public void should_return_allFields() {
-        VariableElement field1 = ElementMocks.variableElementMock();
-        VariableElement field2 = ElementMocks.variableElementMock();
+        VariableElement field1 = ElementMocks.fieldElementMock();
+        VariableElement field2 = ElementMocks.fieldElementMock();
+        VariableElement variable = ElementMocks.variableElementMock();
         ExecutableElement method1 = ElementMocks.executableElementMock();
         ExecutableElement method2 = ElementMocks.executableElementMock();
-        List<Element> enclosedElements = Arrays.asList(field1, method1, field2, method2);
+        List<Element> enclosedElements = Arrays.asList(field1, method1, field2, method2, variable);
         TypeElement type = ElementMocks.typeElementMock(enclosedElements);
         FieldCollector collector = new FieldCollector(type);
         assertEquals(new HashSet<>(Arrays.asList(field1, field2)), collector.getChildren(),

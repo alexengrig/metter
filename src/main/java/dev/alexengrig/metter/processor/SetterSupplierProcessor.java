@@ -19,8 +19,12 @@ package dev.alexengrig.metter.processor;
 import com.google.auto.service.AutoService;
 import dev.alexengrig.metter.annotation.SetterSupplier;
 import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
+import dev.alexengrig.metter.element.descriptor.MethodDescriptor;
 import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
 import dev.alexengrig.metter.generator.SetterSupplierSourceGenerator;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Setter;
 
 import javax.annotation.processing.Processor;
 import java.util.Arrays;
@@ -103,7 +107,6 @@ public class SetterSupplierProcessor extends BaseMethodSupplierProcessor<SetterS
      * @return if a type descriptor has {@code lombok.Data} or {@code lombok.Setter} annotations
      * @since 0.1.0
      */
-    @Override
     protected boolean hasAllMethods(TypeDescriptor type) {
         return type.hasAnnotation("lombok.Data") || type.hasAnnotation("lombok.Setter");
     }
@@ -122,15 +125,47 @@ public class SetterSupplierProcessor extends BaseMethodSupplierProcessor<SetterS
     }
 
     /**
-     * Checks if a field descriptor has {@code lombok.Setter} annotation.
+     * Checks if a field descriptor has {@link lombok.Setter} annotation (not private)
+     * or a type descriptor of field descriptor has {@link lombok.Setter} annotation (not private)
+     * or type descriptor of field descriptor has {@link lombok.Data}
+     * or type descriptor of field descriptor has a setter method.
      *
      * @param field descriptor
-     * @return if a field descriptor has {@code lombok.Setter} annotation
+     * @return if {@code descriptor} has {@link lombok.Setter} annotation (not private)
+     * or a type descriptor of {@code descriptor} has {@link lombok.Setter} annotation (not private)
+     * or type descriptor of {@code descriptor} has {@link lombok.Data}
+     * or type descriptor of {@code descriptor} has a setter method
      * @since 0.1.0
      */
     @Override
     protected boolean isTargetField(FieldDescriptor field) {
-        return field.hasAnnotation("lombok.Setter");
+        if (field.hasAnnotation(Setter.class)) {
+            Setter setter = field.getAnnotation(Setter.class);
+            return setter.value() != AccessLevel.PRIVATE;
+        }
+        TypeDescriptor type = field.getParent();
+        if (type.hasAnnotation(Setter.class)) {
+            Setter setter = type.getAnnotation(Setter.class);
+            return setter.value() != AccessLevel.PRIVATE;
+        }
+        return type.hasAnnotation(Data.class) || hasSetterMethod(field);
+    }
+
+    /**
+     * Checks if a type descriptor of a field descriptor has a setter method
+     *
+     * @param field descriptor
+     * @return if a type descriptor of a field descriptor has a setter method
+     */
+    protected boolean hasSetterMethod(FieldDescriptor field) {
+        String methodName = getMethodName(field);
+        TypeDescriptor type = field.getParent();
+        if (type.hasMethod(methodName)) {
+            Set<MethodDescriptor> methods = type.getMethods(methodName);
+            return methods.stream().anyMatch(method -> !method.isPrivate() && "void".equals(method.getTypeName())
+                    && method.hasOnlyOneParameter(field.getTypeName()));
+        }
+        return false;
     }
 
     /**

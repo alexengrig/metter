@@ -20,13 +20,12 @@ import dev.alexengrig.metter.annotation.GetterSupplier;
 import dev.alexengrig.metter.element.ElementMocks;
 import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
 import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import javax.annotation.processing.ProcessingEnvironment;
-import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
@@ -34,7 +33,6 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -154,9 +152,18 @@ class GetterSupplierProcessorTest {
     @Test
     void should_check_hasAllMethods_with_Data_annotation() {
         TypeElement typeElement = mock(TypeElement.class);
-        AnnotationMirror data = ElementMocks.annotationMirrorMock(Data.class);
-        Mockito.<List<? extends AnnotationMirror>>when(typeElement.getAnnotationMirrors())
-                .thenReturn(Collections.singletonList(data));
+        Data dataAnnotation = new Data() {
+            @Override
+            public String staticConstructor() {
+                return null;
+            }
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return null;
+            }
+        };
+        when(typeElement.getAnnotation(Data.class)).thenReturn(dataAnnotation);
         TypeDescriptor typeDescriptor = new TypeDescriptor(typeElement);
         assertTrue(processor.hasAllMethods(typeDescriptor), "Class has no Data annotation of lombok");
     }
@@ -164,9 +171,28 @@ class GetterSupplierProcessorTest {
     @Test
     void should_check_hasAllMethods_with_Getter_annotation() {
         TypeElement typeElement = mock(TypeElement.class);
-        AnnotationMirror getter = ElementMocks.annotationMirrorMock(Getter.class);
-        Mockito.<List<? extends AnnotationMirror>>when(typeElement.getAnnotationMirrors())
-                .thenReturn(Collections.singletonList(getter));
+        Getter getterAnnotation = new Getter() {
+            @Override
+            public AccessLevel value() {
+                return AccessLevel.PUBLIC;
+            }
+
+            @Override
+            public AnyAnnotation[] onMethod() {
+                return new AnyAnnotation[0];
+            }
+
+            @Override
+            public boolean lazy() {
+                return false;
+            }
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return null;
+            }
+        };
+        when(typeElement.getAnnotation(Getter.class)).thenReturn(getterAnnotation);
         TypeDescriptor typeDescriptor = new TypeDescriptor(typeElement);
         assertTrue(processor.hasAllMethods(typeDescriptor), "Class has no Getter annotation of lombok");
     }
@@ -174,21 +200,51 @@ class GetterSupplierProcessorTest {
     @Test
     void should_check_hasAllMethods_with_Data_and_Getter_annotations() {
         TypeElement typeElement = mock(TypeElement.class);
-        AnnotationMirror data = ElementMocks.annotationMirrorMock(Data.class);
-        AnnotationMirror getter = ElementMocks.annotationMirrorMock(Getter.class);
-        Mockito.<List<? extends AnnotationMirror>>when(typeElement.getAnnotationMirrors())
-                .thenReturn(Arrays.asList(data, getter));
+        Data dataAnnotation = new Data() {
+            @Override
+            public String staticConstructor() {
+                return null;
+            }
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return null;
+            }
+        };
+        when(typeElement.getAnnotation(Data.class)).thenReturn(dataAnnotation);
+        Getter getterAnnotation = new Getter() {
+            @Override
+            public AccessLevel value() {
+                return AccessLevel.PUBLIC;
+            }
+
+            @Override
+            public AnyAnnotation[] onMethod() {
+                return new AnyAnnotation[0];
+            }
+
+            @Override
+            public boolean lazy() {
+                return false;
+            }
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return null;
+            }
+        };
+        when(typeElement.getAnnotation(Getter.class)).thenReturn(getterAnnotation);
         TypeDescriptor typeDescriptor = new TypeDescriptor(typeElement);
         assertTrue(processor.hasAllMethods(typeDescriptor), "Class has no Data/Getter annotations of lombok");
     }
 
     @Test
     void should_return_methodName() {
-        VariableElement booleanField = ElementMocks.variableElementMock("booleanField", boolean.class);
+        VariableElement booleanField = ElementMocks.fieldElementMock("booleanField", boolean.class);
         FieldDescriptor booleanFieldDescriptor = new FieldDescriptor(booleanField);
         assertEquals("isBooleanField", processor.getMethodName(booleanFieldDescriptor),
                 "Method name does not equal to 'isBooleanField'");
-        VariableElement stringField = ElementMocks.variableElementMock("stringField", String.class);
+        VariableElement stringField = ElementMocks.fieldElementMock("stringField", String.class);
         FieldDescriptor stringFieldDescriptor = new FieldDescriptor(stringField);
         assertEquals("getStringField", processor.getMethodName(stringFieldDescriptor),
                 "Method name does not equal to 'getStringField'");
@@ -196,10 +252,29 @@ class GetterSupplierProcessorTest {
 
     @Test
     void should_check_isTargetField_with_Getter_annotation() {
-        VariableElement variableElement = mock(VariableElement.class);
-        AnnotationMirror getter = ElementMocks.annotationMirrorMock(Getter.class);
-        Mockito.<List<? extends AnnotationMirror>>when(variableElement.getAnnotationMirrors())
-                .thenReturn(Collections.singletonList(getter));
+        VariableElement variableElement = ElementMocks.fieldElementMock();
+        Getter getterAnnotation = new Getter() {
+            @Override
+            public AccessLevel value() {
+                return AccessLevel.PUBLIC;
+            }
+
+            @Override
+            public AnyAnnotation[] onMethod() {
+                return new AnyAnnotation[0];
+            }
+
+            @Override
+            public boolean lazy() {
+                return false;
+            }
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return null;
+            }
+        };
+        when(variableElement.getAnnotation(Getter.class)).thenReturn(getterAnnotation);
         FieldDescriptor fieldDescriptor = new FieldDescriptor(variableElement);
         assertTrue(processor.isTargetField(fieldDescriptor),
                 "Field with lombok Getter annotation must be target");
@@ -207,9 +282,12 @@ class GetterSupplierProcessorTest {
 
     @Test
     void should_check_isTargetField_without_Getter_annotation() {
-        VariableElement variableElement = mock(VariableElement.class);
-        Mockito.<List<? extends AnnotationMirror>>when(variableElement.getAnnotationMirrors())
-                .thenReturn(Collections.emptyList());
+        VariableElement variableElement = ElementMocks.fieldElementMock("field", String.class);
+        when(variableElement.getAnnotation(Getter.class)).thenReturn(null);
+        TypeElement typeElement = ElementMocks.typeElementMock();
+        when(typeElement.getAnnotation(Getter.class)).thenReturn(null);
+        when(typeElement.getAnnotation(Data.class)).thenReturn(null);
+        when(variableElement.getEnclosingElement()).thenReturn(typeElement);
         FieldDescriptor fieldDescriptor = new FieldDescriptor(variableElement);
         assertFalse(processor.isTargetField(fieldDescriptor),
                 "Field without lombok Getter annotation must not be target");

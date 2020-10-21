@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  *
  * @param <A> type of annotation
  * @author Grig Alex
- * @version 0.1.0
+ * @version 0.1.1
  * @since 0.1.0
  */
 public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends BaseProcessor<A, TypeElement> {
@@ -160,11 +160,10 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
     protected Map<String, String> createField2MethodMap(TypeDescriptor type) {
         Map<String, String> field2Method = new HashMap<>();
         Set<FieldDescriptor> fields = getFields(type);
-        boolean hasAllMethods = hasAllMethods(type);
         for (FieldDescriptor field : fields) {
             String fieldName = field.getName();
             String methodName = getMethodName(field);
-            if (isTargetField(field) || hasAllMethods || type.hasMethod(methodName)) {
+            if (isTargetField(field)) {
                 field2Method.put(fieldName, getMethodView(type, field, methodName));
             }
         }
@@ -209,15 +208,6 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
      * @since 0.1.0
      */
     protected abstract Set<String> getExcludedFields(TypeDescriptor type);
-
-    /**
-     * Checks if a type descriptor has all target methods.
-     *
-     * @param type descriptor
-     * @return if {@code type} has all target methods
-     * @since 0.1.0
-     */
-    protected abstract boolean hasAllMethods(TypeDescriptor type);
 
     /**
      * Returns a method name from a field descriptor.

@@ -33,8 +33,8 @@ import static org.mockito.Mockito.verify;
 class MethodCollectorTest {
     @Test
     void should_return_allMethods() {
-        VariableElement field1 = ElementMocks.variableElementMock();
-        VariableElement field2 = ElementMocks.variableElementMock();
+        VariableElement field1 = ElementMocks.fieldElementMock();
+        VariableElement field2 = ElementMocks.fieldElementMock();
         ExecutableElement method1 = ElementMocks.executableElementMock();
         ExecutableElement method2 = ElementMocks.executableElementMock();
         List<Element> enclosedElements = Arrays.asList(field1, method1, field2, method2);

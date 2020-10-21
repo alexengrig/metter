@@ -20,6 +20,7 @@ import org.mockito.Mockito;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ElementVisitor;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Name;
@@ -58,6 +59,7 @@ public final class ElementMocks {
 
     public static VariableElement variableElementMock() {
         VariableElement mock = mock(VariableElement.class);
+        when(mock.getKind()).thenReturn(ElementKind.LOCAL_VARIABLE);
         when(mock.accept(any(), any())).then(invocationOnMock -> {
             ElementVisitor<Object, Object> visitor = invocationOnMock.getArgument(0);
             Object parameter = invocationOnMock.getArgument(1);
@@ -66,22 +68,36 @@ public final class ElementMocks {
         return mock;
     }
 
-    public static VariableElement variableElementMock(String fieldName) {
-        VariableElement mock = variableElementMock();
+    public static VariableElement fieldElementMock() {
+        VariableElement mock = mock(VariableElement.class);
+        when(mock.getKind()).thenReturn(ElementKind.FIELD);
+        when(mock.accept(any(), any())).then(invocationOnMock -> {
+            ElementVisitor<Object, Object> visitor = invocationOnMock.getArgument(0);
+            Object parameter = invocationOnMock.getArgument(1);
+            return visitor.visitVariable(mock, parameter);
+        });
+        return mock;
+    }
+
+    public static VariableElement fieldElementMock(String fieldName) {
+        VariableElement mock = fieldElementMock();
         Name name = nameMock(fieldName);
+        when(mock.getKind()).thenReturn(ElementKind.FIELD);
         when(mock.getSimpleName()).thenReturn(name);
         return mock;
     }
 
-    public static VariableElement variableElementMock(Class<?> fieldType) {
-        VariableElement mock = variableElementMock();
+    public static VariableElement fieldElementMock(Class<?> fieldType) {
+        VariableElement mock = fieldElementMock();
         TypeMirror typeMirror = typeMirrorMock(fieldType);
+        when(mock.getKind()).thenReturn(ElementKind.FIELD);
         when(mock.asType()).thenReturn(typeMirror);
         return mock;
     }
 
-    public static VariableElement variableElementMock(String fieldName, Class<?> fieldType) {
-        VariableElement mock = variableElementMock();
+    public static VariableElement fieldElementMock(String fieldName, Class<?> fieldType) {
+        VariableElement mock = fieldElementMock();
+        when(mock.getKind()).thenReturn(ElementKind.FIELD);
         Name name = nameMock(fieldName);
         when(mock.getSimpleName()).thenReturn(name);
         TypeMirror typeMirror = typeMirrorMock(fieldType);
@@ -90,13 +106,19 @@ public final class ElementMocks {
     }
 
     @SafeVarargs
-    public static <T extends Annotation> VariableElement variableElementMock(Class<? extends T> annotationType,
-                                                                             Class<? extends T>... annotationTypes) {
+    public static <T extends Annotation> VariableElement fieldElementMock(Class<? extends T> annotationType,
+                                                                          Class<? extends T>... annotationTypes) {
         VariableElement mock = mock(VariableElement.class);
-        List<AnnotationMirror> annotationMirrors =
+        when(mock.getKind()).thenReturn(ElementKind.FIELD);
+        List<Class<? extends T>> annotations =
                 Stream.concat(Stream.of(annotationType), Arrays.stream(annotationTypes))
-                        .map(ElementMocks::annotationMirrorMock)
                         .collect(Collectors.toList());
+        for (Class<? extends T> annotation : annotations) {
+            Mockito.<Annotation>when(mock.getAnnotation(annotation)).thenReturn(mock(annotation));
+        }
+        List<AnnotationMirror> annotationMirrors = annotations.stream()
+                .map(ElementMocks::annotationMirrorMock)
+                .collect(Collectors.toList());
         Mockito.<List<? extends AnnotationMirror>>when(mock.getAnnotationMirrors()).thenReturn(annotationMirrors);
         return mock;
     }

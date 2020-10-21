@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 
 import static dev.alexengrig.metter.element.ElementMocks.executableElementMock;
 import static dev.alexengrig.metter.element.ElementMocks.typeElementMock;
-import static dev.alexengrig.metter.element.ElementMocks.variableElementMock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -58,8 +57,8 @@ class TypeDescriptorTest {
 
     @Test
     void should_return_fields() {
-        VariableElement field1 = variableElementMock("field1");
-        VariableElement field2 = variableElementMock("field2");
+        VariableElement field1 = ElementMocks.fieldElementMock("field1");
+        VariableElement field2 = ElementMocks.fieldElementMock("field2");
         ExecutableElement method = executableElementMock();
         TypeElement typeElement = typeElementMock(Arrays.asList(field1, field2, method));
         Set<String> expected = new HashSet<>(Arrays.asList("field1", "field2"));
@@ -76,7 +75,7 @@ class TypeDescriptorTest {
     void should_return_methods() {
         ExecutableElement method1 = executableElementMock("method1");
         ExecutableElement method2 = executableElementMock("method2");
-        VariableElement field = variableElementMock();
+        VariableElement field = ElementMocks.fieldElementMock();
         TypeElement typeElement = typeElementMock(Arrays.asList(method1, method2, field));
         Set<String> expected = new HashSet<>(Arrays.asList("method1", "method2"));
         TypeDescriptor descriptor = new TypeDescriptor(typeElement);

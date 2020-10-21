@@ -19,8 +19,12 @@ package dev.alexengrig.metter.processor;
 import com.google.auto.service.AutoService;
 import dev.alexengrig.metter.annotation.GetterSupplier;
 import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
+import dev.alexengrig.metter.element.descriptor.MethodDescriptor;
 import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
 import dev.alexengrig.metter.generator.GetterSupplierSourceGenerator;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Getter;
 
 import javax.annotation.processing.Processor;
 import java.util.Arrays;
@@ -31,7 +35,7 @@ import java.util.Set;
  * Processor of getter supplier.
  *
  * @author Grig Alex
- * @version 0.1.0
+ * @version 0.1.1
  * @see dev.alexengrig.metter.annotation.GetterSupplier
  * @since 0.1.0
  */
@@ -97,15 +101,19 @@ public class GetterSupplierProcessor extends BaseMethodSupplierProcessor<GetterS
     }
 
     /**
-     * Checks if a type descriptor has {@code lombok.Data} or {@code lombok.Getter} annotations.
+     * Checks if a type descriptor has {@link lombok.Data} or {@link lombok.Getter} (not private) annotations.
      *
      * @param type descriptor
-     * @return if a type descriptor has {@code lombok.Data} or {@code lombok.Getter} annotations
+     * @return if {@code descriptor} has {@link lombok.Data} or {@link lombok.Getter} (not private) annotations
      * @since 0.1.0
      */
-    @Override
     protected boolean hasAllMethods(TypeDescriptor type) {
-        return type.hasAnnotation("lombok.Data") || type.hasAnnotation("lombok.Getter");
+        if (type.hasAnnotation(Data.class)) {
+            return true;
+        } else if (type.hasAnnotation(Getter.class)) {
+            return type.getAnnotation(Getter.class).value() != AccessLevel.PRIVATE;
+        }
+        return false;
     }
 
     /**
@@ -125,15 +133,48 @@ public class GetterSupplierProcessor extends BaseMethodSupplierProcessor<GetterS
     }
 
     /**
-     * Checks if a field descriptor has {@code lombok.Getter} annotation.
+     * Checks if a field descriptor has {@link lombok.Getter} (not private) annotation
+     * or a type descriptor of field descriptor has {@link lombok.Getter} (not private) annotation
+     * or type descriptor of field descriptor has {@link lombok.Data}
+     * or type descriptor of field descriptor has a getter method.
      *
      * @param field descriptor
-     * @return if a field descriptor has {@code lombok.Getter} annotation
+     * @return if {@code descriptor} has {@link lombok.Getter} (not private) annotation
+     * or a type descriptor of {@code descriptor} has {@link lombok.Getter} (not private) annotation
+     * or type descriptor of {@code descriptor} has {@link lombok.Data}
+     * or type descriptor of {@code descriptor} has a getter method
      * @since 0.1.0
      */
     @Override
     protected boolean isTargetField(FieldDescriptor field) {
-        return field.hasAnnotation("lombok.Getter");
+        if (field.hasAnnotation(Getter.class)) {
+            Getter getter = field.getAnnotation(Getter.class);
+            return getter.value() != AccessLevel.PRIVATE;
+        }
+        TypeDescriptor type = field.getParent();
+        if (type.hasAnnotation(Getter.class)) {
+            Getter getter = type.getAnnotation(Getter.class);
+            return getter.value() != AccessLevel.PRIVATE;
+        }
+        return type.hasAnnotation(Data.class) || hasGetterMethod(field);
+    }
+
+    /**
+     * Checks if a type descriptor of a field descriptor has a getter method
+     *
+     * @param field descriptor
+     * @return if a type descriptor of {@code descriptor} has a getter method
+     * @since 0.1.1
+     */
+    protected boolean hasGetterMethod(FieldDescriptor field) {
+        String methodName = getMethodName(field);
+        TypeDescriptor type = field.getParent();
+        if (type.hasMethod(methodName)) {
+            Set<MethodDescriptor> methods = type.getMethods(methodName);
+            return methods.stream().anyMatch(method -> !method.isPrivate() && method.hasNoParameters()
+                    && field.getTypeName().equals(method.getTypeName()));
+        }
+        return false;
     }
 
     /**

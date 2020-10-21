@@ -26,14 +26,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 class FieldDescriptorTest {
     @Test
     void should_return_name() {
         String fieldName = "someField";
-        VariableElement variableElement = ElementMocks.variableElementMock(fieldName);
+        VariableElement variableElement = ElementMocks.fieldElementMock(fieldName);
         FieldDescriptor descriptor = new FieldDescriptor(variableElement);
         assertEquals(fieldName, descriptor.getName(), "Field name does not equal to 'someField'");
         descriptor.getName();
@@ -42,7 +46,7 @@ class FieldDescriptorTest {
 
     @Test
     void should_return_type() {
-        VariableElement variableElement = ElementMocks.variableElementMock(String.class);
+        VariableElement variableElement = ElementMocks.fieldElementMock(String.class);
         FieldDescriptor descriptor = new FieldDescriptor(variableElement);
         assertEquals("java.lang.String", descriptor.getTypeName(), "Field type does not equal to 'java.lang.String'");
         descriptor.getTypeName();
@@ -51,7 +55,7 @@ class FieldDescriptorTest {
 
     @Test
     void should_return_annotations() {
-        VariableElement variableElement = ElementMocks.variableElementMock(Deprecated.class, SuppressWarnings.class);
+        VariableElement variableElement = ElementMocks.fieldElementMock(Deprecated.class, SuppressWarnings.class);
         FieldDescriptor descriptor = new FieldDescriptor(variableElement);
         List<String> expected = Arrays.asList("java.lang.Deprecated", "java.lang.SuppressWarnings");
         List<String> actual = descriptor.getAnnotations().stream()
@@ -65,14 +69,26 @@ class FieldDescriptorTest {
 
     @Test
     void should_check_hasAnnotation() {
-        VariableElement variableElement = ElementMocks.variableElementMock(Deprecated.class, SuppressWarnings.class);
+        VariableElement variableElement = ElementMocks.fieldElementMock(Deprecated.class, SuppressWarnings.class);
         FieldDescriptor descriptor = new FieldDescriptor(variableElement);
-        assertTrue(descriptor.hasAnnotation("java.lang.Deprecated"),
+        assertTrue(descriptor.hasAnnotation(Deprecated.class),
                 "Field has no 'java.lang.Deprecated' annotation");
-        assertTrue(descriptor.hasAnnotation("java.lang.Deprecated"),
+        assertTrue(descriptor.hasAnnotation(Deprecated.class),
                 "Second time: Field has no 'java.lang.Deprecated' annotation");
-        assertTrue(descriptor.hasAnnotation("java.lang.SuppressWarnings"),
+        assertTrue(descriptor.hasAnnotation(SuppressWarnings.class),
                 "Field has no 'java.lang.SuppressWarnings' annotation");
-        verify(variableElement).getAnnotationMirrors();
+        verify(variableElement, times(3)).getAnnotation(any());
+    }
+
+    @Test
+    void should_return_annotation() {
+        VariableElement variableElement = ElementMocks.fieldElementMock(Deprecated.class, SuppressWarnings.class);
+        FieldDescriptor descriptor = new FieldDescriptor(variableElement);
+        assertNotNull(descriptor.getAnnotation(Deprecated.class),
+                "Field has no 'java.lang.Deprecated' annotation");
+        assertNotNull(descriptor.getAnnotation(SuppressWarnings.class),
+                "Field has no 'java.lang.SuppressWarnings' annotation");
+        assertNull(descriptor.getAnnotation(Override.class),
+                "Field has no 'java.lang.Override' annotation");
     }
 }

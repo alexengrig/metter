@@ -86,11 +86,6 @@ class BaseMethodSupplierProcessorTest {
             }
 
             @Override
-            protected boolean hasAllMethods(TypeDescriptor type) {
-                return false;
-            }
-
-            @Override
             protected String getMethodName(FieldDescriptor field) {
                 return "methodName";
             }
@@ -146,11 +141,6 @@ class BaseMethodSupplierProcessorTest {
             @Override
             protected Set<String> getExcludedFields(TypeDescriptor type) {
                 return null;
-            }
-
-            @Override
-            protected boolean hasAllMethods(TypeDescriptor type) {
-                return false;
             }
 
             @Override
@@ -232,7 +222,7 @@ class BaseMethodSupplierProcessorTest {
         Filer filer = mock(Filer.class);
         when(filer.createSourceFile(any())).thenReturn(file);
         when(environment.getFiler()).thenReturn(filer);
-        VariableElement variableElement = ElementMocks.variableElementMock("field", String.class);
+        VariableElement variableElement = ElementMocks.fieldElementMock("field", String.class);
         TypeElement typeElement = ElementMocks.typeElementMock(String.class);
         Mockito.<List<? extends Element>>when(typeElement.getEnclosedElements())
                 .thenReturn(Collections.singletonList(variableElement));
@@ -244,7 +234,7 @@ class BaseMethodSupplierProcessorTest {
     @Test
     void should_return_fields() {
         TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
-        FieldDescriptor field = new FieldDescriptor(ElementMocks.variableElementMock("field"));
+        FieldDescriptor field = new FieldDescriptor(ElementMocks.fieldElementMock("field"));
         when(typeDescriptor.getFields()).thenReturn(Collections.singleton(field));
         Set<FieldDescriptor> fields = processor.getFields(typeDescriptor);
         assertEquals(1, fields.size(), "Number of fields does not equal to 1");
@@ -254,10 +244,11 @@ class BaseMethodSupplierProcessorTest {
     @Test
     void should_return_includedFields() {
         TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
-        FieldDescriptor field = new FieldDescriptor(ElementMocks.variableElementMock("field"));
-        FieldDescriptor included = new FieldDescriptor(ElementMocks.variableElementMock("included"));
+        FieldDescriptor field = new FieldDescriptor(ElementMocks.fieldElementMock("field"));
+        FieldDescriptor included = new FieldDescriptor(ElementMocks.fieldElementMock("included"));
         when(typeDescriptor.getFields()).thenReturn(new HashSet<>(Arrays.asList(field, included)));
-        BaseMethodSupplierProcessor<Deprecated> processor = new BaseMethodSupplierProcessor<Deprecated>(Deprecated.class) {
+        BaseMethodSupplierProcessor<Deprecated> processor
+                = new BaseMethodSupplierProcessor<Deprecated>(Deprecated.class) {
             @Override
             protected MethodSupplierSourceGenerator getSourceGenerator() {
                 return null;
@@ -276,11 +267,6 @@ class BaseMethodSupplierProcessorTest {
             @Override
             protected Set<String> getExcludedFields(TypeDescriptor type) {
                 return null;
-            }
-
-            @Override
-            protected boolean hasAllMethods(TypeDescriptor type) {
-                return false;
             }
 
             @Override
@@ -306,8 +292,8 @@ class BaseMethodSupplierProcessorTest {
     @Test
     void should_return_notExcludedFields() {
         TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
-        FieldDescriptor field = new FieldDescriptor(ElementMocks.variableElementMock("field"));
-        FieldDescriptor excluded = new FieldDescriptor(ElementMocks.variableElementMock("excluded"));
+        FieldDescriptor field = new FieldDescriptor(ElementMocks.fieldElementMock("field"));
+        FieldDescriptor excluded = new FieldDescriptor(ElementMocks.fieldElementMock("excluded"));
         when(typeDescriptor.getFields()).thenReturn(new HashSet<>(Arrays.asList(field, excluded)));
         BaseMethodSupplierProcessor<Deprecated> processor
                 = new BaseMethodSupplierProcessor<Deprecated>(Deprecated.class) {
@@ -329,11 +315,6 @@ class BaseMethodSupplierProcessorTest {
             @Override
             protected Set<String> getExcludedFields(TypeDescriptor type) {
                 return Collections.singleton("excluded");
-            }
-
-            @Override
-            protected boolean hasAllMethods(TypeDescriptor type) {
-                return false;
             }
 
             @Override
