@@ -16,7 +16,7 @@
 
 package dev.alexengrig.metter.element.descriptor;
 
-import dev.alexengrig.metter.element.ElementMocks;
+import dev.alexengrig.metter.ElementMocks;
 import org.junit.jupiter.api.Test;
 
 import javax.lang.model.element.ExecutableElement;
@@ -27,9 +27,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static dev.alexengrig.metter.element.ElementMocks.executableElementMock;
-import static dev.alexengrig.metter.element.ElementMocks.typeElementMock;
-import static dev.alexengrig.metter.element.ElementMocks.variableElementMock;
+import static dev.alexengrig.metter.ElementMocks.executableElementMock;
+import static dev.alexengrig.metter.ElementMocks.typeElementMock;
+import static dev.alexengrig.metter.ElementMocks.variableElementMock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;

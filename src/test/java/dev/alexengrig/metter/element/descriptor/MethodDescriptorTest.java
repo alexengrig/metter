@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.lang.model.element.ExecutableElement;
 
-import static dev.alexengrig.metter.element.ElementMocks.executableElementMock;
+import static dev.alexengrig.metter.ElementMocks.executableElementMock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 

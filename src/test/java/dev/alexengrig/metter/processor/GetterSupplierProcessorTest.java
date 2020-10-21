@@ -16,8 +16,8 @@
 
 package dev.alexengrig.metter.processor;
 
+import dev.alexengrig.metter.ElementMocks;
 import dev.alexengrig.metter.annotation.GetterSupplier;
-import dev.alexengrig.metter.element.ElementMocks;
 import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
 import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
 import lombok.Data;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dev.alexengrig.metter.element;
+package dev.alexengrig.metter;
 
 import org.mockito.Mockito;
 

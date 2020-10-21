@@ -16,7 +16,7 @@
 
 package dev.alexengrig.metter.processor;
 
-import dev.alexengrig.metter.element.ElementMocks;
+import dev.alexengrig.metter.ElementMocks;
 import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
 import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
 import dev.alexengrig.metter.generator.MethodSupplierSourceGenerator;
@@ -104,6 +104,11 @@ class BaseMethodSupplierProcessorTest {
             protected String getMethodView(TypeDescriptor type, FieldDescriptor field, String methodName) {
                 return "methodView";
             }
+
+            @Override
+            protected String getMethod(FieldDescriptor field) {
+                return null;
+            }
         };
         sourceFile = mock(JavaFileObject.class);
     }
@@ -170,6 +175,11 @@ class BaseMethodSupplierProcessorTest {
 
             @Override
             protected String createSource(TypeDescriptor type, Map<String, String> field2Method, String sourceClassName) {
+                return null;
+            }
+
+            @Override
+            protected String getMethod(FieldDescriptor field) {
                 return null;
             }
         };
@@ -297,6 +307,11 @@ class BaseMethodSupplierProcessorTest {
             protected String getMethodView(TypeDescriptor type, FieldDescriptor field, String methodName) {
                 return null;
             }
+
+            @Override
+            protected String getMethod(FieldDescriptor field) {
+                return null;
+            }
         };
         Set<FieldDescriptor> fields = processor.getFields(typeDescriptor);
         assertEquals(1, fields.size(), "Number of fields does not equal to 1");
@@ -348,6 +363,11 @@ class BaseMethodSupplierProcessorTest {
 
             @Override
             protected String getMethodView(TypeDescriptor type, FieldDescriptor field, String methodName) {
+                return null;
+            }
+
+            @Override
+            protected String getMethod(FieldDescriptor field) {
                 return null;
             }
         };
