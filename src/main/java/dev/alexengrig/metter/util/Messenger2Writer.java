@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,16 +26,16 @@ import java.util.Arrays;
  * An adapter of {@link javax.annotation.processing.Messager} for {@link java.io.PrintWriter}.
  *
  * @author Grig Alex
- * @version 0.1.0
+ * @version 0.1.1
  * @since 0.1.0
  */
-public class Messager2Writer {
+public class Messenger2Writer {
     /**
-     * Messager.
+     * Messenger.
      *
      * @since 0.1.0
      */
-    protected final Messager messager;
+    protected final Messager messenger;
     /**
      * Error print writer.
      *
@@ -44,13 +44,13 @@ public class Messager2Writer {
     protected transient PrintWriter errorWriter;
 
     /**
-     * Constructs for a messager.
+     * Constructs for a messenger.
      *
-     * @param messager target messager for adapting
+     * @param messenger target messenger for adapting
      * @since 0.1.0
      */
-    public Messager2Writer(Messager messager) {
-        this.messager = messager;
+    public Messenger2Writer(Messager messenger) {
+        this.messenger = messenger;
     }
 
     /**
@@ -63,10 +63,10 @@ public class Messager2Writer {
         if (errorWriter == null) {
             errorWriter = new PrintWriter(new Writer() {
                 @Override
-                public void write(char[] cbuf, int off, int len) {
-                    String message = new String(Arrays.copyOfRange(cbuf, off, off + len));
+                public void write(char[] buffer, int off, int len) {
+                    String message = new String(Arrays.copyOfRange(buffer, off, off + len));
                     if (!message.equals("\r\n")) {
-                        messager.printMessage(Diagnostic.Kind.ERROR, message);
+                        messenger.printMessage(Diagnostic.Kind.ERROR, message);
                     }
                 }
 
