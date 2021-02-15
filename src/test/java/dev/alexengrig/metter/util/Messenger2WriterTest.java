@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,13 +25,13 @@ import java.io.PrintWriter;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-class Messager2WriterTest {
+class Messenger2WriterTest {
     Messager messager = mock(Messager.class);
-    Messager2Writer messager2Writer = new Messager2Writer(messager);
+    Messenger2Writer messenger2Writer = new Messenger2Writer(messager);
 
     @Test
     void should_print_errorMessage() {
-        PrintWriter writer = messager2Writer.errorWriter();
+        PrintWriter writer = messenger2Writer.errorWriter();
         writer.println("Error message");
         verify(messager).printMessage(Diagnostic.Kind.ERROR, "Error message");
         // coverage
