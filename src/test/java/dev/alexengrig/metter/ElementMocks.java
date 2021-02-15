@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public final class ElementMocks {
+
+    public static <A extends Annotation> Element annotatedElement(Class<A> type) {
+        Element element = mock(Element.class);
+        A annotation = annotationMock(type);
+        when(element.getAnnotation(type)).thenReturn(annotation);
+        return element;
+    }
+
     public static VariableElement fieldMock() {
         VariableElement mock = mock(VariableElement.class);
         when(mock.getKind()).thenReturn(ElementKind.FIELD);
@@ -215,6 +223,13 @@ public final class ElementMocks {
     public static Name nameMock(String name) {
         Name mock = mock(Name.class);
         when(mock.toString()).thenReturn(name);
+        return mock;
+    }
+
+    public static <A extends Annotation> A annotationMock(Class<A> type) {
+        A mock = mock(type);
+        //noinspection unchecked
+        when((Class<A>) mock.annotationType()).thenReturn(type);
         return mock;
     }
 }
