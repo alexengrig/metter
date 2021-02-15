@@ -32,6 +32,8 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -51,6 +53,11 @@ public final class ElementMocks {
     public static VariableElement fieldMock() {
         VariableElement mock = mock(VariableElement.class);
         when(mock.getKind()).thenReturn(ElementKind.FIELD);
+        when(mock.accept(any(), any())).then(invocationOnMock -> {
+            ElementVisitor<Object, Object> visitor = invocationOnMock.getArgument(0);
+            Object parameter = invocationOnMock.getArgument(1);
+            return visitor.visitVariable(mock, parameter);
+        });
         return mock;
     }
 
@@ -70,14 +77,16 @@ public final class ElementMocks {
 
     @SafeVarargs
     public static <A extends Annotation> VariableElement annotatedFieldMock(
-            Class<? extends A> annotationType,
-            Class<? extends A>... annotationTypes) {
+            Class<? extends A> type,
+            Class<? extends A>... types) {
         VariableElement mock = fieldMock();
-        List<AnnotationMirror> annotationMirrors =
-                Stream.concat(Stream.of(annotationType), Arrays.stream(annotationTypes))
-                        .map(ElementMocks::annotationMirrorMock)
-                        .collect(Collectors.toList());
-        Mockito.<List<? extends AnnotationMirror>>when(mock.getAnnotationMirrors()).thenReturn(annotationMirrors);
+        Map<Class<? extends A>, ? extends A> annotationByType = Stream.concat(Stream.of(type), Arrays.stream(types))
+                .collect(Collectors.toMap(Function.identity(), ElementMocks::annotationMock));
+        when(mock.getAnnotation(any())).then(inv -> {
+            @SuppressWarnings("unchecked")
+            Class<A> annotationType = (Class<A>) inv.getArgument(0, Class.class);
+            return annotationByType.get(annotationType);
+        });
         return mock;
     }
 
@@ -226,10 +235,10 @@ public final class ElementMocks {
         return mock;
     }
 
-    public static <A extends Annotation> A annotationMock(Class<A> type) {
+    public static <A extends Annotation> A annotationMock(Class<? extends A> type) {
         A mock = mock(type);
         //noinspection unchecked
-        when((Class<A>) mock.annotationType()).thenReturn(type);
+        Mockito.<Class<? extends A>>when((Class<? extends A>) mock.annotationType()).thenReturn(type);
         return mock;
     }
 }

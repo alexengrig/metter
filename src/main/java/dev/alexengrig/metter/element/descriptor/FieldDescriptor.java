@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,6 @@ import dev.alexengrig.metter.element.collector.FieldCollector;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,43 +32,13 @@ import java.util.stream.Collectors;
  * @version 0.1.1
  * @since 0.1.0
  */
-public class FieldDescriptor {
-    /**
-     * Variable element.
-     *
-     * @since 0.1.0
-     */
-    protected final VariableElement variableElement;
+public class FieldDescriptor extends ElementDescriptor<VariableElement> {
     /**
      * Parent - type descriptor.
      *
      * @since 0.1.1
      */
     protected transient TypeDescriptor parent;
-    /**
-     * Name.
-     *
-     * @since 0.1.0
-     */
-    protected transient String name;
-    /**
-     * Type name.
-     *
-     * @since 0.1.0
-     */
-    protected transient String typeName;
-    /**
-     * Set of annotation descriptors.
-     *
-     * @since 0.1.0
-     */
-    protected transient Set<AnnotationDescriptor> annotations;
-    /**
-     * Map of annotation qualified name to mark about presence.
-     *
-     * @since 0.1.0
-     */
-    protected transient Map<String, Boolean> hasAnnotationByQualifiedNameMap;
 
     /**
      * Constructs with a variable element.
@@ -79,11 +47,25 @@ public class FieldDescriptor {
      * @since 0.1.0
      */
     public FieldDescriptor(VariableElement variableElement) {
+        super(requireValid(variableElement));
+    }
+
+    /**
+     * Checks that a variable element is valid.
+     *
+     * @param variableElement variable element
+     * @return {@code variableElement} is valid
+     * @throws NullPointerException     if {@code variableElement} is {@code null}
+     * @throws IllegalArgumentException if {@code variableElement} kind is not
+     *                                  {@link javax.lang.model.element.ElementKind#FIELD}
+     * @since 0.1.1
+     */
+    protected static VariableElement requireValid(VariableElement variableElement) {
         Objects.requireNonNull(variableElement, "Variable element must not be null");
         if (variableElement.getKind() != ElementKind.FIELD) {
             throw new IllegalArgumentException("Variable element must be field kind");
         }
-        this.variableElement = variableElement;
+        return variableElement;
     }
 
     /**
@@ -108,7 +90,7 @@ public class FieldDescriptor {
      */
     public TypeDescriptor getParent() {
         if (parent == null) {
-            parent = new TypeDescriptor((TypeElement) variableElement.getEnclosingElement());
+            parent = new TypeDescriptor((TypeElement) element.getEnclosingElement());
         }
         return parent;
     }
@@ -120,10 +102,7 @@ public class FieldDescriptor {
      * @since 0.1.0
      */
     public String getName() {
-        if (name == null) {
-            name = variableElement.getSimpleName().toString();
-        }
-        return name;
+        return element.getSimpleName().toString();
     }
 
     /**
@@ -133,42 +112,6 @@ public class FieldDescriptor {
      * @since 0.1.0
      */
     public String getTypeName() {
-        if (typeName == null) {
-            typeName = variableElement.asType().toString();
-        }
-        return typeName;
-    }
-
-    /**
-     * Returns a set of annotation descriptors.
-     *
-     * @return set of annotation descriptors
-     * @since 0.1.0
-     */
-    public Set<AnnotationDescriptor> getAnnotations() {
-        if (annotations == null) {
-            annotations = AnnotationDescriptor.of(variableElement);
-        }
-        return annotations;
-    }
-
-    /**
-     * Check if has a annotation by an qualified name.
-     *
-     * @param annotationQualifiedName annotation qualified name
-     * @return if has a annotation by {@code annotationQualifiedName}
-     * @since 0.1.0
-     */
-    public boolean hasAnnotation(String annotationQualifiedName) {
-        if (hasAnnotationByQualifiedNameMap == null) {
-            hasAnnotationByQualifiedNameMap = new HashMap<>();
-        } else if (hasAnnotationByQualifiedNameMap.containsKey(annotationQualifiedName)) {
-            return hasAnnotationByQualifiedNameMap.get(annotationQualifiedName);
-        }
-        boolean hasAnnotation = getAnnotations().stream()
-                .map(AnnotationDescriptor::getQualifiedName)
-                .anyMatch(annotationQualifiedName::equals);
-        hasAnnotationByQualifiedNameMap.put(annotationQualifiedName, hasAnnotation);
-        return hasAnnotation;
+        return element.asType().toString();
     }
 }
