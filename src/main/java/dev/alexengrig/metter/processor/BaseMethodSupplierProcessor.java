@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  *
  * @param <A> type of annotation
  * @author Grig Alex
- * @version 0.1.0
+ * @version 0.1.1
  * @since 0.1.0
  */
 public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends BaseProcessor<A, TypeElement> {
@@ -160,12 +160,9 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
     protected Map<String, String> createField2MethodMap(TypeDescriptor type) {
         Map<String, String> field2Method = new HashMap<>();
         Set<FieldDescriptor> fields = getFields(type);
-        boolean hasAllMethods = hasAllMethods(type);
         for (FieldDescriptor field : fields) {
-            String fieldName = field.getName();
-            String methodName = getMethodName(field);
-            if (isTargetField(field) || hasAllMethods || type.hasMethod(methodName)) {
-                field2Method.put(fieldName, getMethodView(type, field, methodName));
+            if (isTargetField(field)) {
+                field2Method.put(field.getName(), getMethod(field));
             }
         }
         return field2Method;
@@ -211,24 +208,6 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
     protected abstract Set<String> getExcludedFields(TypeDescriptor type);
 
     /**
-     * Checks if a type descriptor has all target methods.
-     *
-     * @param type descriptor
-     * @return if {@code type} has all target methods
-     * @since 0.1.0
-     */
-    protected abstract boolean hasAllMethods(TypeDescriptor type);
-
-    /**
-     * Returns a method name from a field descriptor.
-     *
-     * @param field descriptor
-     * @return method name from {@code field}
-     * @since 0.1.0
-     */
-    protected abstract String getMethodName(FieldDescriptor field);
-
-    /**
      * Checks if a field descriptor is target field.
      *
      * @param field descriptor
@@ -238,15 +217,13 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
     protected abstract boolean isTargetField(FieldDescriptor field);
 
     /**
-     * Returns a method view from a type descriptor, a field descriptor and a method name.
+     * Returns a method for a field descriptor.
      *
-     * @param type       descriptor
-     * @param field      descriptor
-     * @param methodName method name
-     * @return method view from {@code type}, {@code field} and {@code methodName}
-     * @since 0.1.0
+     * @param field descriptor
+     * @return method for {@code field}
+     * @since 0.1.1
      */
-    protected abstract String getMethodView(TypeDescriptor type, FieldDescriptor field, String methodName);
+    protected abstract String getMethod(FieldDescriptor field);
 
     /**
      * Creates a source from a type descriptor, a map of field to method and a source class name.

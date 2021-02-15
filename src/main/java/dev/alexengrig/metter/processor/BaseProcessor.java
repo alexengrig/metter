@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package dev.alexengrig.metter.processor;
 
-import dev.alexengrig.metter.util.Messager2Writer;
+import dev.alexengrig.metter.util.Messenger2Writer;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
@@ -46,11 +46,11 @@ public abstract class BaseProcessor<A extends Annotation, E extends Element> ext
      */
     protected final Class<? extends A> annotationClass;
     /**
-     * Adapter of messager.
+     * Adapter of messenger.
      *
      * @since 0.1.0
      */
-    protected transient Messager2Writer messager;
+    protected transient Messenger2Writer messenger;
 
     /**
      * Constructs with an annotation class.
@@ -108,20 +108,20 @@ public abstract class BaseProcessor<A extends Annotation, E extends Element> ext
      */
     protected void error(String message, Throwable throwable) {
         processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, message);
-        throwable.printStackTrace(prepareMessager().errorWriter());
+        throwable.printStackTrace(prepareMessenger().errorWriter());
     }
 
     /**
-     * Prepares adapter of messager.
+     * Prepares adapter of messenger.
      *
-     * @return adapter of messager
+     * @return adapter of messenger
      * @since 0.1.0
      */
-    protected Messager2Writer prepareMessager() {
-        if (messager == null) {
-            messager = new Messager2Writer(processingEnv.getMessager());
+    protected Messenger2Writer prepareMessenger() {
+        if (messenger == null) {
+            messenger = new Messenger2Writer(processingEnv.getMessager());
         }
-        return messager;
+        return messenger;
     }
 
     /**
