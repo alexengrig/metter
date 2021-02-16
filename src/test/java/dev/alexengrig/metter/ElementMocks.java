@@ -29,8 +29,8 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -75,6 +75,26 @@ public final class ElementMocks {
         return mock;
     }
 
+    public static ExecutableElement notPrivateMethodMock() {
+        ExecutableElement mock = mock(ExecutableElement.class);
+        when(mock.getModifiers()).thenReturn(Collections.emptySet());
+        return mock;
+    }
+
+    public static ExecutableElement noParametersMethodMock() {
+        ExecutableElement mock = mock(ExecutableElement.class);
+        when(mock.getParameters()).thenReturn(Collections.emptyList());
+        return mock;
+    }
+
+    public static ExecutableElement parameterizedMethodMock(Class<?> type) {
+        ExecutableElement mock = mock(ExecutableElement.class);
+        VariableElement variableElement = variableElementMock(type);
+        Mockito.<List<? extends VariableElement>>when(mock.getParameters())
+                .thenReturn(Collections.singletonList(variableElement));
+        return mock;
+    }
+
     @SafeVarargs
     public static <A extends Annotation> VariableElement annotatedFieldMock(
             Class<? extends A> type,
@@ -104,6 +124,13 @@ public final class ElementMocks {
         ExecutableElement mock = executableElementMock();
         Name name = nameMock(methodName);
         when(mock.getSimpleName()).thenReturn(name);
+        return mock;
+    }
+
+    public static ExecutableElement executableElementMock(Class<?> returnType) {
+        ExecutableElement mock = executableElementMock();
+        TypeMirror type = typeMirrorMock(returnType);
+        when(mock.getReturnType()).thenReturn(type);
         return mock;
     }
 
@@ -175,32 +202,6 @@ public final class ElementMocks {
         when(mock.getQualifiedName()).thenReturn(qualifiedName);
         Name simpleName = nameMock(type.getSimpleName());
         when(mock.getSimpleName()).thenReturn(simpleName);
-        return mock;
-    }
-
-
-    @SafeVarargs
-    public static <T extends Annotation> TypeElement typeElementMockWithAnnotations(
-            Class<? extends T> annotationType,
-            Class<? extends T>... annotationTypes) {
-        TypeElement mock = mock(TypeElement.class);
-        List<Class<? extends T>> annotationList = new ArrayList<Class<? extends T>>(1 + annotationTypes.length) {{
-            add(annotationType);
-            addAll(Arrays.asList(annotationTypes));
-        }};
-        List<AnnotationMirror> annotationMirrors = annotationList.stream()
-                .map(ElementMocks::annotationMirrorMock)
-                .collect(Collectors.toList());
-        Mockito.<List<? extends AnnotationMirror>>when(mock.getAnnotationMirrors()).thenReturn(annotationMirrors);
-        when(mock.getAnnotation(any())).then(invocation -> {
-            Class<? extends Annotation> type = invocation.getArgument(0);
-            if (annotationList.contains(type)) {
-                Annotation annotationMock = mock(type);
-                Mockito.<Class<? extends Annotation>>when(annotationMock.annotationType()).thenReturn(type);
-                return annotationMock;
-            }
-            return null;
-        });
         return mock;
     }
 
