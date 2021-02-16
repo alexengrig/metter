@@ -18,10 +18,25 @@ package dev.alexengrig.metter.util;
 
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class StringsTest {
+    @Test
+    void should_throws_on_constructor() throws NoSuchMethodException {
+        Constructor<Strings> constructor = Strings.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        InvocationTargetException exception = assertThrows(InvocationTargetException.class, constructor::newInstance);
+        Throwable cause = exception.getCause();
+        assertTrue(cause instanceof IllegalAccessException, "Exception instance not IllegalAccessException");
+        assertEquals("Strings is utility class", cause.getMessage(), "Exception message is incorrect");
+    }
+
     @Test
     void should_capitalize() {
         assertNull(Strings.capitalize(null));
