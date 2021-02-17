@@ -27,4 +27,8 @@ public class MetterException extends RuntimeException {
     public MetterException(String message) {
         super(message);
     }
+
+    public MetterException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

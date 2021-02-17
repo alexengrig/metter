@@ -75,6 +75,15 @@ public final class ElementMocks {
         return mock;
     }
 
+    public static VariableElement fieldMock(String fieldName, Class<?> fieldType) {
+        VariableElement mock = fieldMock();
+        Name name = nameMock(fieldName);
+        when(mock.getSimpleName()).thenReturn(name);
+        TypeMirror type = typeMirrorMock(fieldType);
+        when(mock.asType()).thenReturn(type);
+        return mock;
+    }
+
     public static ExecutableElement notPrivateMethodMock() {
         ExecutableElement mock = mock(ExecutableElement.class);
         when(mock.getModifiers()).thenReturn(Collections.emptySet());

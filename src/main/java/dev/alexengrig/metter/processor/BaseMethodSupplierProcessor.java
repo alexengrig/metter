@@ -18,6 +18,7 @@ package dev.alexengrig.metter.processor;
 
 import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
 import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
+import dev.alexengrig.metter.exception.MetterException;
 import dev.alexengrig.metter.generator.MethodSupplierSourceGenerator;
 
 import javax.lang.model.element.TypeElement;
@@ -146,7 +147,7 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
         try {
             return processingEnv.getFiler().createSourceFile(className);
         } catch (IOException e) {
-            throw new IllegalArgumentException("Exception of source file creation for:" + className, e);
+            throw new MetterException("Exception of source file creation for: " + className, e);
         }
     }
 
