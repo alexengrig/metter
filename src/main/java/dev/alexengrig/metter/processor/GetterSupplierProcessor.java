@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,14 @@ package dev.alexengrig.metter.processor;
 import com.google.auto.service.AutoService;
 import dev.alexengrig.metter.annotation.GetterSupplier;
 import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
+import dev.alexengrig.metter.element.descriptor.MethodDescriptor;
 import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
+import dev.alexengrig.metter.exception.MetterException;
 import dev.alexengrig.metter.generator.GetterSupplierSourceGenerator;
+import dev.alexengrig.metter.util.Strings;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Getter;
 
 import javax.annotation.processing.Processor;
 import java.util.Arrays;
@@ -31,7 +37,7 @@ import java.util.Set;
  * Processor of getter supplier.
  *
  * @author Grig Alex
- * @version 0.1.0
+ * @version 0.1.1
  * @see dev.alexengrig.metter.annotation.GetterSupplier
  * @since 0.1.0
  */
@@ -66,8 +72,9 @@ public class GetterSupplierProcessor extends BaseMethodSupplierProcessor<GetterS
      */
     @Override
     protected String getCustomClassName(TypeDescriptor type) {
-        GetterSupplier annotation = type.getAnnotation(annotationClass);
-        return annotation.value();
+        return type.getAnnotation(annotationClass)
+                .map(GetterSupplier::value)
+                .orElseThrow(() -> new MetterException("Type has no annotation: " + type + ", " + annotationClass));
     }
 
     /**
@@ -79,8 +86,11 @@ public class GetterSupplierProcessor extends BaseMethodSupplierProcessor<GetterS
      */
     @Override
     protected Set<String> getIncludedFields(TypeDescriptor type) {
-        GetterSupplier annotation = type.getAnnotation(annotationClass);
-        return new HashSet<>(Arrays.asList(annotation.includedFields()));
+        return type.getAnnotation(annotationClass)
+                .map(GetterSupplier::includedFields)
+                .map(Arrays::asList)
+                .map(HashSet::new)
+                .orElseThrow(() -> new MetterException("Type " + type + " has no annotation: " + annotationClass));
     }
 
     /**
@@ -92,64 +102,84 @@ public class GetterSupplierProcessor extends BaseMethodSupplierProcessor<GetterS
      */
     @Override
     protected Set<String> getExcludedFields(TypeDescriptor type) {
-        GetterSupplier annotation = type.getAnnotation(annotationClass);
-        return new HashSet<>(Arrays.asList(annotation.excludedFields()));
+        return type.getAnnotation(annotationClass)
+                .map(GetterSupplier::excludedFields)
+                .map(Arrays::asList)
+                .map(HashSet::new)
+                .orElseThrow(() -> new MetterException("Type " + type + " has no annotation: " + annotationClass));
     }
 
     /**
-     * Checks if a type descriptor has {@code lombok.Data} or {@code lombok.Getter} annotations.
-     *
-     * @param type descriptor
-     * @return if a type descriptor has {@code lombok.Data} or {@code lombok.Getter} annotations
-     * @since 0.1.0
-     */
-    @Override
-    protected boolean hasAllMethods(TypeDescriptor type) {
-        return type.hasAnnotation("lombok.Data") || type.hasAnnotation("lombok.Getter");
-    }
-
-    /**
-     * Returns a method name from a field descriptor:
-     * for {@code boolean} type - {@code is} prefix name,
-     * for other types - {@code get} prefix name.
+     * Checks if a field descriptor has {@link lombok.Getter} (not private) annotation
+     * or a type descriptor of field descriptor has {@link lombok.Getter} (not private) annotation
+     * or type descriptor of field descriptor has {@link lombok.Data}
+     * or type descriptor of field descriptor has a getter method.
      *
      * @param field descriptor
-     * @return method name from {@code field}
-     * @since 0.1.0
-     */
-    @Override
-    protected String getMethodName(FieldDescriptor field) {
-        String methodNamePrefix = "boolean".equals(field.getTypeName()) ? "is" : "get";
-        String name = field.getName();
-        return methodNamePrefix + name.substring(0, 1).toUpperCase() + name.substring(1);
-    }
-
-    /**
-     * Checks if a field descriptor has {@code lombok.Getter} annotation.
-     *
-     * @param field descriptor
-     * @return if a field descriptor has {@code lombok.Getter} annotation
-     * @since 0.1.0
+     * @return if {@code descriptor} has {@link lombok.Getter} (not private) annotation
+     * or a type descriptor of {@code descriptor} has {@link lombok.Getter} (not private) annotation
+     * or type descriptor of {@code descriptor} has {@link lombok.Data}
+     * or type descriptor of {@code descriptor} has a getter method
+     * @since 0.1.1
      */
     @Override
     protected boolean isTargetField(FieldDescriptor field) {
-        return field.hasAnnotation("lombok.Getter");
+        if (field.hasAnnotation(Getter.class)) {
+            return !field.getAnnotation(Getter.class)
+                    .map(Getter::value)
+                    .filter(AccessLevel.PRIVATE::equals)
+                    .isPresent();
+        }
+        TypeDescriptor type = field.getParent();
+        if (type.hasAnnotation(Getter.class)) {
+            return !type.getAnnotation(Getter.class)
+                    .map(Getter::value)
+                    .filter(AccessLevel.PRIVATE::equals)
+                    .isPresent();
+        }
+        return type.hasAnnotation(Data.class) || hasGetterMethod(field);
     }
 
     /**
-     * Returns a method view from an qualified name of a type descriptor and a method name:
-     * <pre>{@code
-     * QualifiedName::methodName
-     * }</pre>
+     * Checks if a type descriptor of a field descriptor has a getter method
      *
-     * @param type       descriptor
-     * @param field      descriptor
-     * @param methodName method name
-     * @return method view from an qualified name of {@code type} and {@code methodName}
-     * @since 0.1.0
+     * @param field descriptor
+     * @return if a type descriptor of {@code descriptor} has a getter method
+     * @since 0.1.1
+     */
+    protected boolean hasGetterMethod(FieldDescriptor field) {
+        String getter = getGetterMethod(field);
+        TypeDescriptor type = field.getParent();
+        if (type.hasMethod(getter)) {
+            Set<MethodDescriptor> methods = type.getMethods(getter);
+            return methods.stream().anyMatch(method -> method.isNotPrivate() && method.hasNoParameters()
+                    && field.getTypeName().equals(method.getTypeName()));
+        }
+        return false;
+    }
+
+    /**
+     * Returns a getter-method for a field descriptor.
+     *
+     * @param field descriptor
+     * @return getter-method for {@code field}
+     * @since 0.1.1
+     */
+    protected String getGetterMethod(FieldDescriptor field) {
+        String methodNamePrefix = "boolean".equals(field.getTypeName()) ? "is" : "get";
+        String name = field.getName();
+        return methodNamePrefix + Strings.capitalize(name);
+    }
+
+    /**
+     * Returns a getter for a field descriptor.
+     *
+     * @param field descriptor
+     * @return getter for {@code field}
+     * @since 0.1.1
      */
     @Override
-    protected String getMethodView(TypeDescriptor type, FieldDescriptor field, String methodName) {
-        return type.getQualifiedName().concat("::").concat(methodName);
+    protected String getMethod(FieldDescriptor field) {
+        return field.getParent().getQualifiedName() + "::" + getGetterMethod(field);
     }
 }
