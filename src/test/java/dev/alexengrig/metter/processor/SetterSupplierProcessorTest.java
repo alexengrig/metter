@@ -20,6 +20,9 @@ import dev.alexengrig.metter.annotation.SetterSupplier;
 import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
 import dev.alexengrig.metter.element.descriptor.MethodDescriptor;
 import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Setter;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -29,6 +32,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -113,5 +117,113 @@ class SetterSupplierProcessorTest {
         boolean hasSetterMethod = PROCESSOR.hasSetterMethod(fieldDescriptor);
 
         assertTrue(hasSetterMethod, "Has no setter method");
+    }
+
+    @Test
+    void should_check_hasSetterMethod_without_setterMethod() {
+        TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
+        when(typeDescriptor.hasMethod("setField")).thenReturn(false);
+        FieldDescriptor fieldDescriptor = mock(FieldDescriptor.class);
+        when(fieldDescriptor.getName()).thenReturn("field");
+        when(fieldDescriptor.getParent()).thenReturn(typeDescriptor);
+
+        boolean hasSetterMethod = PROCESSOR.hasSetterMethod(fieldDescriptor);
+
+        assertFalse(hasSetterMethod, "Has setter method");
+    }
+
+    @Test
+    void should_check_isTargetField_for_notPrivateLombokSetterOnField() {
+        Setter setter = mock(Setter.class);
+        when(setter.value()).thenReturn(AccessLevel.PUBLIC);
+        FieldDescriptor fieldDescriptor = mock(FieldDescriptor.class);
+        when(fieldDescriptor.hasAnnotation(Setter.class)).thenReturn(true);
+        when(fieldDescriptor.getAnnotation(Setter.class)).thenReturn(Optional.of(setter));
+
+        boolean isTargetField = PROCESSOR.isTargetField(fieldDescriptor);
+
+        assertTrue(isTargetField, "Field does not have not-private Lombok Setter annotation");
+    }
+
+    @Test
+    void should_check_isTargetField_for_privateLombokSetterOnField() {
+        Setter setter = mock(Setter.class);
+        when(setter.value()).thenReturn(AccessLevel.PRIVATE);
+        FieldDescriptor fieldDescriptor = mock(FieldDescriptor.class);
+        when(fieldDescriptor.hasAnnotation(Setter.class)).thenReturn(true);
+        when(fieldDescriptor.getAnnotation(Setter.class)).thenReturn(Optional.of(setter));
+
+        boolean isTargetField = PROCESSOR.isTargetField(fieldDescriptor);
+
+        assertFalse(isTargetField, "Field does not have private Lombok Setter annotation");
+    }
+
+    @Test
+    void should_check_isTargetField_for_notPrivateLombokSetterOnClass() {
+        Setter setter = mock(Setter.class);
+        when(setter.value()).thenReturn(AccessLevel.PUBLIC);
+        TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
+        when(typeDescriptor.hasAnnotation(Setter.class)).thenReturn(true);
+        when(typeDescriptor.getAnnotation(Setter.class)).thenReturn(Optional.of(setter));
+        FieldDescriptor fieldDescriptor = mock(FieldDescriptor.class);
+        when(fieldDescriptor.hasAnnotation(Setter.class)).thenReturn(false);
+        when(fieldDescriptor.getParent()).thenReturn(typeDescriptor);
+
+        boolean isTargetField = PROCESSOR.isTargetField(fieldDescriptor);
+
+        assertTrue(isTargetField, "Class does not have not-private Lombok Setter annotation");
+    }
+
+    @Test
+    void should_check_isTargetField_for_privateLombokSetterOnClass() {
+        Setter setter = mock(Setter.class);
+        when(setter.value()).thenReturn(AccessLevel.PRIVATE);
+        TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
+        when(typeDescriptor.hasAnnotation(Setter.class)).thenReturn(true);
+        when(typeDescriptor.getAnnotation(Setter.class)).thenReturn(Optional.of(setter));
+        FieldDescriptor fieldDescriptor = mock(FieldDescriptor.class);
+        when(fieldDescriptor.hasAnnotation(Setter.class)).thenReturn(false);
+        when(fieldDescriptor.getParent()).thenReturn(typeDescriptor);
+
+        boolean isTargetField = PROCESSOR.isTargetField(fieldDescriptor);
+
+        assertFalse(isTargetField, "Class does not have private Lombok Setter annotation");
+    }
+
+    @Test
+    void should_check_isTargetField_for_lombokDataOnClass() {
+        TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
+        when(typeDescriptor.hasAnnotation(Setter.class)).thenReturn(false);
+        when(typeDescriptor.hasAnnotation(Data.class)).thenReturn(true);
+        FieldDescriptor fieldDescriptor = mock(FieldDescriptor.class);
+        when(fieldDescriptor.hasAnnotation(Setter.class)).thenReturn(false);
+        when(fieldDescriptor.getParent()).thenReturn(typeDescriptor);
+
+        boolean isTargetField = PROCESSOR.isTargetField(fieldDescriptor);
+
+        assertTrue(isTargetField, "Class does not have Lombok Data annotation");
+    }
+
+    @Test
+    void should_check_isTargetField_for_setterMethod() {
+        MethodDescriptor methodDescriptor = mock(MethodDescriptor.class);
+        when(methodDescriptor.isNotPrivate()).thenReturn(true);
+        when(methodDescriptor.hasNoParameters()).thenReturn(true);
+        when(methodDescriptor.getTypeName()).thenReturn("void");
+        when(methodDescriptor.hasOnlyOneParameter("boolean")).thenReturn(true);
+        TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
+        when(typeDescriptor.hasAnnotation(Setter.class)).thenReturn(false);
+        when(typeDescriptor.hasAnnotation(Data.class)).thenReturn(false);
+        when(typeDescriptor.hasMethod("setTest")).thenReturn(true);
+        when(typeDescriptor.getMethods("setTest")).thenReturn(Collections.singleton(methodDescriptor));
+        FieldDescriptor fieldDescriptor = mock(FieldDescriptor.class);
+        when(fieldDescriptor.getName()).thenReturn("test");
+        when(fieldDescriptor.getParent()).thenReturn(typeDescriptor);
+        when(fieldDescriptor.hasAnnotation(Setter.class)).thenReturn(false);
+        when(fieldDescriptor.getTypeName()).thenReturn("boolean");
+
+        boolean isTargetField = PROCESSOR.isTargetField(fieldDescriptor);
+
+        assertTrue(isTargetField, "Class does not have setter-method");
     }
 }
