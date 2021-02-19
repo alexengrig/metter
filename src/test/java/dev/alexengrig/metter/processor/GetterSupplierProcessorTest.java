@@ -26,7 +26,6 @@ import lombok.Data;
 import lombok.Getter;
 import org.junit.jupiter.api.Test;
 
-import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import java.lang.annotation.Annotation;
@@ -42,13 +41,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class GetterSupplierProcessorTest {
-    static final GetterSupplierProcessor processor;
-    static final ProcessingEnvironment environment;
-
-    static {
-        processor = new GetterSupplierProcessor();
-        processor.init(environment = mock(ProcessingEnvironment.class));
-    }
+    static final GetterSupplierProcessor PROCESSOR = new GetterSupplierProcessor();
 
     @Test
     void should_return_customClassName() {
@@ -76,7 +69,7 @@ class GetterSupplierProcessorTest {
         };
         when(typeElement.getAnnotation(GetterSupplier.class)).thenReturn(annotation);
         TypeDescriptor typeDescriptor = new TypeDescriptor(typeElement);
-        assertEquals("MyCustomClassName", processor.getCustomClassName(typeDescriptor),
+        assertEquals("MyCustomClassName", PROCESSOR.getCustomClassName(typeDescriptor),
                 "Custom class name does not equal to 'MyCustomClassName'");
     }
 
@@ -89,7 +82,7 @@ class GetterSupplierProcessorTest {
         when(typeElement.getAnnotation(GetterSupplier.class)).thenReturn(annotation);
         TypeDescriptor typeDescriptor = new TypeDescriptor(typeElement);
         HashSet<String> expected = new HashSet<>(Arrays.asList("includedField1", "includedField2"));
-        assertEquals(expected, processor.getIncludedFields(typeDescriptor),
+        assertEquals(expected, PROCESSOR.getIncludedFields(typeDescriptor),
                 "Included fields not equal to 'includedField1' and 'includedField2'");
     }
 
@@ -102,20 +95,48 @@ class GetterSupplierProcessorTest {
         when(typeElement.getAnnotation(GetterSupplier.class)).thenReturn(annotation);
         TypeDescriptor typeDescriptor = new TypeDescriptor(typeElement);
         HashSet<String> expected = new HashSet<>(Arrays.asList("excludedField1", "excludedField2"));
-        assertEquals(expected, processor.getExcludedFields(typeDescriptor),
+        assertEquals(expected, PROCESSOR.getExcludedFields(typeDescriptor),
                 "Excluded fields not equal to 'excludedField1' and 'excludedField2'");
     }
 
     @Test
-    void should_return_methodName() {
+    void should_return_getterMethod() {
         VariableElement booleanField = ElementMocks.fieldMock("booleanField", boolean.class);
         FieldDescriptor booleanFieldDescriptor = new FieldDescriptor(booleanField);
-        assertEquals("isBooleanField", processor.getGetterMethod(booleanFieldDescriptor),
+        assertEquals("isBooleanField", PROCESSOR.getGetterMethod(booleanFieldDescriptor),
                 "Method name does not equal to 'isBooleanField'");
         VariableElement stringField = ElementMocks.fieldMock("stringField", String.class);
         FieldDescriptor stringFieldDescriptor = new FieldDescriptor(stringField);
-        assertEquals("getStringField", processor.getGetterMethod(stringFieldDescriptor),
+        assertEquals("getStringField", PROCESSOR.getGetterMethod(stringFieldDescriptor),
                 "Method name does not equal to 'getStringField'");
+    }
+
+    @Test
+    void should_return_method() {
+        TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
+        when(typeDescriptor.getQualifiedName()).thenReturn("java.lang.String");
+        FieldDescriptor fieldDescriptor = mock(FieldDescriptor.class);
+        when(fieldDescriptor.getTypeName()).thenReturn("boolean");
+        when(fieldDescriptor.getName()).thenReturn("field");
+        when(fieldDescriptor.getParent()).thenReturn(typeDescriptor);
+
+        String method = PROCESSOR.getMethod(fieldDescriptor);
+
+        assertEquals("java.lang.String::isField", method, "Method is incorrect");
+    }
+
+    @Test
+    void should_check_hasGetterMethod_without_getterMethod() {
+        TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
+        when(typeDescriptor.hasMethod("isField")).thenReturn(false);
+        FieldDescriptor fieldDescriptor = mock(FieldDescriptor.class);
+        when(fieldDescriptor.getTypeName()).thenReturn("boolean");
+        when(fieldDescriptor.getName()).thenReturn("field");
+        when(fieldDescriptor.getParent()).thenReturn(typeDescriptor);
+
+        boolean hasGetterMethod = PROCESSOR.hasGetterMethod(fieldDescriptor);
+
+        assertFalse(hasGetterMethod, "Class has getter-method");
     }
 
     @Test
@@ -126,7 +147,7 @@ class GetterSupplierProcessorTest {
         when(fieldDescriptor.hasAnnotation(Getter.class)).thenReturn(true);
         when(fieldDescriptor.getAnnotation(Getter.class)).thenReturn(Optional.of(getter));
 
-        boolean isTargetField = processor.isTargetField(fieldDescriptor);
+        boolean isTargetField = PROCESSOR.isTargetField(fieldDescriptor);
 
         assertTrue(isTargetField, "Field does not have not-private Lombok Getter annotation");
     }
@@ -139,7 +160,7 @@ class GetterSupplierProcessorTest {
         when(fieldDescriptor.hasAnnotation(Getter.class)).thenReturn(true);
         when(fieldDescriptor.getAnnotation(Getter.class)).thenReturn(Optional.of(getter));
 
-        boolean isTargetField = processor.isTargetField(fieldDescriptor);
+        boolean isTargetField = PROCESSOR.isTargetField(fieldDescriptor);
 
         assertFalse(isTargetField, "Field does not have private Lombok Getter annotation");
     }
@@ -155,7 +176,7 @@ class GetterSupplierProcessorTest {
         when(fieldDescriptor.hasAnnotation(Getter.class)).thenReturn(false);
         when(fieldDescriptor.getParent()).thenReturn(typeDescriptor);
 
-        boolean isTargetField = processor.isTargetField(fieldDescriptor);
+        boolean isTargetField = PROCESSOR.isTargetField(fieldDescriptor);
 
         assertTrue(isTargetField, "Class does not have not-private Lombok Getter annotation");
     }
@@ -171,7 +192,7 @@ class GetterSupplierProcessorTest {
         when(fieldDescriptor.hasAnnotation(Getter.class)).thenReturn(false);
         when(fieldDescriptor.getParent()).thenReturn(typeDescriptor);
 
-        boolean isTargetField = processor.isTargetField(fieldDescriptor);
+        boolean isTargetField = PROCESSOR.isTargetField(fieldDescriptor);
 
         assertFalse(isTargetField, "Class does not have private Lombok Getter annotation");
     }
@@ -185,7 +206,7 @@ class GetterSupplierProcessorTest {
         when(fieldDescriptor.hasAnnotation(Getter.class)).thenReturn(false);
         when(fieldDescriptor.getParent()).thenReturn(typeDescriptor);
 
-        boolean isTargetField = processor.isTargetField(fieldDescriptor);
+        boolean isTargetField = PROCESSOR.isTargetField(fieldDescriptor);
 
         assertTrue(isTargetField, "Class does not have Lombok Data annotation");
     }
@@ -207,7 +228,7 @@ class GetterSupplierProcessorTest {
         when(fieldDescriptor.getName()).thenReturn("test");
         when(fieldDescriptor.getTypeName()).thenReturn("boolean");
 
-        boolean isTargetField = processor.isTargetField(fieldDescriptor);
+        boolean isTargetField = PROCESSOR.isTargetField(fieldDescriptor);
 
         assertTrue(isTargetField, "Class does not have getter-method");
     }
