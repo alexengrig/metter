@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ public class SetterSupplierSourceGenerator extends MethodSupplierSourceGenerator
 
     /**
      * {@inheritDoc}
-     * <p>
+     *
      * <pre>{@code
      * java.util.function.BiConsumer<DomainClass, java.lang.Object>
      * }</pre>

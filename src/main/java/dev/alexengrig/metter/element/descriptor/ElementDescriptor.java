@@ -24,7 +24,7 @@ import java.util.Optional;
 /**
  * An element descriptor.
  *
- * @param <E>
+ * @param <E> type of element
  * @author Grig Alex
  * @version 0.1.1
  * @since 0.1.1
