@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,210 +16,102 @@
 
 package dev.alexengrig.metter.processor;
 
-import dev.alexengrig.metter.ElementMocks;
 import dev.alexengrig.metter.annotation.SetterSupplier;
 import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
+import dev.alexengrig.metter.element.descriptor.MethodDescriptor;
 import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
-import lombok.Data;
-import lombok.Setter;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
-import javax.annotation.processing.ProcessingEnvironment;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
-import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class SetterSupplierProcessorTest {
-    static final SetterSupplierProcessor processor;
-    static final ProcessingEnvironment environment;
-
-    static {
-        processor = new SetterSupplierProcessor();
-        processor.init(environment = mock(ProcessingEnvironment.class));
-    }
+    static final SetterSupplierProcessor PROCESSOR = new SetterSupplierProcessor();
 
     @Test
     void should_return_customClassName() {
-        TypeElement typeElement = mock(TypeElement.class);
-        SetterSupplier annotation = new SetterSupplier() {
-            @Override
-            public Class<? extends Annotation> annotationType() {
-                return null;
-            }
+        SetterSupplier annotation = mock(SetterSupplier.class);
+        when(annotation.value()).thenReturn("MyCustomClassName");
+        TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
+        when(typeDescriptor.getAnnotation(SetterSupplier.class)).thenReturn(Optional.of(annotation));
 
-            @Override
-            public String value() {
-                return "MyCustomClassName";
-            }
+        String customClassName = PROCESSOR.getCustomClassName(typeDescriptor);
 
-            @Override
-            public String[] includedFields() {
-                return new String[0];
-            }
-
-            @Override
-            public String[] excludedFields() {
-                return new String[0];
-            }
-        };
-        when(typeElement.getAnnotation(SetterSupplier.class)).thenReturn(annotation);
-        TypeDescriptor typeDescriptor = new TypeDescriptor(typeElement);
-        assertEquals("MyCustomClassName", processor.getCustomClassName(typeDescriptor),
-                "Custom class name does not equal to 'MyCustomClassName'");
+        assertEquals("MyCustomClassName", customClassName,
+                "Custom class name is incorrect");
     }
 
     @Test
     void should_return_includedFields() {
-        TypeElement typeElement = mock(TypeElement.class);
-        SetterSupplier annotation = new SetterSupplier() {
-            @Override
-            public Class<? extends Annotation> annotationType() {
-                return null;
-            }
+        SetterSupplier annotation = mock(SetterSupplier.class);
+        when(annotation.includedFields()).thenReturn(new String[]{"includedField1", "includedField2"});
+        TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
+        when(typeDescriptor.getAnnotation(SetterSupplier.class)).thenReturn(Optional.of(annotation));
 
-            @Override
-            public String value() {
-                return null;
-            }
+        Set<String> includedFields = PROCESSOR.getIncludedFields(typeDescriptor);
 
-            @Override
-            public String[] includedFields() {
-                return new String[]{"includedField1", "includedField2"};
-            }
-
-            @Override
-            public String[] excludedFields() {
-                return new String[0];
-            }
-        };
-        when(typeElement.getAnnotation(SetterSupplier.class)).thenReturn(annotation);
-        TypeDescriptor typeDescriptor = new TypeDescriptor(typeElement);
-        HashSet<String> expected = new HashSet<>(Arrays.asList("includedField1", "includedField2"));
-        assertEquals(expected, processor.getIncludedFields(typeDescriptor),
+        assertEquals(new HashSet<>(Arrays.asList("includedField1", "includedField2")), includedFields,
                 "Included fields are not equal to 'includedField1' and 'includedField2'");
     }
 
     @Test
     void should_return_excludedFields() {
-        TypeElement typeElement = mock(TypeElement.class);
-        SetterSupplier annotation = new SetterSupplier() {
-            @Override
-            public Class<? extends Annotation> annotationType() {
-                return null;
-            }
+        SetterSupplier annotation = mock(SetterSupplier.class);
+        when(annotation.excludedFields()).thenReturn(new String[]{"excludedField1", "excludedField2"});
+        TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
+        when(typeDescriptor.getAnnotation(SetterSupplier.class)).thenReturn(Optional.of(annotation));
 
-            @Override
-            public String value() {
-                return null;
-            }
+        Set<String> excludedFields = PROCESSOR.getExcludedFields(typeDescriptor);
 
-            @Override
-            public String[] includedFields() {
-                return new String[0];
-            }
-
-            @Override
-            public String[] excludedFields() {
-                return new String[]{"excludedField1", "excludedField2"};
-            }
-        };
-        when(typeElement.getAnnotation(SetterSupplier.class)).thenReturn(annotation);
-        TypeDescriptor typeDescriptor = new TypeDescriptor(typeElement);
-        HashSet<String> expected = new HashSet<>(Arrays.asList("excludedField1", "excludedField2"));
-        assertEquals(expected, processor.getExcludedFields(typeDescriptor),
+        assertEquals(new HashSet<>(Arrays.asList("excludedField1", "excludedField2")), excludedFields,
                 "Excluded fields are not equal to 'excludedField1' and 'excludedField2'");
     }
 
     @Test
-    void should_check_hasAllMethods_without_annotations() {
-        TypeElement typeElement = mock(TypeElement.class);
-        when(typeElement.getAnnotationMirrors()).thenReturn(Collections.emptyList());
-        TypeDescriptor typeDescriptor = new TypeDescriptor(typeElement);
-        assertFalse(processor.hasAllMethods(typeDescriptor), "Class has lombok annotations");
+    void should_return_setterMethod() {
+        FieldDescriptor fieldDescriptor = mock(FieldDescriptor.class);
+        when(fieldDescriptor.getName()).thenReturn("field");
+
+        String setterMethod = PROCESSOR.getSetterMethod(fieldDescriptor);
+
+        assertEquals("setField", setterMethod, "Method name is incorrect");
     }
 
     @Test
-    void should_check_hasAllMethods_with_Data_annotation() {
-        TypeElement typeElement = mock(TypeElement.class);
-        AnnotationMirror data = ElementMocks.annotationMirrorMock(Data.class);
-        Mockito.<List<? extends AnnotationMirror>>when(typeElement.getAnnotationMirrors())
-                .thenReturn(Collections.singletonList(data));
-        TypeDescriptor typeDescriptor = new TypeDescriptor(typeElement);
-        assertTrue(processor.hasAllMethods(typeDescriptor), "Class has no Data annotation of lombok");
+    void should_return_method() {
+        FieldDescriptor fieldDescriptor = mock(FieldDescriptor.class);
+        when(fieldDescriptor.getName()).thenReturn("field");
+        when(fieldDescriptor.getTypeName()).thenReturn("java.lang.String");
+
+        String method = PROCESSOR.getMethod(fieldDescriptor);
+
+        assertEquals("(instance, value) -> instance.setField((java.lang.String) value)", method, "Method is incorrect");
     }
 
     @Test
-    void should_check_hasAllMethods_with_Setter_annotation() {
-        TypeElement typeElement = mock(TypeElement.class);
-        AnnotationMirror setter = ElementMocks.annotationMirrorMock(Setter.class);
-        Mockito.<List<? extends AnnotationMirror>>when(typeElement.getAnnotationMirrors())
-                .thenReturn(Collections.singletonList(setter));
-        TypeDescriptor typeDescriptor = new TypeDescriptor(typeElement);
-        assertTrue(processor.hasAllMethods(typeDescriptor), "Class has no Setter annotation of lombok");
-    }
+    void should_check_hasSetterMethod() {
+        MethodDescriptor methodDescriptor = mock(MethodDescriptor.class);
+        when(methodDescriptor.isNotPrivate()).thenReturn(true);
+        when(methodDescriptor.getTypeName()).thenReturn("void");
+        when(methodDescriptor.hasOnlyOneParameter("java.lang.String")).thenReturn(true);
+        TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
+        when(typeDescriptor.hasMethod("setField")).thenReturn(true);
+        when(typeDescriptor.getMethods("setField")).thenReturn(Collections.singleton(methodDescriptor));
+        FieldDescriptor fieldDescriptor = mock(FieldDescriptor.class);
+        when(fieldDescriptor.getName()).thenReturn("field");
+        when(fieldDescriptor.getTypeName()).thenReturn("java.lang.String");
+        when(fieldDescriptor.getParent()).thenReturn(typeDescriptor);
 
-    @Test
-    void should_check_hasAllMethods_with_Data_and_Setter_annotations() {
-        TypeElement typeElement = mock(TypeElement.class);
-        AnnotationMirror data = ElementMocks.annotationMirrorMock(Data.class);
-        AnnotationMirror setter = ElementMocks.annotationMirrorMock(Setter.class);
-        Mockito.<List<? extends AnnotationMirror>>when(typeElement.getAnnotationMirrors())
-                .thenReturn(Arrays.asList(data, setter));
-        TypeDescriptor typeDescriptor = new TypeDescriptor(typeElement);
-        assertTrue(processor.hasAllMethods(typeDescriptor), "Class has no Data/Setter annotations of lombok");
-    }
+        boolean hasSetterMethod = PROCESSOR.hasSetterMethod(fieldDescriptor);
 
-    @Test
-    void should_return_methodName() {
-        VariableElement booleanField = ElementMocks.variableElementMock("booleanField", boolean.class);
-        FieldDescriptor booleanFieldDescriptor = new FieldDescriptor(booleanField);
-        assertEquals("setBooleanField", processor.getMethodName(booleanFieldDescriptor),
-                "Method name does not equal to 'setBooleanField'");
-        VariableElement stringField = ElementMocks.variableElementMock("stringField", String.class);
-        FieldDescriptor stringFieldDescriptor = new FieldDescriptor(stringField);
-        assertEquals("setStringField", processor.getMethodName(stringFieldDescriptor),
-                "Method name does not equal to 'setStringField'");
-    }
-
-    @Test
-    void should_check_isTargetField_with_Setter_annotation() {
-        VariableElement variableElement = mock(VariableElement.class);
-        AnnotationMirror setter = ElementMocks.annotationMirrorMock(Setter.class);
-        Mockito.<List<? extends AnnotationMirror>>when(variableElement.getAnnotationMirrors())
-                .thenReturn(Collections.singletonList(setter));
-        FieldDescriptor fieldDescriptor = new FieldDescriptor(variableElement);
-        assertTrue(processor.isTargetField(fieldDescriptor),
-                "Field with lombok Setter annotation must be target");
-    }
-
-    @Test
-    void should_check_isTargetField_without_Setter_annotation() {
-        VariableElement variableElement = mock(VariableElement.class);
-        Mockito.<List<? extends AnnotationMirror>>when(variableElement.getAnnotationMirrors())
-                .thenReturn(Collections.emptyList());
-        FieldDescriptor fieldDescriptor = new FieldDescriptor(variableElement);
-        assertFalse(processor.isTargetField(fieldDescriptor),
-                "Field without lombok Setter annotation must not be target");
-    }
-
-    @Test
-    void should_return_methodView() {
-        VariableElement variableElement = ElementMocks.variableElementMock(String.class);
-        FieldDescriptor fieldDescriptor = new FieldDescriptor(variableElement);
-        assertEquals("(instance, value) -> instance.setName((java.lang.String) value)",
-                processor.getMethodView(null, fieldDescriptor, "setName"),
-                "Method view is not equal '(instance, value) -> instance.setName((java.lang.String) value)'");
+        assertTrue(hasSetterMethod, "Has no setter method");
     }
 }
