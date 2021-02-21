@@ -26,14 +26,14 @@ import static org.junit.Assert.assertTrue;
 
 public class PrivateLombokGettersAndSettersDomainTest {
     @Test
-    public void should_ignore_privateGetters() {
+    public void should_ignores_privateGetters() {
         Map<String, Function<PrivateLombokGettersAndSettersDomain, Object>> getterByField
                 = new PrivateLombokGettersAndSettersDomainGetterSupplier().get();
         assertTrue("Map is not empty", getterByField.isEmpty());
     }
 
     @Test
-    public void should_ignore_privateSetters() {
+    public void should_ignores_privateSetters() {
         Map<String, BiConsumer<PrivateLombokGettersAndSettersDomain, Object>> setterByField
                 = new PrivateLombokGettersAndSettersDomainSetterSupplier().get();
         assertTrue("Map is not empty", setterByField.isEmpty());
