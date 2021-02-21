@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,10 +79,12 @@ public abstract class MethodSupplierSourceGenerator {
                 .ln("                        java.lang.String,")
                 .ft("                        %s", mapValueType)
                 .ln("                        >> {")
+                .ln()
                 .ln("    protected final java.util.Map<")
                 .ln("            java.lang.String,")
                 .ft("            %s", mapValueType)
                 .ln("            > getterByField;")
+                .ln()
                 .ft("    public %s() {", simpleClassName)
                 .ln("        this.getterByField = createMap();")
                 .ln("    }")

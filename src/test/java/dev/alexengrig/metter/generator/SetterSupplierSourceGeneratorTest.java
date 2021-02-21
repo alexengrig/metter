@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,10 +38,12 @@ class SetterSupplierSourceGeneratorTest {
                 "                        java.lang.String,\n" +
                 "                        java.util.function.BiConsumer<MyDomain, java.lang.Object>\n" +
                 "                        >> {\n" +
+                "\n" +
                 "    protected final java.util.Map<\n" +
                 "            java.lang.String,\n" +
                 "            java.util.function.BiConsumer<MyDomain, java.lang.Object>\n" +
                 "            > getterByField;\n" +
+                "\n" +
                 "    public MyClass() {\n" +
                 "        this.getterByField = createMap();\n" +
                 "    }\n" +
@@ -82,10 +84,12 @@ class SetterSupplierSourceGeneratorTest {
                 "                        java.lang.String,\n" +
                 "                        java.util.function.BiConsumer<my.company.MyDomain, java.lang.Object>\n" +
                 "                        >> {\n" +
+                "\n" +
                 "    protected final java.util.Map<\n" +
                 "            java.lang.String,\n" +
                 "            java.util.function.BiConsumer<my.company.MyDomain, java.lang.Object>\n" +
                 "            > getterByField;\n" +
+                "\n" +
                 "    public MyClass() {\n" +
                 "        this.getterByField = createMap();\n" +
                 "    }\n" +
