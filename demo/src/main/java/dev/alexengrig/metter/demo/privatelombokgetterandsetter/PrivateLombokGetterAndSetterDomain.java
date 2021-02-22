@@ -14,11 +14,20 @@
  * limitations under the License.
  */
 
-/**
- * Element descriptors.
- *
- * @author Grig Alex
- * @version 0.1.1
- * @since 0.1.0
- */
-package dev.alexengrig.metter.element.descriptor;
+package dev.alexengrig.metter.demo.privatelombokgetterandsetter;
+
+import dev.alexengrig.metter.annotation.GetterSupplier;
+import dev.alexengrig.metter.annotation.SetterSupplier;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
+@GetterSupplier
+@SetterSupplier
+@Getter(AccessLevel.PRIVATE)
+@Setter(AccessLevel.PRIVATE)
+public class PrivateLombokGetterAndSetterDomain {
+    private int integer;
+    private String string;
+    private boolean bool;
+}

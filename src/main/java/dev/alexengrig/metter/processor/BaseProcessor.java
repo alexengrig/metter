@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package dev.alexengrig.metter.processor;
 
-import dev.alexengrig.metter.util.Messager2Writer;
+import dev.alexengrig.metter.util.Exceptions;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
@@ -34,7 +34,7 @@ import java.util.Set;
  * @param <A> type of annotation
  * @param <E> type of element
  * @author Grig Alex
- * @version 0.1.0
+ * @version 0.1.1
  * @see javax.annotation.processing.AbstractProcessor
  * @since 0.1.0
  */
@@ -45,12 +45,6 @@ public abstract class BaseProcessor<A extends Annotation, E extends Element> ext
      * @since 0.1.0
      */
     protected final Class<? extends A> annotationClass;
-    /**
-     * Adapter of messager.
-     *
-     * @since 0.1.0
-     */
-    protected transient Messager2Writer messager;
 
     /**
      * Constructs with an annotation class.
@@ -107,21 +101,8 @@ public abstract class BaseProcessor<A extends Annotation, E extends Element> ext
      * @since 0.1.0
      */
     protected void error(String message, Throwable throwable) {
-        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, message);
-        throwable.printStackTrace(prepareMessager().errorWriter());
-    }
-
-    /**
-     * Prepares adapter of messager.
-     *
-     * @return adapter of messager
-     * @since 0.1.0
-     */
-    protected Messager2Writer prepareMessager() {
-        if (messager == null) {
-            messager = new Messager2Writer(processingEnv.getMessager());
-        }
-        return messager;
+        String stackTrace = Exceptions.getStackTrace(throwable);
+        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, message + System.lineSeparator() + stackTrace);
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,14 @@ package dev.alexengrig.metter.processor;
 import com.google.auto.service.AutoService;
 import dev.alexengrig.metter.annotation.SetterSupplier;
 import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
+import dev.alexengrig.metter.element.descriptor.MethodDescriptor;
 import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
+import dev.alexengrig.metter.exception.MetterException;
 import dev.alexengrig.metter.generator.SetterSupplierSourceGenerator;
+import dev.alexengrig.metter.util.Strings;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Setter;
 
 import javax.annotation.processing.Processor;
 import java.util.Arrays;
@@ -66,8 +72,9 @@ public class SetterSupplierProcessor extends BaseMethodSupplierProcessor<SetterS
      */
     @Override
     protected String getCustomClassName(TypeDescriptor type) {
-        SetterSupplier annotation = type.getAnnotation(annotationClass);
-        return annotation.value();
+        return type.getAnnotation(annotationClass)
+                .map(SetterSupplier::value)
+                .orElseThrow(() -> new MetterException("Type " + type + " has no annotation: " + annotationClass));
     }
 
     /**
@@ -79,8 +86,11 @@ public class SetterSupplierProcessor extends BaseMethodSupplierProcessor<SetterS
      */
     @Override
     protected Set<String> getIncludedFields(TypeDescriptor type) {
-        SetterSupplier annotation = type.getAnnotation(annotationClass);
-        return new HashSet<>(Arrays.asList(annotation.includedFields()));
+        return type.getAnnotation(annotationClass)
+                .map(SetterSupplier::includedFields)
+                .map(Arrays::asList)
+                .map(HashSet::new)
+                .orElseThrow(() -> new MetterException("Type " + type + " has no annotation: " + annotationClass));
     }
 
     /**
@@ -92,62 +102,83 @@ public class SetterSupplierProcessor extends BaseMethodSupplierProcessor<SetterS
      */
     @Override
     protected Set<String> getExcludedFields(TypeDescriptor type) {
-        SetterSupplier annotation = type.getAnnotation(annotationClass);
-        return new HashSet<>(Arrays.asList(annotation.excludedFields()));
+        return type.getAnnotation(annotationClass)
+                .map(SetterSupplier::excludedFields)
+                .map(Arrays::asList)
+                .map(HashSet::new)
+                .orElseThrow(() -> new MetterException("Type " + type + " has no annotation: " + annotationClass));
     }
 
     /**
-     * Checks if a type descriptor has {@code lombok.Data} or {@code lombok.Setter} annotations.
-     *
-     * @param type descriptor
-     * @return if a type descriptor has {@code lombok.Data} or {@code lombok.Setter} annotations
-     * @since 0.1.0
-     */
-    @Override
-    protected boolean hasAllMethods(TypeDescriptor type) {
-        return type.hasAnnotation("lombok.Data") || type.hasAnnotation("lombok.Setter");
-    }
-
-    /**
-     * Returns a method name from a field descriptor: {@code set} prefix name.
+     * Checks if a field descriptor has {@link lombok.Setter} annotation (not private)
+     * or a type descriptor of field descriptor has {@link lombok.Setter} annotation (not private)
+     * or type descriptor of field descriptor has {@link lombok.Data}
+     * or type descriptor of field descriptor has a setter method.
      *
      * @param field descriptor
-     * @return method name from {@code field}
-     * @since 0.1.0
-     */
-    @Override
-    protected String getMethodName(FieldDescriptor field) {
-        String name = field.getName();
-        return "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
-    }
-
-    /**
-     * Checks if a field descriptor has {@code lombok.Setter} annotation.
-     *
-     * @param field descriptor
-     * @return if a field descriptor has {@code lombok.Setter} annotation
+     * @return if {@code descriptor} has {@link lombok.Setter} annotation (not private)
+     * or a type descriptor of {@code descriptor} has {@link lombok.Setter} annotation (not private)
+     * or type descriptor of {@code descriptor} has {@link lombok.Data}
+     * or type descriptor of {@code descriptor} has a setter method
      * @since 0.1.0
      */
     @Override
     protected boolean isTargetField(FieldDescriptor field) {
-        return field.hasAnnotation("lombok.Setter");
+        if (field.hasAnnotation(Setter.class)) {
+            return !field.getAnnotation(Setter.class)
+                    .map(Setter::value)
+                    .filter(AccessLevel.PRIVATE::equals)
+                    .isPresent();
+        }
+        TypeDescriptor type = field.getParent();
+        if (type.hasAnnotation(Setter.class)) {
+            return !type.getAnnotation(Setter.class)
+                    .map(Setter::value)
+                    .filter(AccessLevel.PRIVATE::equals)
+                    .isPresent();
+        }
+        return type.hasAnnotation(Data.class) || hasSetterMethod(field);
     }
 
     /**
-     * Returns a method view from a type name of a field descriptor and a method name:
-     * <pre>{@code
-     * (instance, value) -> instance.methodName((FieldType) value)
-     * }</pre>
+     * Checks if a type descriptor of a field descriptor has a setter method
      *
-     * @param type       descriptor
-     * @param field      descriptor
-     * @param methodName method name
-     * @return method view from a type name of {@code field} and {@code methodName}
-     * @since 0.1.0
+     * @param field descriptor
+     * @return if a type descriptor of {@code field} has a setter method
+     * @since 0.1.1
+     */
+    protected boolean hasSetterMethod(FieldDescriptor field) {
+        String methodName = getSetterMethod(field);
+        TypeDescriptor type = field.getParent();
+        if (type.hasMethod(methodName)) {
+            Set<MethodDescriptor> methods = type.getMethods(methodName);
+            return methods.stream().anyMatch(method -> method.isNotPrivate() && "void".equals(method.getTypeName())
+                    && method.hasOnlyOneParameter(field.getTypeName()));
+        }
+        return false;
+    }
+
+    /**
+     * Returns a setter-method for a field descriptor.
+     *
+     * @param field descriptor
+     * @return setter-method for {@code field}
+     * @since 0.1.1
+     */
+    protected String getSetterMethod(FieldDescriptor field) {
+        String name = field.getName();
+        return "set" + Strings.capitalize(name);
+    }
+
+    /**
+     * Returns a setter for a field descriptor.
+     *
+     * @param field descriptor
+     * @return setter for {@code field}
+     * @since 0.1.1
      */
     @Override
-    protected String getMethodView(TypeDescriptor type, FieldDescriptor field, String methodName) {
-        return String.format("(instance, value) -> instance.%s((%s) value)",
-                methodName, field.getTypeName());
+    protected String getMethod(FieldDescriptor field) {
+        return "(instance, value) -> instance." + getSetterMethod(field) + "((" + field.getTypeName() + ") value)";
     }
 }

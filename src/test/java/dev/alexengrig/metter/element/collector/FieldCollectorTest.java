@@ -16,7 +16,7 @@
 
 package dev.alexengrig.metter.element.collector;
 
-import dev.alexengrig.metter.element.ElementMocks;
+import dev.alexengrig.metter.ElementMocks;
 import org.junit.jupiter.api.Test;
 
 import javax.lang.model.element.Element;

@@ -14,11 +14,20 @@
  * limitations under the License.
  */
 
-/**
- * Element descriptors.
- *
- * @author Grig Alex
- * @version 0.1.1
- * @since 0.1.0
- */
-package dev.alexengrig.metter.element.descriptor;
+package dev.alexengrig.metter.exception;
+
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+class MetterExceptionTest {
+    @Test
+    void should_create_with_message() {
+        String message = "This is test message!";
+        MetterException exception = assertThrows(MetterException.class, () -> {
+            throw new MetterException(message);
+        });
+        assertEquals(message, exception.getMessage(), "Exception message is incorrect");
+    }
+}

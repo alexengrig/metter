@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
+package dev.alexengrig.metter.exception;
+
 /**
- * Element descriptors.
+ * Metter exception.
  *
  * @author Grig Alex
  * @version 0.1.1
- * @since 0.1.0
+ * @since 0.1.1
  */
-package dev.alexengrig.metter.element.descriptor;
+public class MetterException extends RuntimeException {
+    public MetterException(String message) {
+        super(message);
+    }
+
+    public MetterException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}

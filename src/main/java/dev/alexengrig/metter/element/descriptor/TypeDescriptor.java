@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,37 +18,19 @@ package dev.alexengrig.metter.element.descriptor;
 
 
 import javax.lang.model.element.TypeElement;
-import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
- * A descriptor of type.
+ * A type element descriptor.
  *
  * @author Grig Alex
- * @version 0.1.0
+ * @version 0.1.1
  * @since 0.1.0
  */
-public class TypeDescriptor {
-    /**
-     * Type element.
-     *
-     * @since 0.1.0
-     */
-    protected final TypeElement typeElement;
-    /**
-     * Qualified name.
-     *
-     * @since 0.1.0
-     */
-    protected transient String qualifiedName;
-    /**
-     * Simple name.
-     *
-     * @since 0.1.0
-     */
-    protected transient String simpleName;
+public class TypeDescriptor extends ElementDescriptor<TypeElement> {
     /**
      * Set of field descriptors.
      *
@@ -62,23 +44,11 @@ public class TypeDescriptor {
      */
     protected transient Set<MethodDescriptor> methods;
     /**
-     * Set of annotation descriptors.
-     *
-     * @since 0.1.0
-     */
-    protected transient Set<AnnotationDescriptor> annotations;
-    /**
      * Map of method name to mark about presence
      *
      * @since 0.1.0
      */
     protected transient Map<String, Boolean> hasMethodByNameMap;
-    /**
-     * Map of annotation qualified name to mark about presence
-     *
-     * @since 0.1.0
-     */
-    protected transient Map<String, Boolean> hasAnnotationByQualifiedNameMap;
 
     /**
      * Constructs with a type element.
@@ -87,7 +57,7 @@ public class TypeDescriptor {
      * @since 0.1.0
      */
     public TypeDescriptor(TypeElement typeElement) {
-        this.typeElement = typeElement;
+        super(typeElement);
     }
 
     /**
@@ -97,10 +67,7 @@ public class TypeDescriptor {
      * @since 0.1.0
      */
     public String getQualifiedName() {
-        if (qualifiedName == null) {
-            qualifiedName = typeElement.getQualifiedName().toString();
-        }
-        return qualifiedName;
+        return element.getQualifiedName().toString();
     }
 
     /**
@@ -110,10 +77,7 @@ public class TypeDescriptor {
      * @since 0.1.0
      */
     public String getSimpleName() {
-        if (simpleName == null) {
-            simpleName = typeElement.getSimpleName().toString();
-        }
-        return simpleName;
+        return element.getSimpleName().toString();
     }
 
     /**
@@ -124,7 +88,7 @@ public class TypeDescriptor {
      */
     public Set<FieldDescriptor> getFields() {
         if (fields == null) {
-            fields = FieldDescriptor.of(typeElement);
+            fields = FieldDescriptor.of(element);
         }
         return fields;
     }
@@ -137,9 +101,20 @@ public class TypeDescriptor {
      */
     public Set<MethodDescriptor> getMethods() {
         if (methods == null) {
-            methods = MethodDescriptor.of(typeElement);
+            methods = MethodDescriptor.of(element);
         }
         return methods;
+    }
+
+    /**
+     * Returns a set of method descriptors by a method name.
+     *
+     * @param methodName method name
+     * @return set of method descriptors by {@code methodName}
+     * @since 0.1.1
+     */
+    public Set<MethodDescriptor> getMethods(String methodName) {
+        return getMethods().stream().filter(m -> methodName.equals(m.getName())).collect(Collectors.toSet());
     }
 
     /**
@@ -160,50 +135,5 @@ public class TypeDescriptor {
                 .anyMatch(methodName::equals);
         hasMethodByNameMap.put(methodName, hasMethod);
         return hasMethod;
-    }
-
-    /**
-     * Returns a set of annotation descriptors.
-     *
-     * @return set of annotation descriptors
-     * @since 0.1.0
-     */
-    public Set<AnnotationDescriptor> getAnnotations() {
-        if (annotations == null) {
-            annotations = AnnotationDescriptor.of(typeElement);
-        }
-        return annotations;
-    }
-
-    /**
-     * Checks if has an annotation by an qualified name.
-     *
-     * @param annotationQualifiedName annotation qualified name
-     * @return if has an annotation by an qualified name
-     * @since 0.1.0
-     */
-    public boolean hasAnnotation(String annotationQualifiedName) {
-        if (hasAnnotationByQualifiedNameMap == null) {
-            hasAnnotationByQualifiedNameMap = new HashMap<>();
-        } else if (hasAnnotationByQualifiedNameMap.containsKey(annotationQualifiedName)) {
-            return hasAnnotationByQualifiedNameMap.get(annotationQualifiedName);
-        }
-        boolean hasAnnotation = getAnnotations().stream()
-                .map(AnnotationDescriptor::getQualifiedName)
-                .anyMatch(annotationQualifiedName::equals);
-        hasAnnotationByQualifiedNameMap.put(annotationQualifiedName, hasAnnotation);
-        return hasAnnotation;
-    }
-
-    /**
-     * Returns an annotation by a type if present, else {@code null}.
-     *
-     * @param annotationType annotation type
-     * @param <T>            type of annotation
-     * @return annotation by {@code annotationType} if present, else {@code null}
-     * @since 0.1.0
-     */
-    public <T extends Annotation> T getAnnotation(Class<? extends T> annotationType) {
-        return typeElement.getAnnotation(annotationType);
     }
 }
