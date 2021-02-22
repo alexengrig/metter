@@ -16,7 +16,6 @@
 
 package dev.alexengrig.metter.processor;
 
-import dev.alexengrig.metter.ElementMocks;
 import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
 import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
 import dev.alexengrig.metter.exception.MetterException;
@@ -255,7 +254,7 @@ class BaseMethodSupplierProcessorTest {
         when(filer.createSourceFile(any())).thenReturn(file);
         ProcessingEnvironment environment = mock(ProcessingEnvironment.class);
         when(environment.getFiler()).thenReturn(filer);
-        VariableElement variableElement = ElementMocks.fieldMock("field", String.class);
+        VariableElement variableElement = fieldMock("field", String.class);
         TypeElement typeElement = typeElementMock(String.class);
         Mockito.<List<? extends Element>>when(typeElement.getEnclosedElements())
                 .thenReturn(Collections.singletonList(variableElement));
@@ -287,7 +286,7 @@ class BaseMethodSupplierProcessorTest {
     void should_return_fields() {
         BaseMethodSupplierProcessor<Deprecated> processor = getMock();
         TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
-        FieldDescriptor field = new FieldDescriptor(ElementMocks.fieldMock("field"));
+        FieldDescriptor field = new FieldDescriptor(fieldMock("field"));
         when(typeDescriptor.getFields()).thenReturn(Collections.singleton(field));
         Set<FieldDescriptor> fields = processor.getFields(typeDescriptor);
         assertEquals(1, fields.size(), "Number of fields does not equal to 1");
@@ -298,8 +297,8 @@ class BaseMethodSupplierProcessorTest {
     void should_return_includedFields() {
         BaseMethodSupplierProcessor<Deprecated> processor = getMock();
         TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
-        FieldDescriptor field = new FieldDescriptor(ElementMocks.fieldMock("field"));
-        FieldDescriptor included = new FieldDescriptor(ElementMocks.fieldMock("included"));
+        FieldDescriptor field = new FieldDescriptor(fieldMock("field"));
+        FieldDescriptor included = new FieldDescriptor(fieldMock("included"));
         when(typeDescriptor.getFields()).thenReturn(new HashSet<>(Arrays.asList(field, included)));
         when(processor.getIncludedFields(any())).thenReturn(Collections.singleton("included"));
         Set<FieldDescriptor> fields = processor.getFields(typeDescriptor);
@@ -311,8 +310,8 @@ class BaseMethodSupplierProcessorTest {
     void should_return_notExcludedFields() {
         BaseMethodSupplierProcessor<Deprecated> processor = getMock();
         TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
-        FieldDescriptor field = new FieldDescriptor(ElementMocks.fieldMock("field"));
-        FieldDescriptor excluded = new FieldDescriptor(ElementMocks.fieldMock("excluded"));
+        FieldDescriptor field = new FieldDescriptor(fieldMock("field"));
+        FieldDescriptor excluded = new FieldDescriptor(fieldMock("excluded"));
         when(typeDescriptor.getFields()).thenReturn(new HashSet<>(Arrays.asList(field, excluded)));
         when(processor.getExcludedFields(any())).thenReturn(Collections.singleton("excluded"));
         Set<FieldDescriptor> fields = processor.getFields(typeDescriptor);

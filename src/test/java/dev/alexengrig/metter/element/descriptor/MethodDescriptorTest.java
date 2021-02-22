@@ -35,9 +35,9 @@ class MethodDescriptorTest {
     @Test
     void should_create_set_by_type() {
         Set<MethodDescriptor> descriptors = MethodDescriptor.of(ElementMocks.typeElementMock(Arrays.asList(
-                ElementMocks.executableElementMock("method1"),
-                ElementMocks.executableElementMock("method2"),
-                ElementMocks.executableElementMock("method3"),
+                executableElementMock("method1"),
+                executableElementMock("method2"),
+                executableElementMock("method3"),
                 ElementMocks.fieldMock("field"))));
         assertEquals(3, descriptors.size(), "Number of descriptors is incorrect");
     }
