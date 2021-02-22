@@ -116,7 +116,55 @@ class SetterSupplierProcessorTest {
 
         boolean hasSetterMethod = PROCESSOR.hasSetterMethod(fieldDescriptor);
 
-        assertTrue(hasSetterMethod, "Has no setter method");
+        assertTrue(hasSetterMethod, "Class has no setter-method");
+    }
+
+    @Test
+    void should_check_hasSetterMethod_without_setterMethod() {
+        TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
+        when(typeDescriptor.hasMethod("setField")).thenReturn(false);
+        FieldDescriptor fieldDescriptor = mock(FieldDescriptor.class);
+        when(fieldDescriptor.getName()).thenReturn("field");
+        when(fieldDescriptor.getParent()).thenReturn(typeDescriptor);
+
+        boolean hasSetterMethod = PROCESSOR.hasSetterMethod(fieldDescriptor);
+
+        assertFalse(hasSetterMethod, "Class has setter-method");
+    }
+
+    @Test
+    void should_check_hasSetterMethod_with_privateSetter() {
+        MethodDescriptor methodDescriptor = mock(MethodDescriptor.class);
+        when(methodDescriptor.isNotPrivate()).thenReturn(false);
+        TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
+        when(typeDescriptor.hasMethod("setField")).thenReturn(true);
+        when(typeDescriptor.getMethods("setField")).thenReturn(Collections.singleton(methodDescriptor));
+        FieldDescriptor fieldDescriptor = mock(FieldDescriptor.class);
+        when(fieldDescriptor.getName()).thenReturn("field");
+        when(fieldDescriptor.getTypeName()).thenReturn("java.lang.String");
+        when(fieldDescriptor.getParent()).thenReturn(typeDescriptor);
+
+        boolean hasSetterMethod = PROCESSOR.hasSetterMethod(fieldDescriptor);
+
+        assertFalse(hasSetterMethod, "Class has not-private setter-method");
+    }
+
+    @Test
+    void should_check_hasSetterMethod_for_setter_with_returnType() {
+        MethodDescriptor methodDescriptor = mock(MethodDescriptor.class);
+        when(methodDescriptor.isNotPrivate()).thenReturn(true);
+        when(methodDescriptor.getTypeName()).thenReturn("int");
+        TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
+        when(typeDescriptor.hasMethod("setField")).thenReturn(true);
+        when(typeDescriptor.getMethods("setField")).thenReturn(Collections.singleton(methodDescriptor));
+        FieldDescriptor fieldDescriptor = mock(FieldDescriptor.class);
+        when(fieldDescriptor.getName()).thenReturn("field");
+        when(fieldDescriptor.getTypeName()).thenReturn("java.lang.String");
+        when(fieldDescriptor.getParent()).thenReturn(typeDescriptor);
+
+        boolean hasSetterMethod = PROCESSOR.hasSetterMethod(fieldDescriptor);
+
+        assertFalse(hasSetterMethod, "Class has setter-method with void return type");
     }
 
     @Test
@@ -136,19 +184,6 @@ class SetterSupplierProcessorTest {
         boolean hasSetterMethod = PROCESSOR.hasSetterMethod(fieldDescriptor);
 
         assertFalse(hasSetterMethod, "Class has setter-method with String parameter");
-    }
-
-    @Test
-    void should_check_hasSetterMethod_without_setterMethod() {
-        TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
-        when(typeDescriptor.hasMethod("setField")).thenReturn(false);
-        FieldDescriptor fieldDescriptor = mock(FieldDescriptor.class);
-        when(fieldDescriptor.getName()).thenReturn("field");
-        when(fieldDescriptor.getParent()).thenReturn(typeDescriptor);
-
-        boolean hasSetterMethod = PROCESSOR.hasSetterMethod(fieldDescriptor);
-
-        assertFalse(hasSetterMethod, "Class has setter-method");
     }
 
     @Test
