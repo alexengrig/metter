@@ -26,17 +26,17 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.tools.Diagnostic;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Set;
 
+import static java.lang.System.lineSeparator;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -94,14 +94,18 @@ class BaseProcessorTest {
             messages.add(invocation.getArgument(1));
             return null;
         }).when(messager).printMessage(eq(Diagnostic.Kind.ERROR), any());
-        RuntimeException exception = new RuntimeException();
+        RuntimeException exception = mock(RuntimeException.class);
+        doAnswer(invocation -> {
+            PrintWriter printWriter = invocation.getArgument(0, PrintWriter.class);
+            printWriter.write("java.lang.RuntimeException without stack trace");
+            return null;
+        }).when(exception).printStackTrace(any(PrintWriter.class));
         processor.error("Error message", exception);
-        verify(messager, atLeast(2)).printMessage(eq(Diagnostic.Kind.ERROR), any());
-        assertTrue(messages.size() > 2, "Number of messages less than 2");
-        assertEquals("Error message", messages.get(0),
-                "First message does not equal to 'Error message'");
-        assertEquals("java.lang.RuntimeException", messages.get(1),
-                "Second message does not equal to 'java.lang.RuntimeException'");
+        verify(messager).printMessage(eq(Diagnostic.Kind.ERROR), any());
+        assertEquals(1, messages.size(), "Number of messages is not 1");
+        String message = messages.get(0);
+        assertEquals("Error message" + lineSeparator() + "java.lang.RuntimeException without stack trace", message,
+                "Error message is incorrect");
     }
 
     @Test
@@ -119,12 +123,5 @@ class BaseProcessorTest {
     void should_return_supportedAnnotations() {
         assertEquals(Collections.singleton("java.lang.Deprecated"), processor.getSupportedAnnotationTypes(),
                 "Supported annotation types are not equal to 'java.lang.Deprecated'");
-    }
-
-    @Test
-    void should_prepare_messenger() {
-        // coverage
-        assertNotNull(processor.prepareMessenger(), "Messenger");
-        assertNotNull(processor.prepareMessenger(), "Messenger");
     }
 }

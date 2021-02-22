@@ -16,7 +16,7 @@
 
 package dev.alexengrig.metter.processor;
 
-import dev.alexengrig.metter.util.Messenger2Writer;
+import dev.alexengrig.metter.util.Exceptions;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
@@ -34,7 +34,7 @@ import java.util.Set;
  * @param <A> type of annotation
  * @param <E> type of element
  * @author Grig Alex
- * @version 0.1.0
+ * @version 0.1.1
  * @see javax.annotation.processing.AbstractProcessor
  * @since 0.1.0
  */
@@ -45,12 +45,6 @@ public abstract class BaseProcessor<A extends Annotation, E extends Element> ext
      * @since 0.1.0
      */
     protected final Class<? extends A> annotationClass;
-    /**
-     * Adapter of messenger.
-     *
-     * @since 0.1.0
-     */
-    protected transient Messenger2Writer messenger;
 
     /**
      * Constructs with an annotation class.
@@ -107,21 +101,8 @@ public abstract class BaseProcessor<A extends Annotation, E extends Element> ext
      * @since 0.1.0
      */
     protected void error(String message, Throwable throwable) {
-        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, message);
-        throwable.printStackTrace(prepareMessenger().errorWriter());
-    }
-
-    /**
-     * Prepares adapter of messenger.
-     *
-     * @return adapter of messenger
-     * @since 0.1.0
-     */
-    protected Messenger2Writer prepareMessenger() {
-        if (messenger == null) {
-            messenger = new Messenger2Writer(processingEnv.getMessager());
-        }
-        return messenger;
+        String stackTrace = Exceptions.getStackTrace(throwable);
+        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, message + System.lineSeparator() + stackTrace);
     }
 
     /**

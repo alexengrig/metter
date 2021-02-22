@@ -45,6 +45,7 @@ import java.util.Set;
 import static dev.alexengrig.metter.ElementMocks.fieldMock;
 import static dev.alexengrig.metter.ElementMocks.nameMock;
 import static dev.alexengrig.metter.ElementMocks.typeElementMock;
+import static java.lang.System.lineSeparator;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -206,7 +207,8 @@ class BaseMethodSupplierProcessorTest {
         processor.init(environment);
         processor.writeSourceFile(file, "ignore");
 
-        verify(messager).printMessage(Diagnostic.Kind.ERROR, "Exception of source file writing");
+        verify(messager).printMessage(Diagnostic.Kind.ERROR,
+                "Exception of source file writing" + lineSeparator() + "java.io.IOException" + lineSeparator());
     }
 
     @Test

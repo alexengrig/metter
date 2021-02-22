@@ -16,37 +16,38 @@
 
 package dev.alexengrig.metter.util;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 /**
- * Utility class for {@link java.lang.String}.
+ * Utility class for {@link java.lang.Throwable}.
  *
  * @author Grig Alex
  * @version 0.1.1
  * @since 0.1.1
  */
-public final class Strings {
+public class Exceptions {
     /**
      * Private constructor.
      *
      * @throws IllegalAccessException on call
      * @since 0.1.1
      */
-    private Strings() throws IllegalAccessException {
-        throw new IllegalAccessException("Strings is utility class");
+    private Exceptions() throws IllegalAccessException {
+        throw new IllegalAccessException("Exceptions is utility class");
     }
 
     /**
-     * Capitalize string.
+     * Returns a stack trace from {@link java.lang.Throwable}.
      *
-     * @param string string
-     * @return capitalized {@code string}
+     * @param throwable exception with stack trace
+     * @return stack trace from {@code throwable}
      * @since 0.1.1
      */
-    public static String capitalize(String string) {
-        if (string == null) {
-            return null;
-        } else if (string.length() < 2) {
-            return string.toUpperCase();
-        }
-        return string.substring(0, 1).toUpperCase() + string.substring(1);
+    public static String getStackTrace(Throwable throwable) {
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        throwable.printStackTrace(printWriter);
+        return stringWriter.toString();
     }
 }
