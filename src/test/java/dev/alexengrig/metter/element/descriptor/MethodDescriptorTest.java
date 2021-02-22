@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.lang.model.element.ExecutableElement;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Set;
 
 import static dev.alexengrig.metter.ElementMocks.executableElementMock;
@@ -28,8 +29,11 @@ import static dev.alexengrig.metter.ElementMocks.noParametersMethodMock;
 import static dev.alexengrig.metter.ElementMocks.notPrivateMethodMock;
 import static dev.alexengrig.metter.ElementMocks.parameterizedMethodMock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class MethodDescriptorTest {
     @Test
@@ -76,7 +80,24 @@ class MethodDescriptorTest {
     void should_check_hasOnlyOneParameter() {
         ExecutableElement executableElement = parameterizedMethodMock(String.class);
         MethodDescriptor descriptor = new MethodDescriptor(executableElement);
-        assertTrue(descriptor.hasOnlyOneParameter(String.class.getName()), () ->
-                "Method has no only one parameter: " + String.class.getName());
+        boolean hasOnlyOneParameter = descriptor.hasOnlyOneParameter(String.class.getName());
+        assertTrue(hasOnlyOneParameter, () -> "Method has no only one parameter: " + String.class.getName());
+    }
+
+    @Test
+    void should_check_hasOnlyOneParameter_without_parameters() {
+        ExecutableElement executableElement = mock(ExecutableElement.class);
+        when(executableElement.getParameters()).thenReturn(Collections.emptyList());
+        MethodDescriptor descriptor = new MethodDescriptor(executableElement);
+        boolean hasOnlyOneParameter = descriptor.hasOnlyOneParameter(String.class.getName());
+        assertFalse(hasOnlyOneParameter, () -> "Method has only one parameter: " + String.class.getName());
+    }
+
+    @Test
+    void should_check_hasOnlyOneParameter_with_differentParameter() {
+        ExecutableElement executableElement = parameterizedMethodMock(Integer.class);
+        MethodDescriptor descriptor = new MethodDescriptor(executableElement);
+        boolean hasOnlyOneParameter = descriptor.hasOnlyOneParameter(String.class.getName());
+        assertFalse(hasOnlyOneParameter, () -> "Method has only one parameter: " + Integer.class.getName());
     }
 }

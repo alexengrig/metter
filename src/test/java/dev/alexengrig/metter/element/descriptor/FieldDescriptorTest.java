@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class FieldDescriptorTest {
@@ -68,6 +69,8 @@ class FieldDescriptorTest {
         when(field.getEnclosingElement()).thenReturn(type);
         FieldDescriptor descriptor = new FieldDescriptor(field);
         assertSame(type, descriptor.getParent().element, "Type element is invalid");
+        descriptor.getParent();
+        verify(field).getEnclosingElement();
     }
 
     @Test

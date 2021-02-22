@@ -26,15 +26,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 class Messenger2WriterTest {
-    Messager messager = mock(Messager.class);
-    Messenger2Writer messenger2Writer = new Messenger2Writer(messager);
-
     @Test
     void should_print_errorMessage() {
+        Messager messager = mock(Messager.class);
+        Messenger2Writer messenger2Writer = new Messenger2Writer(messager);
         PrintWriter writer = messenger2Writer.errorWriter();
         writer.println("Error message");
         verify(messager).printMessage(Diagnostic.Kind.ERROR, "Error message");
         // coverage
+        messenger2Writer.errorWriter();
         writer.flush();
         writer.close();
     }

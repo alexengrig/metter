@@ -52,12 +52,6 @@ public class MethodDescriptor {
      * @since 0.1.1
      */
     protected transient Boolean isNotPrivate;
-    /**
-     * Mark about single parameter.
-     *
-     * @since 0.1.1
-     */
-    protected transient Boolean hasOnlyOneParameter;
 
     /**
      * Constructs with an executable element.
@@ -127,18 +121,14 @@ public class MethodDescriptor {
     }
 
     /**
-     * Checks if method has only one parameter.
+     * Checks if method has only one parameter with parameter type name.
      *
      * @param parameterTypeName parameter type name
-     * @return if method has only one parameter
+     * @return if method has only one parameter with {@code parameterTypeName}
      * @since 0.1.1
      */
     public boolean hasOnlyOneParameter(String parameterTypeName) {
-        if (hasOnlyOneParameter == null) {
-            List<? extends VariableElement> parameters = executableElement.getParameters();
-            hasOnlyOneParameter = parameters.size() == 1
-                    && parameterTypeName.equals(parameters.get(0).asType().toString());
-        }
-        return hasOnlyOneParameter;
+        List<? extends VariableElement> parameters = executableElement.getParameters();
+        return parameters.size() == 1 && parameterTypeName.equals(parameters.get(0).asType().toString());
     }
 }

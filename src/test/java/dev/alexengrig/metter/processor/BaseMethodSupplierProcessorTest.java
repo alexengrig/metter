@@ -27,6 +27,7 @@ import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.tools.Diagnostic;
@@ -42,6 +43,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static dev.alexengrig.metter.ElementMocks.fieldMock;
+import static dev.alexengrig.metter.ElementMocks.nameMock;
 import static dev.alexengrig.metter.ElementMocks.typeElementMock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -113,6 +115,20 @@ class BaseMethodSupplierProcessorTest {
         Optional<String> className = processor.getClassName(typeDescriptor);
         assertTrue(className.isPresent(), "Class name created");
         assertEquals("java.lang.CustomClassName", className.get(), "Class name is incorrect");
+    }
+
+    @Test
+    void should_create_customClassName_without_package() {
+        BaseMethodSupplierProcessor<Deprecated> processor = getMock();
+        when(processor.getCustomClassName(any())).thenReturn("CustomClassName");
+
+        Name qualifiedName = nameMock("FakeClass");
+        TypeElement typeElement = mock(TypeElement.class);
+        when(typeElement.getQualifiedName()).thenReturn(qualifiedName);
+        TypeDescriptor typeDescriptor = new TypeDescriptor(typeElement);
+        Optional<String> className = processor.getClassName(typeDescriptor);
+        assertTrue(className.isPresent(), "Class name created");
+        assertEquals("CustomClassName", className.get(), "Class name is incorrect");
     }
 
     @Test

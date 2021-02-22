@@ -106,13 +106,12 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
         if (customClassName.isEmpty()) {
             return Optional.empty();
         }
-        String packageName = "";
         String className = type.getQualifiedName();
         int lastIndexOfDot = className.lastIndexOf('.');
         if (lastIndexOfDot > 0) {
-            packageName = className.substring(0, lastIndexOfDot);
+            return Optional.of(className.substring(0, lastIndexOfDot).concat(".").concat(customClassName));
         }
-        return Optional.of(packageName.concat(".").concat(customClassName));
+        return Optional.of(customClassName);
     }
 
     /**

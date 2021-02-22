@@ -126,6 +126,25 @@ class GetterSupplierProcessorTest {
     }
 
     @Test
+    void should_check_hasGetterMethod() {
+        MethodDescriptor methodDescriptor = mock(MethodDescriptor.class);
+        when(methodDescriptor.isNotPrivate()).thenReturn(true);
+        when(methodDescriptor.hasNoParameters()).thenReturn(true);
+        when(methodDescriptor.getTypeName()).thenReturn("boolean");
+        TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
+        when(typeDescriptor.hasMethod("isField")).thenReturn(true);
+        when(typeDescriptor.getMethods("isField")).thenReturn(Collections.singleton(methodDescriptor));
+        FieldDescriptor fieldDescriptor = mock(FieldDescriptor.class);
+        when(fieldDescriptor.getTypeName()).thenReturn("boolean");
+        when(fieldDescriptor.getName()).thenReturn("field");
+        when(fieldDescriptor.getParent()).thenReturn(typeDescriptor);
+
+        boolean hasGetterMethod = PROCESSOR.hasGetterMethod(fieldDescriptor);
+
+        assertTrue(hasGetterMethod, "Class has no getter-method");
+    }
+
+    @Test
     void should_check_hasGetterMethod_without_getterMethod() {
         TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
         when(typeDescriptor.hasMethod("isField")).thenReturn(false);
@@ -231,5 +250,27 @@ class GetterSupplierProcessorTest {
         boolean isTargetField = PROCESSOR.isTargetField(fieldDescriptor);
 
         assertTrue(isTargetField, "Class does not have getter-method");
+    }
+
+    @Test
+    void should_check_isTargetField_with_differentTypeOfGetter() {
+        MethodDescriptor methodDescriptor = mock(MethodDescriptor.class);
+        when(methodDescriptor.isNotPrivate()).thenReturn(true);
+        when(methodDescriptor.hasNoParameters()).thenReturn(true);
+        when(methodDescriptor.getTypeName()).thenReturn("int");
+        TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
+        when(typeDescriptor.hasAnnotation(Getter.class)).thenReturn(false);
+        when(typeDescriptor.hasAnnotation(Data.class)).thenReturn(false);
+        when(typeDescriptor.hasMethod("isTest")).thenReturn(true);
+        when(typeDescriptor.getMethods("isTest")).thenReturn(Collections.singleton(methodDescriptor));
+        FieldDescriptor fieldDescriptor = mock(FieldDescriptor.class);
+        when(fieldDescriptor.hasAnnotation(Getter.class)).thenReturn(false);
+        when(fieldDescriptor.getParent()).thenReturn(typeDescriptor);
+        when(fieldDescriptor.getName()).thenReturn("test");
+        when(fieldDescriptor.getTypeName()).thenReturn("boolean");
+
+        boolean isTargetField = PROCESSOR.isTargetField(fieldDescriptor);
+
+        assertFalse(isTargetField, "Class have getter-method with int return type");
     }
 }

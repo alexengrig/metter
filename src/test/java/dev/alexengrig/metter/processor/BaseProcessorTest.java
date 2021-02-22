@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -118,5 +119,12 @@ class BaseProcessorTest {
     void should_return_supportedAnnotations() {
         assertEquals(Collections.singleton("java.lang.Deprecated"), processor.getSupportedAnnotationTypes(),
                 "Supported annotation types are not equal to 'java.lang.Deprecated'");
+    }
+
+    @Test
+    void should_prepare_messenger() {
+        // coverage
+        assertNotNull(processor.prepareMessenger(), "Messenger");
+        assertNotNull(processor.prepareMessenger(), "Messenger");
     }
 }
