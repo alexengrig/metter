@@ -23,18 +23,18 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-public class PrivateGettersAndSettersDomainTest extends BaseDomainTest<PrivateGettersAndSettersDomain> {
+public class InheritedPrivateGettersAndSettersDomainTest extends BaseDomainTest<InheritedPrivateGettersAndSettersDomain> {
     @Test
     public void should_ignores_privateGetters() {
-        Map<String, Function<PrivateGettersAndSettersDomain, Object>> getterByField
-                = getGetterMap(new PrivateGettersAndSettersDomainGetterSupplier());
+        Map<String, Function<InheritedPrivateGettersAndSettersDomain, Object>> getterByField
+                = getGetterMap(new InheritedPrivateGettersAndSettersDomainGetterSupplier());
         assertEmpty(getterByField);
     }
 
     @Test
     public void should_ignores_privateSetters() {
-        Map<String, BiConsumer<PrivateGettersAndSettersDomain, Object>> setterByField
-                = getSetterMap(new PrivateGettersAndSettersDomainSetterSupplier());
+        Map<String, BiConsumer<InheritedPrivateGettersAndSettersDomain, Object>> setterByField
+                = getSetterMap(new InheritedPrivateGettersAndSettersDomainSetterSupplier());
         assertEmpty(setterByField);
     }
 }
