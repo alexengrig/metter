@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2020-2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,36 +14,29 @@
  * limitations under the License.
  */
 
+import dev.alexengrig.metter.demo.BaseDomainTest;
 import org.junit.Test;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-public class NoPackageDomainTest {
+public class NoPackageDomainTest extends BaseDomainTest<NoPackageDomain> {
     @Test
     public void should_contains_allGetters() {
-        Map<String, Function<NoPackageDomain, Object>> getterByField = new NoPackageDomainGetterSupplier().get();
-        assertNotNull("Map is null", getterByField);
-        assertEquals("Map size not equal to 1", 1, getterByField.size());
-        assertTrue("Map not contain getter for 'integer' field", getterByField.containsKey("integer"));
+        Map<String, Function<NoPackageDomain, Object>> getterByField = getGetterMap(new NoPackageDomainGetterSupplier());
+        assertSize(getterByField, 1);
+        assertGetterFields(getterByField, "integer");
         NoPackageDomain domain = new NoPackageDomain(1);
-        assertEquals("Getter for 'integer' field returns wrong value",
-                1, getterByField.get("integer").apply(domain));
+        assertGetterValue(getterByField, domain, "integer", 1);
     }
 
     @Test
     public void should_contains_allSetters() {
-        Map<String, BiConsumer<NoPackageDomain, Object>> setterByField = new NoPackageDomainSetterSupplier().get();
-        assertNotNull("Map is null", setterByField);
-        assertEquals("Map size not equal to 1", 1, setterByField.size());
-        assertTrue("Map not contain setter for 'integer' field", setterByField.containsKey("integer"));
-        NoPackageDomain domain = new NoPackageDomain(0);
-        setterByField.get("integer").accept(domain, 1);
-        assertEquals("Setter for 'integer' field sets wrong value", 1, domain.getInteger());
+        Map<String, BiConsumer<NoPackageDomain, Object>> setterByField = getSetterMap(new NoPackageDomainSetterSupplier());
+        assertSize(setterByField, 1);
+        assertSetterFields(setterByField, "integer");
+        NoPackageDomain domain = new NoPackageDomain(1);
+        assertSetterValue(setterByField, domain, "integer", 10, NoPackageDomain::getInteger);
     }
 }
