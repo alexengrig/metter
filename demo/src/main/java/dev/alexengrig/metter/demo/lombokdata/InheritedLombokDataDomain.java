@@ -18,16 +18,18 @@ package dev.alexengrig.metter.demo.lombokdata;
 
 import dev.alexengrig.metter.annotation.GetterSupplier;
 import dev.alexengrig.metter.annotation.SetterSupplier;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 @Data
 @GetterSupplier
 @SetterSupplier
-@NoArgsConstructor
-@AllArgsConstructor
-public class LombokDataDomain {
-    private int integer;
-    private boolean bool;
+@EqualsAndHashCode(callSuper = true)
+public class InheritedLombokDataDomain extends LombokDataDomain {
+    private long longer;
+
+    public InheritedLombokDataDomain(int integer, boolean bool, long longer) {
+        super(integer, bool);
+        this.longer = longer;
+    }
 }
