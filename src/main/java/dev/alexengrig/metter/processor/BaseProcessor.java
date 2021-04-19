@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Alexengrig Dev.
+ * Copyright 2020-2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,11 +22,18 @@ import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeKind;
 import javax.tools.Diagnostic;
 import java.lang.annotation.Annotation;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Base processor.
@@ -34,11 +41,18 @@ import java.util.Set;
  * @param <A> type of annotation
  * @param <E> type of element
  * @author Grig Alex
- * @version 0.1.1
+ * @version 0.2.0
  * @see javax.annotation.processing.AbstractProcessor
  * @since 0.1.0
  */
 public abstract class BaseProcessor<A extends Annotation, E extends Element> extends AbstractProcessor {
+    /**
+     * {@link Class#getName()} for {@link Object}.
+     *
+     * @since 0.2.0
+     */
+    protected static final String JAVA_LANG_OBJECT_CLASS_NAME = Object.class.getName();
+
     /**
      * Annotation class.
      *
@@ -103,6 +117,36 @@ public abstract class BaseProcessor<A extends Annotation, E extends Element> ext
     protected void error(String message, Throwable throwable) {
         String stackTrace = Exceptions.getStackTrace(throwable);
         processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, message + System.lineSeparator() + stackTrace);
+    }
+
+    /**
+     * Returns all super type elements for a type element.
+     *
+     * @param typeElement type element
+     * @return all super type elements for {@code typeElement}
+     * @since 0.2.0
+     */
+    protected Set<TypeElement> getAllSuperTypes(TypeElement typeElement) {
+        Set<TypeElement> target = new HashSet<>();
+        Queue<TypeElement> queue = new LinkedList<>();
+        queue.add(typeElement);
+        while (!queue.isEmpty()) {
+            TypeElement type = queue.remove();
+            Set<TypeElement> superTypes = processingEnv.getTypeUtils().directSupertypes(type.asType())
+                    .stream()
+                    .filter(typeMirror -> typeMirror.getKind() == TypeKind.DECLARED)
+                    .map(DeclaredType.class::cast)
+                    .map(DeclaredType::asElement)
+                    .filter(element -> element.getKind() == ElementKind.CLASS)
+                    .filter(element -> !JAVA_LANG_OBJECT_CLASS_NAME.equals(element.toString()))
+                    .map(TypeElement.class::cast)
+                    .collect(Collectors.toSet());
+            if (!superTypes.isEmpty()) {
+                target.addAll(superTypes);
+                queue.addAll(superTypes);
+            }
+        }
+        return target;
     }
 
     /**
