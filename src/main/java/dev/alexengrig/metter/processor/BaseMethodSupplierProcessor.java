@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Alexengrig Dev.
+ * Copyright 2020-2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,13 +31,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Base processor of method supplier.
  *
  * @param <A> type of annotation
  * @author Grig Alex
- * @version 0.1.1
+ * @version 0.2.0
  * @since 0.1.0
  */
 public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends BaseProcessor<A, TypeElement> {
@@ -169,14 +170,17 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
     }
 
     /**
-     * Returns fields from a type descriptor.
+     * Returns fields from a type descriptor with fields of super classes.
      *
      * @param type descriptor
-     * @return fields from {@code type}
+     * @return fields from {@code type} with fields of super classes
      * @since 0.1.0
      */
     protected Set<FieldDescriptor> getFields(TypeDescriptor type) {
-        Set<FieldDescriptor> fields = type.getFields();
+        Set<TypeElement> superTypes = getAllSuperTypes(type.getElement());
+        Set<FieldDescriptor> fields = Stream.concat(Stream.of(type), superTypes.stream().map(TypeDescriptor::new))
+                .flatMap(descriptor -> descriptor.getFields().stream())
+                .collect(Collectors.toSet());
         Set<String> includedFields = getIncludedFields(type);
         Set<String> excludedFields = getExcludedFields(type);
         if (includedFields.isEmpty() && excludedFields.isEmpty()) {
