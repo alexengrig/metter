@@ -42,6 +42,10 @@ public abstract class BaseDomainTest<T> {
         assertEquals("Map size is incorrect", size, map.size());
     }
 
+    protected void assertEmpty(Map<String, ?> map) {
+        assertTrue("Map isn't empty", map.isEmpty());
+    }
+
     protected void assertGetterFields(Map<String, Function<T, Object>> getterByField, String... fields) {
         for (String field : fields) {
             assertTrue("Map not contain getter for field '" + field + "'", getterByField.containsKey(field));
