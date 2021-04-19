@@ -23,19 +23,13 @@ import lombok.Setter;
 
 @GetterSupplier
 @SetterSupplier
-public class LombokGettersAndSettersDomain {
-    @SuppressWarnings({"unused", "FieldCanBeLocal"})
-    private final int ignored;
+public class InheritedLombokGettersAndSettersDomain extends LombokGettersAndSettersDomain {
     @Getter
     @Setter
-    private int integer;
-    @Getter
-    @Setter
-    private boolean bool;
+    private long longer;
 
-    public LombokGettersAndSettersDomain(int integer, boolean bool, int ignored) {
-        this.integer = integer;
-        this.bool = bool;
-        this.ignored = ignored;
+    public InheritedLombokGettersAndSettersDomain(int integer, boolean bool, int ignored, long longer) {
+        super(integer, bool, ignored);
+        this.longer = longer;
     }
 }
