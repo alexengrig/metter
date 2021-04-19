@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Alexengrig Dev.
+ * Copyright 2020-2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,16 @@ import org.junit.jupiter.api.Test;
 import javax.lang.model.element.Element;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ElementDescriptorTest {
+    @Test
+    void should_return_element() {
+        Element element = ElementMocks.element();
+        ElementDescriptor<Element> descriptor = new ElementDescriptor<>(element);
+        assertSame(element, descriptor.getElement(), "Element is incorrect");
+    }
 
     @Test
     void should_return_annotation() {
