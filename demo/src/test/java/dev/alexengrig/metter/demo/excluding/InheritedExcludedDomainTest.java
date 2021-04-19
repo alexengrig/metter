@@ -25,25 +25,28 @@ import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
 
-public class ExcludedDomainTest extends BaseDomainTest<ExcludedDomain> {
+public class InheritedExcludedDomainTest extends BaseDomainTest<InheritedExcludedDomain> {
     @Test
-    public void should_contains_allNotExcludedGetters() {
-        Map<String, Function<ExcludedDomain, Object>> getterByField = getGetterMap(new ExcludedDomainGetterSupplier());
+    public void should_contains_allNotExcludedGettersWithSuper() {
+        Map<String, Function<InheritedExcludedDomain, Object>> getterByField = getGetterMap(new InheritedExcludedDomainGetterSupplier());
         assertSize(getterByField, 1);
         assertGetterFields(getterByField, "integer");
-        ExcludedDomain domain = new ExcludedDomain(1, 2);
+        InheritedExcludedDomain domain = new InheritedExcludedDomain(1, 2, 3);
         assertGetterValue(getterByField, domain, "integer", 1);
         assertEquals("Excluded field value is incorrect", 2, domain.getExcluded());
+        assertEquals("Also excluded field value is incorrect", 3, domain.getAlsoExcluded());
     }
 
     @Test
     public void should_contains_allNotExcludedSetters() {
-        Map<String, BiConsumer<ExcludedDomain, Object>> setterByField = getSetterMap(new ExcludedDomainSetterSupplier());
+        Map<String, BiConsumer<InheritedExcludedDomain, Object>> setterByField = getSetterMap(new InheritedExcludedDomainSetterSupplier());
         assertSize(setterByField, 1);
         assertSetterFields(setterByField, "integer");
-        ExcludedDomain domain = new ExcludedDomain(1, 2);
-        assertSetterValue(setterByField, domain, "integer", 10, ExcludedDomain::getInteger);
+        InheritedExcludedDomain domain = new InheritedExcludedDomain(1, 2, 3);
+        assertSetterValue(setterByField, domain, "integer", 10, InheritedExcludedDomain::getInteger);
         domain.setExcluded(20);
         assertEquals("Excluded field value is incorrect", 20, domain.getExcluded());
+        domain.setAlsoExcluded(30);
+        assertEquals("Also excluded field value is incorrect", 30, domain.getAlsoExcluded());
     }
 }
