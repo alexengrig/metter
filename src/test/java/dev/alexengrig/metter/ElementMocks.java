@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Alexengrig Dev.
+ * Copyright 2020-2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,10 +44,14 @@ import static org.mockito.Mockito.when;
 public final class ElementMocks {
 
     public static <A extends Annotation> Element annotatedElement(Class<A> type) {
-        Element element = mock(Element.class);
+        Element element = element();
         A annotation = annotationMock(type);
         when(element.getAnnotation(type)).thenReturn(annotation);
         return element;
+    }
+
+    public static Element element() {
+        return mock(Element.class);
     }
 
     public static VariableElement fieldMock() {
