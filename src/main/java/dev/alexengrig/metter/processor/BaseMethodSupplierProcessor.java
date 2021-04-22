@@ -177,8 +177,8 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
      * @since 0.1.0
      */
     protected Set<FieldDescriptor> getFields(TypeDescriptor type) {
-        Set<TypeElement> superTypes = getAllSuperTypes(type.getElement());
-        Set<FieldDescriptor> fields = Stream.concat(Stream.of(type), superTypes.stream().map(TypeDescriptor::new))
+        Set<TypeDescriptor> superTypes = getAllSuperTypes(type);
+        Set<FieldDescriptor> fields = Stream.concat(Stream.of(type), superTypes.stream())
                 .flatMap(descriptor -> descriptor.getFields().stream())
                 .collect(Collectors.toSet());
         Set<String> includedFields = getIncludedFields(type);

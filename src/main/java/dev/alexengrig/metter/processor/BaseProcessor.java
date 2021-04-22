@@ -16,6 +16,7 @@
 
 package dev.alexengrig.metter.processor;
 
+import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
 import dev.alexengrig.metter.util.Exceptions;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -120,16 +121,16 @@ public abstract class BaseProcessor<A extends Annotation, E extends Element> ext
     }
 
     /**
-     * Returns all super type elements for a type element.
+     * Returns all super type descriptors for a type descriptor.
      *
-     * @param typeElement type element
-     * @return all super type elements for {@code typeElement}
+     * @param typeDescriptor type descriptor
+     * @return all super type descriptors for {@code typeDescriptor}
      * @since 0.2.0
      */
-    protected Set<TypeElement> getAllSuperTypes(TypeElement typeElement) {
-        Set<TypeElement> target = new HashSet<>();
+    protected Set<TypeDescriptor> getAllSuperTypes(TypeDescriptor typeDescriptor) {
+        Set<TypeDescriptor> target = new HashSet<>();
         Queue<TypeElement> queue = new LinkedList<>();
-        queue.add(typeElement);
+        queue.add(typeDescriptor.getElement());
         while (!queue.isEmpty()) {
             TypeElement type = queue.remove();
             Set<TypeElement> superTypes = processingEnv.getTypeUtils().directSupertypes(type.asType())
@@ -142,7 +143,7 @@ public abstract class BaseProcessor<A extends Annotation, E extends Element> ext
                     .map(TypeElement.class::cast)
                     .collect(Collectors.toSet());
             if (!superTypes.isEmpty()) {
-                target.addAll(superTypes);
+                target.addAll(superTypes.stream().map(TypeDescriptor::new).collect(Collectors.toSet()));
                 queue.addAll(superTypes);
             }
         }
