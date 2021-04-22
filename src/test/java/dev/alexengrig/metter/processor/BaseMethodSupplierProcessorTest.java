@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Alexengrig Dev.
+ * Copyright 2020-2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
 import dev.alexengrig.metter.exception.MetterException;
 import dev.alexengrig.metter.generator.MethodSupplierSourceGenerator;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 
 import javax.annotation.processing.Filer;
@@ -130,6 +132,14 @@ class BaseMethodSupplierProcessorTest {
         Optional<String> className = processor.getClassName(typeDescriptor);
         assertTrue(className.isPresent(), "Class name created");
         assertEquals("CustomClassName", className.get(), "Class name is incorrect");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", " ", ".", "0", "do", "while", "com.", "com.null", "com.CustomName"})
+    void should_assert_customClassName(String customClassName) {
+        BaseMethodSupplierProcessor<Deprecated> processor = getMock();
+        MetterException exception = assertThrows(MetterException.class, () -> processor.assertValidCustomClassName(customClassName));
+        assertEquals("Custom class name is invalid: '" + customClassName + "'", exception.getMessage(), "Exception message is incorrect");
     }
 
     @Test
