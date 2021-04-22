@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Alexengrig Dev.
+ * Copyright 2020-2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,16 +43,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class BaseProcessorTest {
-    static final BaseProcessor<Deprecated, Element> processor;
-    static final ProcessingEnvironment environment;
-
-    static {
-        environment = mock(ProcessingEnvironment.class);
-        processor = new BaseProcessor<Deprecated, Element>(Deprecated.class) {
-            {
-                init(environment);
-            }
-
+    private static BaseProcessor<Deprecated, Element> getMock() {
+        return new BaseProcessor<Deprecated, Element>(Deprecated.class) {
             @Override
             protected void process(Element annotatedElement) {
             }
@@ -63,6 +55,7 @@ class BaseProcessorTest {
     void should_not_process() {
         RoundEnvironment roundEnvironment = mock(RoundEnvironment.class);
         when(roundEnvironment.processingOver()).thenReturn(true);
+        BaseProcessor<Deprecated, Element> processor = getMock();
         assertFalse(processor.process(Collections.emptySet(), roundEnvironment), "Processor must not process");
     }
 
@@ -73,6 +66,7 @@ class BaseProcessorTest {
         Element typeElement = ElementMocks.typeElementMock();
         Mockito.<Set<? extends Element>>when(roundEnvironment.getElementsAnnotatedWith(Deprecated.class))
                 .thenReturn(Collections.singleton(typeElement));
+        BaseProcessor<Deprecated, Element> processor = getMock();
         assertTrue(processor.process(Collections.emptySet(), roundEnvironment), "Processor must process");
         verify(roundEnvironment).getElementsAnnotatedWith(Deprecated.class);
     }
@@ -80,7 +74,10 @@ class BaseProcessorTest {
     @Test
     void should_print_noteMessage() {
         Messager messager = mock(Messager.class);
+        ProcessingEnvironment environment = mock(ProcessingEnvironment.class);
         when(environment.getMessager()).thenReturn(messager);
+        BaseProcessor<Deprecated, Element> processor = getMock();
+        processor.init(environment);
         processor.note("Note message");
         verify(messager).printMessage(Diagnostic.Kind.NOTE, "Note message");
     }
@@ -88,6 +85,7 @@ class BaseProcessorTest {
     @Test
     void should_print_errorMessage() {
         Messager messager = mock(Messager.class);
+        ProcessingEnvironment environment = mock(ProcessingEnvironment.class);
         when(environment.getMessager()).thenReturn(messager);
         ArrayList<String> messages = new ArrayList<>();
         doAnswer(invocation -> {
@@ -100,6 +98,8 @@ class BaseProcessorTest {
             printWriter.write("java.lang.RuntimeException without stack trace");
             return null;
         }).when(exception).printStackTrace(any(PrintWriter.class));
+        BaseProcessor<Deprecated, Element> processor = getMock();
+        processor.init(environment);
         processor.error("Error message", exception);
         verify(messager).printMessage(eq(Diagnostic.Kind.ERROR), any());
         assertEquals(1, messages.size(), "Number of messages is not 1");
@@ -110,17 +110,20 @@ class BaseProcessorTest {
 
     @Test
     void should_return_supportedOptions() {
+        BaseProcessor<Deprecated, Element> processor = getMock();
         assertTrue(processor.getSupportedOptions().isEmpty(), "Processor has supported options");
     }
 
     @Test
     void should_return_supportedVersion() {
+        BaseProcessor<Deprecated, Element> processor = getMock();
         assertEquals(SourceVersion.RELEASE_8, processor.getSupportedSourceVersion(),
                 "Supported source version does not equal to 8");
     }
 
     @Test
     void should_return_supportedAnnotations() {
+        BaseProcessor<Deprecated, Element> processor = getMock();
         assertEquals(Collections.singleton("java.lang.Deprecated"), processor.getSupportedAnnotationTypes(),
                 "Supported annotation types are not equal to 'java.lang.Deprecated'");
     }
