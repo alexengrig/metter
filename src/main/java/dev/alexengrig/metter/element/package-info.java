@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Alexengrig Dev.
+ * Copyright 2020-2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
  * Elements.
  *
  * @author Grig Alex
- * @version 0.1.1
+ * @version 0.2.0
  * @since 0.1.0
  */
 package dev.alexengrig.metter.element;
