@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Alexengrig Dev.
+ * Copyright 2020-2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
 import dev.alexengrig.metter.exception.MetterException;
 import dev.alexengrig.metter.generator.MethodSupplierSourceGenerator;
 
+import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
@@ -106,6 +107,7 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
         if (customClassName.isEmpty()) {
             return Optional.empty();
         }
+        assertValidCustomClassName(customClassName);
         String className = type.getQualifiedName();
         int lastIndexOfDot = className.lastIndexOf('.');
         if (lastIndexOfDot > 0) {
@@ -122,6 +124,20 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
      * @since 0.1.0
      */
     protected abstract String getCustomClassName(TypeDescriptor type);
+
+    /**
+     * Asserts a valid custom class name.
+     *
+     * @param className custom class name
+     * @throws MetterException if for {@code className} {@link SourceVersion#isKeyword(java.lang.CharSequence)} returns {@code true}
+     *                         or {@link SourceVersion#isIdentifier(java.lang.CharSequence)} returns {@code false}
+     * @since 0.1.1
+     */
+    protected void assertValidCustomClassName(String className) {
+        if (SourceVersion.isKeyword(className) || !SourceVersion.isIdentifier(className)) {
+            throw new MetterException("Custom class name is invalid: '" + className + "'");
+        }
+    }
 
     /**
      * Returns a default class name from a type descriptor.
