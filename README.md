@@ -49,8 +49,8 @@ Supports [Lombok](https://github.com/rzwitserloot/lombok) annotations: `@Data`, 
 Add this code to `dependencies` section in your `build.gradle`:
 
 ```groovy
-compileOnly 'dev.alexengrig:metter:0.1.0'
-annotationProcessor 'dev.alexengrig:metter:0.1.0'
+compileOnly 'dev.alexengrig:metter:0.1.1'
+annotationProcessor 'dev.alexengrig:metter:0.1.1'
 ```
 
 #### Maven
@@ -61,7 +61,7 @@ Add this code to `dependencies` section in your `pom.xml`:
 <dependency>
     <groupId>dev.alexengrig</groupId>
     <artifactId>metter</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
     <scope>provided</scope>
     <optional>true</optional>
 </dependency>
@@ -81,7 +81,7 @@ Specify the annotation processor to `maven-compiler-plugin` plugin:
                     <annotationProcessorPath>
                         <groupId>dev.alexengrig</groupId>
                         <artifactId>metter</artifactId>
-                        <version>0.1.0</version>
+                        <version>0.1.1</version>
                     </annotationProcessorPath>
                 </annotationProcessorPaths>
             </configuration>
