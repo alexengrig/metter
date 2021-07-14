@@ -56,7 +56,7 @@
         <auto-service.version>1.0-rc2</auto-service.version>
         <junit.version>5.7.0</junit.version>
         <mockito.version>3.5.11</mockito.version>
-        <lombok.version>1.18.12</lombok.version>
+        <lombok.version>1.18.20</lombok.version>
     </properties>
 
     <dependencies>
