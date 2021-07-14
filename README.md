@@ -16,6 +16,8 @@
 
 Metter (***met***a get***ter*** / set***ter***) is an annotation processor for generating getter and setter suppliers.
 
+Ignores private methods.
+
 Supports [Lombok](https://github.com/rzwitserloot/lombok) annotations: `@Data`, `@Getter` and `@Setter`.
 
 ## Table of Contents
