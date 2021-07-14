@@ -20,7 +20,7 @@
 
     <groupId>dev.alexengrig</groupId>
     <artifactId>metter</artifactId>
-    <version>0.1.1</version>
+    <version>0.2.0-SNAPSHOT</version>
 
     <name>metter</name>
     <description>An annotation processor for generating getter and setter suppliers</description>
@@ -225,7 +225,7 @@
         <connection>scm:git:https://github.com/alexengrig/metter.git</connection>
         <developerConnection>scm:git:https://github.com/alexengrig/metter.git</developerConnection>
         <url>https://github.com/alexengrig/metter.git</url>
-        <tag>metter-0.1.1</tag>
+        <tag>HEAD</tag>
     </scm>
 
 </project>
