@@ -132,7 +132,7 @@ public class Domain {
 }
 ```
 
-The generated suppliers have a default name consisting of a prefix as a class name
+The generated suppliers have a default name consisting of a prefix as a class name,
 and a suffix as the supplier name: `${CLASS_NAME}GetterSupplier` and `${CLASS_NAME}SetterSupplier`.
 You can set a custom name using the annotation parameter `value`.
 
