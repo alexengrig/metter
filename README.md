@@ -16,21 +16,24 @@
 
 Metter is an annotation processor for generating getter and setter suppliers.
 
-Supports [Lombok](https://github.com/rzwitserloot/lombok) annotations: `@Data`, `@Getter` and `@Setter`.
+- Supports [Lombok](https://github.com/rzwitserloot/lombok) annotations: `@Data`, `@Getter` and `@Setter`.
+- Supports inheritance (getters/setters of superclasses).
+
+[See](demo) examples.
 
 ## Table of Contents
 
--   [Get Started](#get-started)
-    -   [Install](#install)
-        -   [Gradle](#gradle)
-        -   [Maven](#maven)
-    -   [Using](#using)
-        -   [Instance](#instance)
-        -   [Inheritance](#inheritance)
-        -   [Bean](#bean)
--   [API](#api)
-    -   [GetterSupplier](#gettersupplier)
-    -   [SetterSupplier](#settersupplier)
+- [Get Started](#get-started)
+    - [Install](#install)
+        - [Gradle](#gradle)
+        - [Maven](#maven)
+    - [Using](#using)
+        - [Instance](#instance)
+        - [Inheritance](#inheritance)
+        - [Bean](#bean)
+- [API](#api)
+    - [GetterSupplier](#gettersupplier)
+    - [SetterSupplier](#settersupplier)
 -   [Motivation](#motivation)
     -   [Problem](#problem)
     -   [Solution](#solution)
@@ -398,9 +401,9 @@ The generation solution is faster than the reflection solution (reflection is sl
 This project is [licensed](LICENSE) under [Apache License, version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
 [JetBrains Mono typeface](https://www.jetbrains.com/lp/mono)
-used in [logo](docs/images/metter-logo.png)
-and [preview](docs/images/metter-preview.png)
 is [licensed](https://www.jetbrains.com/lp/mono/#license)
-under [Apache License, version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+under [Apache License, version 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+and it used in [logo](docs/images/metter-logo.png)
+and [preview](docs/images/metter-preview.png).
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Falexengrig%2Fmetter.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Falexengrig%2Fmetter?ref=badge_large)
