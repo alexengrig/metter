@@ -1,11 +1,11 @@
 /*
- * Copyright 2021 Alexengrig Dev.
+ * Copyright 2020-2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,9 +21,7 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class MethodSupplierSourceGeneratorTest {
     static final String SNAPSHOT_OF_SOURCE_WITHOUT_PACKAGE;
@@ -31,6 +29,9 @@ class MethodSupplierSourceGeneratorTest {
 
     static {
         SNAPSHOT_OF_SOURCE_WITHOUT_PACKAGE = "" +
+                "/**\n" +
+                " * Types supplier of {@link MyDomain}.\n" +
+                " */\n" +
                 "@javax.annotation.Generated(\n" +
                 "        value = \"dev.alexengrig.metter.generator.MethodSupplierSourceGeneratorTest$1\")\n" +
                 "public class MyClass implements\n" +
@@ -40,15 +41,26 @@ class MethodSupplierSourceGeneratorTest {
                 "                        Object\n" +
                 "                        >> {\n" +
                 "\n" +
+                "    /**\n" +
+                "     * Map, type function by field name.\n" +
+                "     */\n" +
                 "    protected final java.util.Map<\n" +
                 "            java.lang.String,\n" +
                 "            Object\n" +
                 "            > getterByField;\n" +
                 "\n" +
+                "    /**\n" +
+                "     * Constructs this.\n" +
+                "     */\n" +
                 "    public MyClass() {\n" +
                 "        this.getterByField = createMap();\n" +
                 "    }\n" +
                 "\n" +
+                "    /**\n" +
+                "     * Creates map, type function by field name.\n" +
+                "     *\n" +
+                "     * @return map, type function by field name\n" +
+                "     */\n" +
                 "    protected java.util.Map<\n" +
                 "            java.lang.String,\n" +
                 "            Object\n" +
@@ -62,6 +74,11 @@ class MethodSupplierSourceGeneratorTest {
                 "        return map;\n" +
                 "    }\n" +
                 "\n" +
+                "    /**\n" +
+                "     * Returns map, type function by field name.\n" +
+                "     *\n" +
+                "     * @return map, type function by field name\n" +
+                "     */\n" +
                 "    @Override\n" +
                 "    public java.util.Map<\n" +
                 "            java.lang.String,\n" +
@@ -73,6 +90,9 @@ class MethodSupplierSourceGeneratorTest {
         SNAPSHOT_OF_SOURCE_WITH_PACKAGE = "" +
                 "package my.company;\n" +
                 "\n" +
+                "/**\n" +
+                " * Types supplier of {@link my.company.MyDomain}.\n" +
+                " */\n" +
                 "@javax.annotation.Generated(\n" +
                 "        value = \"dev.alexengrig.metter.generator.MethodSupplierSourceGeneratorTest$1\")\n" +
                 "public class MyClass implements\n" +
@@ -82,15 +102,26 @@ class MethodSupplierSourceGeneratorTest {
                 "                        Object\n" +
                 "                        >> {\n" +
                 "\n" +
+                "    /**\n" +
+                "     * Map, type function by field name.\n" +
+                "     */\n" +
                 "    protected final java.util.Map<\n" +
                 "            java.lang.String,\n" +
                 "            Object\n" +
                 "            > getterByField;\n" +
                 "\n" +
+                "    /**\n" +
+                "     * Constructs this.\n" +
+                "     */\n" +
                 "    public MyClass() {\n" +
                 "        this.getterByField = createMap();\n" +
                 "    }\n" +
                 "\n" +
+                "    /**\n" +
+                "     * Creates map, type function by field name.\n" +
+                "     *\n" +
+                "     * @return map, type function by field name\n" +
+                "     */\n" +
                 "    protected java.util.Map<\n" +
                 "            java.lang.String,\n" +
                 "            Object\n" +
@@ -108,6 +139,11 @@ class MethodSupplierSourceGeneratorTest {
                 "        return map;\n" +
                 "    }\n" +
                 "\n" +
+                "    /**\n" +
+                "     * Returns map, type function by field name.\n" +
+                "     *\n" +
+                "     * @return map, type function by field name\n" +
+                "     */\n" +
                 "    @Override\n" +
                 "    public java.util.Map<\n" +
                 "            java.lang.String,\n" +
@@ -123,6 +159,16 @@ class MethodSupplierSourceGeneratorTest {
         protected String getMapValueType(String domainClassName) {
             return "Object";
         }
+
+        @Override
+        protected String getJavaDocTypeNameForClass() {
+            return "Types";
+        }
+
+        @Override
+        protected String getJavaDocTypeName() {
+            return "type";
+        }
     };
 
     @Test
@@ -131,6 +177,16 @@ class MethodSupplierSourceGeneratorTest {
         MethodSupplierSourceGenerator generator = new MethodSupplierSourceGenerator() {
             @Override
             protected String getMapValueType(String domainClassName) {
+                return null;
+            }
+
+            @Override
+            protected String getJavaDocTypeNameForClass() {
+                return null;
+            }
+
+            @Override
+            protected String getJavaDocTypeName() {
                 return null;
             }
         };

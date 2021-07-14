@@ -1,11 +1,11 @@
 /*
- * Copyright 2021 Alexengrig Dev.
+ * Copyright 2020-2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -55,5 +55,25 @@ public class SetterSupplierSourceGenerator extends MethodSupplierSourceGenerator
     @Override
     protected String getMapValueType(String domainClassName) {
         return String.format("java.util.function.BiConsumer<%s, java.lang.Object>", domainClassName);
+    }
+
+    /**
+     * Returns {@code Setters}.
+     *
+     * @return {@code Setters}
+     */
+    @Override
+    protected String getJavaDocTypeNameForClass() {
+        return "Setters";
+    }
+
+    /**
+     * Returns {@code setter}.
+     *
+     * @return {@code setter}
+     */
+    @Override
+    protected String getJavaDocTypeName() {
+        return "setter";
     }
 }

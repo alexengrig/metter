@@ -1,11 +1,11 @@
 /*
- * Copyright 2021 Alexengrig Dev.
+ * Copyright 2020-2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -68,8 +68,12 @@ public abstract class MethodSupplierSourceGenerator {
         String packageName = getPackageName(className);
         String simpleClassName = getSimpleName(className);
         String mapValueType = getMapValueType(domainClassName);
+        String javaDocTypeName = getJavaDocTypeName();
         return new LineJoiner()
                 .ftIf(packageName != null, "package %s;\n", packageName)
+                .ln("/**")
+                .ft(" * %s supplier of {@link %s}.", getJavaDocTypeNameForClass(), domainClassName)
+                .ln(" */")
                 .ln("@javax.annotation.Generated(")
                 .ftIf(withGeneratedDate, "        date = \"%s\",", LocalDateTime.now().toString())
                 .ft("        value = \"%s\")", getClass().getName())
@@ -80,15 +84,26 @@ public abstract class MethodSupplierSourceGenerator {
                 .ft("                        %s", mapValueType)
                 .ln("                        >> {")
                 .ln()
+                .ln("    /**")
+                .ft("     * Map, %s function by field name.", javaDocTypeName)
+                .ln("     */")
                 .ln("    protected final java.util.Map<")
                 .ln("            java.lang.String,")
                 .ft("            %s", mapValueType)
                 .ln("            > getterByField;")
                 .ln()
+                .ln("    /**")
+                .ln("     * Constructs this.")
+                .ln("     */")
                 .ft("    public %s() {", simpleClassName)
                 .ln("        this.getterByField = createMap();")
                 .ln("    }")
                 .ln()
+                .ln("    /**")
+                .ft("     * Creates map, %s function by field name.", javaDocTypeName)
+                .ln("     *")
+                .ft("     * @return map, %s function by field name", javaDocTypeName)
+                .ln("     */")
                 .ln("    protected java.util.Map<")
                 .ln("            java.lang.String,")
                 .ft("            %s", mapValueType)
@@ -101,6 +116,11 @@ public abstract class MethodSupplierSourceGenerator {
                 .ln("        return map;")
                 .ln("    }")
                 .ln()
+                .ln("    /**")
+                .ft("     * Returns map, %s function by field name.", javaDocTypeName)
+                .ln("     *")
+                .ft("     * @return map, %s function by field name", javaDocTypeName)
+                .ln("     */")
                 .ln("    @Override")
                 .ln("    public java.util.Map<")
                 .ln("            java.lang.String,")
@@ -147,4 +167,20 @@ public abstract class MethodSupplierSourceGenerator {
      * @since 0.1.0
      */
     protected abstract String getMapValueType(String domainClassName);
+
+    /**
+     * Returns a type name for JavaDoc in class.
+     *
+     * @return type name for JavaDoc in class
+     * @since 0.2.0
+     */
+    protected abstract String getJavaDocTypeNameForClass();
+
+    /**
+     * Returns a type name for JavaDoc.
+     *
+     * @return type name for JavaDoc
+     * @since 0.2.0
+     */
+    protected abstract String getJavaDocTypeName();
 }
