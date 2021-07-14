@@ -24,10 +24,23 @@ package dev.alexengrig.metter.exception;
  * @since 0.1.1
  */
 public class MetterException extends RuntimeException {
+    /**
+     * Constructs with the detail message.
+     *
+     * @param message the detail message
+     * @since 0.1.1
+     */
     public MetterException(String message) {
         super(message);
     }
 
+    /**
+     * Constructs with the detail message and cause.
+     *
+     * @param message the detail message
+     * @param cause   the cause
+     * @since 0.1.1
+     */
     public MetterException(String message, Throwable cause) {
         super(message, cause);
     }
