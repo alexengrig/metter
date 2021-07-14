@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dev.alexengrig.metter.demo.privatelombokgetterandsetter;
+package dev.alexengrig.metter.demo.privatelombokgettersandsetters;
 
 import dev.alexengrig.metter.demo.BaseDomainTest;
 import org.junit.Test;
@@ -23,18 +23,18 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-public class PrivateLombokGetterAndSetterDomainTest extends BaseDomainTest<PrivateLombokGetterAndSetterDomain> {
+public class InheritedPrivateLombokGettersAndSettersDomainTest extends BaseDomainTest<InheritedPrivateLombokGettersAndSettersDomain> {
     @Test
     public void should_ignores_privateGetters() {
-        Map<String, Function<PrivateLombokGetterAndSetterDomain, Object>> getterByField
-                = getGetterMap(new PrivateLombokGetterAndSetterDomainGetterSupplier());
+        Map<String, Function<InheritedPrivateLombokGettersAndSettersDomain, Object>> getterByField
+                = getGetterMap(new InheritedPrivateLombokGettersAndSettersDomainGetterSupplier());
         assertEmpty(getterByField);
     }
 
     @Test
     public void should_ignores_privateSetters() {
-        Map<String, BiConsumer<PrivateLombokGetterAndSetterDomain, Object>> setterByField
-                = getSetterMap(new PrivateLombokGetterAndSetterDomainSetterSupplier());
+        Map<String, BiConsumer<InheritedPrivateLombokGettersAndSettersDomain, Object>> setterByField
+                = getSetterMap(new InheritedPrivateLombokGettersAndSettersDomainSetterSupplier());
         assertEmpty(setterByField);
     }
 }

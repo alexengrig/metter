@@ -26,7 +26,7 @@ import java.util.Optional;
  *
  * @param <E> type of element
  * @author Grig Alex
- * @version 0.1.1
+ * @version 0.2.0
  * @since 0.1.1
  */
 public class ElementDescriptor<E extends Element> {
@@ -45,6 +45,16 @@ public class ElementDescriptor<E extends Element> {
      */
     public ElementDescriptor(E element) {
         this.element = Objects.requireNonNull(element, "Element must not be null");
+    }
+
+    /**
+     * Returns an element.
+     *
+     * @return element
+     * @since 0.2.0
+     */
+    public E getElement() {
+        return element;
     }
 
     /**

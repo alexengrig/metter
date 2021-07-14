@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+package dev.alexengrig.metter.demo.inheritance;
+
 import dev.alexengrig.metter.demo.BaseDomainTest;
 import org.junit.Test;
 
@@ -21,22 +23,22 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-public class NoPackageDomainTest extends BaseDomainTest<NoPackageDomain> {
+public class FatherDomainTest extends BaseDomainTest<FatherDomain> {
     @Test
-    public void should_contains_allGetters() {
-        Map<String, Function<NoPackageDomain, Object>> getterByField = getGetterMap(new NoPackageDomainGetterSupplier());
+    public void should_contains_allGettersWithSuper() {
+        Map<String, Function<FatherDomain, Object>> getterByField = getGetterMap(new FatherDomainGetterSupplier());
         assertSize(getterByField, 1);
-        assertGetterFields(getterByField, "integer");
-        NoPackageDomain domain = new NoPackageDomain(1);
-        assertGetterValue(getterByField, domain, "integer", 1);
+        assertGetterFields(getterByField, "fatherInt");
+        FatherDomain domain = new FatherDomain(1);
+        assertGetterValue(getterByField, domain, "fatherInt", 1);
     }
 
     @Test
-    public void should_contains_allSetters() {
-        Map<String, BiConsumer<NoPackageDomain, Object>> setterByField = getSetterMap(new NoPackageDomainSetterSupplier());
+    public void should_contains_allSettersWithSuper() {
+        Map<String, BiConsumer<FatherDomain, Object>> setterByField = getSetterMap(new FatherDomainSetterSupplier());
         assertSize(setterByField, 1);
-        assertSetterFields(setterByField, "integer");
-        NoPackageDomain domain = new NoPackageDomain(1);
-        assertSetterValue(setterByField, domain, "integer", 10, NoPackageDomain::getInteger);
+        assertSetterFields(setterByField, "fatherInt");
+        FatherDomain domain = new FatherDomain(1);
+        assertSetterValue(setterByField, domain, "fatherInt", 10, FatherDomain::getFatherInt);
     }
 }

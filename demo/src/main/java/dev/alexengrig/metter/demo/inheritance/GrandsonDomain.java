@@ -14,23 +14,26 @@
  * limitations under the License.
  */
 
-plugins {
-    id 'java'
-}
+package dev.alexengrig.metter.demo.inheritance;
 
-group 'dev.alexengrig'
-version '0.2.0-SNAPSHOT'
+import dev.alexengrig.metter.annotation.GetterSupplier;
+import dev.alexengrig.metter.annotation.SetterSupplier;
 
-repositories {
-    mavenCentral()
-}
+@GetterSupplier
+@SetterSupplier
+public class GrandsonDomain extends SonDomain {
+    private int grandsonInt;
 
-dependencies {
-    compileOnly files('../target/metter.jar')
-    annotationProcessor files('../target/metter.jar')
+    public GrandsonDomain(int fatherInt, int sonInt, int grandsonInt) {
+        super(fatherInt, sonInt);
+        this.grandsonInt = grandsonInt;
+    }
 
-    compileOnly 'org.projectlombok:lombok:1.18.12'
-    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+    public int getGrandsonInt() {
+        return grandsonInt;
+    }
 
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    public void setGrandsonInt(int grandsonInt) {
+        this.grandsonInt = grandsonInt;
+    }
 }

@@ -30,6 +30,9 @@ class GetterSupplierSourceGeneratorTest {
 
     static {
         SNAPSHOT_OF_SOURCE_WITHOUT_PACKAGE = "" +
+                "/**\n" +
+                " * Getters supplier of {@link MyDomain}.\n" +
+                " */\n" +
                 "@javax.annotation.Generated(\n" +
                 "        value = \"dev.alexengrig.metter.generator.GetterSupplierSourceGenerator\")\n" +
                 "public class MyClass implements\n" +
@@ -39,15 +42,26 @@ class GetterSupplierSourceGeneratorTest {
                 "                        java.util.function.Function<MyDomain, java.lang.Object>\n" +
                 "                        >> {\n" +
                 "\n" +
+                "    /**\n" +
+                "     * Map, getter function by field name.\n" +
+                "     */\n" +
                 "    protected final java.util.Map<\n" +
                 "            java.lang.String,\n" +
                 "            java.util.function.Function<MyDomain, java.lang.Object>\n" +
                 "            > getterByField;\n" +
                 "\n" +
+                "    /**\n" +
+                "     * Constructs this.\n" +
+                "     */\n" +
                 "    public MyClass() {\n" +
                 "        this.getterByField = createMap();\n" +
                 "    }\n" +
                 "\n" +
+                "    /**\n" +
+                "     * Creates map, getter function by field name.\n" +
+                "     *\n" +
+                "     * @return map, getter function by field name\n" +
+                "     */\n" +
                 "    protected java.util.Map<\n" +
                 "            java.lang.String,\n" +
                 "            java.util.function.Function<MyDomain, java.lang.Object>\n" +
@@ -65,6 +79,11 @@ class GetterSupplierSourceGeneratorTest {
                 "        return map;\n" +
                 "    }\n" +
                 "\n" +
+                "    /**\n" +
+                "     * Returns map, getter function by field name.\n" +
+                "     *\n" +
+                "     * @return map, getter function by field name\n" +
+                "     */\n" +
                 "    @Override\n" +
                 "    public java.util.Map<\n" +
                 "            java.lang.String,\n" +
@@ -76,6 +95,9 @@ class GetterSupplierSourceGeneratorTest {
         SNAPSHOT_OF_SOURCE_WITH_PACKAGE = "" +
                 "package my.company;\n" +
                 "\n" +
+                "/**\n" +
+                " * Getters supplier of {@link my.company.MyDomain}.\n" +
+                " */\n" +
                 "@javax.annotation.Generated(\n" +
                 "        value = \"dev.alexengrig.metter.generator.GetterSupplierSourceGenerator\")\n" +
                 "public class MyClass implements\n" +
@@ -85,15 +107,26 @@ class GetterSupplierSourceGeneratorTest {
                 "                        java.util.function.Function<my.company.MyDomain, java.lang.Object>\n" +
                 "                        >> {\n" +
                 "\n" +
+                "    /**\n" +
+                "     * Map, getter function by field name.\n" +
+                "     */\n" +
                 "    protected final java.util.Map<\n" +
                 "            java.lang.String,\n" +
                 "            java.util.function.Function<my.company.MyDomain, java.lang.Object>\n" +
                 "            > getterByField;\n" +
                 "\n" +
+                "    /**\n" +
+                "     * Constructs this.\n" +
+                "     */\n" +
                 "    public MyClass() {\n" +
                 "        this.getterByField = createMap();\n" +
                 "    }\n" +
                 "\n" +
+                "    /**\n" +
+                "     * Creates map, getter function by field name.\n" +
+                "     *\n" +
+                "     * @return map, getter function by field name\n" +
+                "     */\n" +
                 "    protected java.util.Map<\n" +
                 "            java.lang.String,\n" +
                 "            java.util.function.Function<my.company.MyDomain, java.lang.Object>\n" +
@@ -111,6 +144,11 @@ class GetterSupplierSourceGeneratorTest {
                 "        return map;\n" +
                 "    }\n" +
                 "\n" +
+                "    /**\n" +
+                "     * Returns map, getter function by field name.\n" +
+                "     *\n" +
+                "     * @return map, getter function by field name\n" +
+                "     */\n" +
                 "    @Override\n" +
                 "    public java.util.Map<\n" +
                 "            java.lang.String,\n" +

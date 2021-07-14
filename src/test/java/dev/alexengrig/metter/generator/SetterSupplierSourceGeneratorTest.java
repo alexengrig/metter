@@ -30,6 +30,9 @@ class SetterSupplierSourceGeneratorTest {
 
     static {
         SNAPSHOT_OF_SOURCE_WITHOUT_PACKAGE = "" +
+                "/**\n" +
+                " * Setters supplier of {@link MyDomain}.\n" +
+                " */\n" +
                 "@javax.annotation.Generated(\n" +
                 "        value = \"dev.alexengrig.metter.generator.SetterSupplierSourceGenerator\")\n" +
                 "public class MyClass implements\n" +
@@ -39,15 +42,26 @@ class SetterSupplierSourceGeneratorTest {
                 "                        java.util.function.BiConsumer<MyDomain, java.lang.Object>\n" +
                 "                        >> {\n" +
                 "\n" +
+                "    /**\n" +
+                "     * Map, setter function by field name.\n" +
+                "     */\n" +
                 "    protected final java.util.Map<\n" +
                 "            java.lang.String,\n" +
                 "            java.util.function.BiConsumer<MyDomain, java.lang.Object>\n" +
-                "            > getterByField;\n" +
+                "            > setterByField;\n" +
                 "\n" +
+                "    /**\n" +
+                "     * Constructs this.\n" +
+                "     */\n" +
                 "    public MyClass() {\n" +
-                "        this.getterByField = createMap();\n" +
+                "        this.setterByField = createMap();\n" +
                 "    }\n" +
                 "\n" +
+                "    /**\n" +
+                "     * Creates map, setter function by field name.\n" +
+                "     *\n" +
+                "     * @return map, setter function by field name\n" +
+                "     */\n" +
                 "    protected java.util.Map<\n" +
                 "            java.lang.String,\n" +
                 "            java.util.function.BiConsumer<MyDomain, java.lang.Object>\n" +
@@ -65,17 +79,25 @@ class SetterSupplierSourceGeneratorTest {
                 "        return map;\n" +
                 "    }\n" +
                 "\n" +
+                "    /**\n" +
+                "     * Returns map, setter function by field name.\n" +
+                "     *\n" +
+                "     * @return map, setter function by field name\n" +
+                "     */\n" +
                 "    @Override\n" +
                 "    public java.util.Map<\n" +
                 "            java.lang.String,\n" +
                 "            java.util.function.BiConsumer<MyDomain, java.lang.Object>\n" +
                 "            > get() {\n" +
-                "        return getterByField;\n" +
+                "        return setterByField;\n" +
                 "    }\n" +
                 "}\n";
         SNAPSHOT_OF_SOURCE_WITH_PACKAGE = "" +
                 "package my.company;\n" +
                 "\n" +
+                "/**\n" +
+                " * Setters supplier of {@link my.company.MyDomain}.\n" +
+                " */\n" +
                 "@javax.annotation.Generated(\n" +
                 "        value = \"dev.alexengrig.metter.generator.SetterSupplierSourceGenerator\")\n" +
                 "public class MyClass implements\n" +
@@ -85,15 +107,26 @@ class SetterSupplierSourceGeneratorTest {
                 "                        java.util.function.BiConsumer<my.company.MyDomain, java.lang.Object>\n" +
                 "                        >> {\n" +
                 "\n" +
+                "    /**\n" +
+                "     * Map, setter function by field name.\n" +
+                "     */\n" +
                 "    protected final java.util.Map<\n" +
                 "            java.lang.String,\n" +
                 "            java.util.function.BiConsumer<my.company.MyDomain, java.lang.Object>\n" +
-                "            > getterByField;\n" +
+                "            > setterByField;\n" +
                 "\n" +
+                "    /**\n" +
+                "     * Constructs this.\n" +
+                "     */\n" +
                 "    public MyClass() {\n" +
-                "        this.getterByField = createMap();\n" +
+                "        this.setterByField = createMap();\n" +
                 "    }\n" +
                 "\n" +
+                "    /**\n" +
+                "     * Creates map, setter function by field name.\n" +
+                "     *\n" +
+                "     * @return map, setter function by field name\n" +
+                "     */\n" +
                 "    protected java.util.Map<\n" +
                 "            java.lang.String,\n" +
                 "            java.util.function.BiConsumer<my.company.MyDomain, java.lang.Object>\n" +
@@ -111,12 +144,17 @@ class SetterSupplierSourceGeneratorTest {
                 "        return map;\n" +
                 "    }\n" +
                 "\n" +
+                "    /**\n" +
+                "     * Returns map, setter function by field name.\n" +
+                "     *\n" +
+                "     * @return map, setter function by field name\n" +
+                "     */\n" +
                 "    @Override\n" +
                 "    public java.util.Map<\n" +
                 "            java.lang.String,\n" +
                 "            java.util.function.BiConsumer<my.company.MyDomain, java.lang.Object>\n" +
                 "            > get() {\n" +
-                "        return getterByField;\n" +
+                "        return setterByField;\n" +
                 "    }\n" +
                 "}\n";
     }

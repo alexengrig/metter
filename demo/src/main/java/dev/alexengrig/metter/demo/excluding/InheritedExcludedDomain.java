@@ -14,28 +14,26 @@
  * limitations under the License.
  */
 
-package dev.alexengrig.metter.demo.lombokgettersandsetters;
+package dev.alexengrig.metter.demo.excluding;
 
 import dev.alexengrig.metter.annotation.GetterSupplier;
 import dev.alexengrig.metter.annotation.SetterSupplier;
-import lombok.Getter;
-import lombok.Setter;
 
-@GetterSupplier
-@SetterSupplier
-public class LombokGettersAndSettersDomain {
-    @SuppressWarnings({"unused", "FieldCanBeLocal"})
-    private final int ignored;
-    @Getter
-    @Setter
-    private int integer;
-    @Getter
-    @Setter
-    private boolean bool;
+@GetterSupplier(excludedFields = {"excluded", "alsoExcluded"})
+@SetterSupplier(excludedFields = {"excluded", "alsoExcluded"})
+public class InheritedExcludedDomain extends ExcludedDomain {
+    private int alsoExcluded;
 
-    public LombokGettersAndSettersDomain(int integer, boolean bool, int ignored) {
-        this.integer = integer;
-        this.bool = bool;
-        this.ignored = ignored;
+    public InheritedExcludedDomain(int integer, int excluded, int alsoExcluded) {
+        super(integer, excluded);
+        this.alsoExcluded = alsoExcluded;
+    }
+
+    public int getAlsoExcluded() {
+        return alsoExcluded;
+    }
+
+    public void setAlsoExcluded(int alsoExcluded) {
+        this.alsoExcluded = alsoExcluded;
     }
 }

@@ -14,23 +14,21 @@
  * limitations under the License.
  */
 
-plugins {
-    id 'java'
-}
+package dev.alexengrig.metter.demo.privategettersandsetters;
 
-group 'dev.alexengrig'
-version '0.2.0-SNAPSHOT'
+import dev.alexengrig.metter.annotation.GetterSupplier;
+import dev.alexengrig.metter.annotation.SetterSupplier;
 
-repositories {
-    mavenCentral()
-}
+@GetterSupplier
+@SetterSupplier
+public class InheritedPrivateGettersAndSettersDomain extends PrivateGettersAndSettersDomain {
+    private long longer;
 
-dependencies {
-    compileOnly files('../target/metter.jar')
-    annotationProcessor files('../target/metter.jar')
+    private long getLonger() {
+        return longer;
+    }
 
-    compileOnly 'org.projectlombok:lombok:1.18.12'
-    annotationProcessor 'org.projectlombok:lombok:1.18.12'
-
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    private void setLonger(long longer) {
+        this.longer = longer;
+    }
 }

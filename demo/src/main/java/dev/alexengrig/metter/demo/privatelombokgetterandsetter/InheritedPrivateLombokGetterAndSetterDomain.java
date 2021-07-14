@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-plugins {
-    id 'java'
-}
+package dev.alexengrig.metter.demo.privatelombokgetterandsetter;
 
-group 'dev.alexengrig'
-version '0.2.0-SNAPSHOT'
+import dev.alexengrig.metter.annotation.GetterSupplier;
+import dev.alexengrig.metter.annotation.SetterSupplier;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    compileOnly files('../target/metter.jar')
-    annotationProcessor files('../target/metter.jar')
-
-    compileOnly 'org.projectlombok:lombok:1.18.12'
-    annotationProcessor 'org.projectlombok:lombok:1.18.12'
-
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+@GetterSupplier
+@SetterSupplier
+@Getter(AccessLevel.PRIVATE)
+@Setter(AccessLevel.PRIVATE)
+public class InheritedPrivateLombokGetterAndSetterDomain extends PrivateLombokGetterAndSetterDomain {
+    private long longer;
 }

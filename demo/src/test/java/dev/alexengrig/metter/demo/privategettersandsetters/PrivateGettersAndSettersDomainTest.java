@@ -16,26 +16,25 @@
 
 package dev.alexengrig.metter.demo.privategettersandsetters;
 
+import dev.alexengrig.metter.demo.BaseDomainTest;
 import org.junit.Test;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-import static org.junit.Assert.assertTrue;
-
-public class PrivateGettersAndSettersDomainTest {
+public class PrivateGettersAndSettersDomainTest extends BaseDomainTest<PrivateGettersAndSettersDomain> {
     @Test
     public void should_ignores_privateGetters() {
         Map<String, Function<PrivateGettersAndSettersDomain, Object>> getterByField
-                = new PrivateGettersAndSettersDomainGetterSupplier().get();
-        assertTrue("Map is not empty", getterByField.isEmpty());
+                = getGetterMap(new PrivateGettersAndSettersDomainGetterSupplier());
+        assertEmpty(getterByField);
     }
 
     @Test
     public void should_ignores_privateSetters() {
         Map<String, BiConsumer<PrivateGettersAndSettersDomain, Object>> setterByField
-                = new PrivateGettersAndSettersDomainSetterSupplier().get();
-        assertTrue("Map is not empty", setterByField.isEmpty());
+                = getSetterMap(new PrivateGettersAndSettersDomainSetterSupplier());
+        assertEmpty(setterByField);
     }
 }

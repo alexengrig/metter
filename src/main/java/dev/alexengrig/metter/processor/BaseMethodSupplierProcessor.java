@@ -32,13 +32,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Base processor of method supplier.
  *
  * @param <A> type of annotation
  * @author Grig Alex
- * @version 0.1.1
+ * @version 0.2.0
  * @since 0.1.0
  */
 public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends BaseProcessor<A, TypeElement> {
@@ -185,14 +186,17 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
     }
 
     /**
-     * Returns fields from a type descriptor.
+     * Returns fields from a type descriptor with fields of super classes.
      *
      * @param type descriptor
-     * @return fields from {@code type}
+     * @return fields from {@code type} with fields of super classes
      * @since 0.1.0
      */
     protected Set<FieldDescriptor> getFields(TypeDescriptor type) {
-        Set<FieldDescriptor> fields = type.getFields();
+        Set<TypeDescriptor> superTypes = getAllSuperTypes(type);
+        Set<FieldDescriptor> fields = Stream.concat(Stream.of(type), superTypes.stream())
+                .flatMap(descriptor -> descriptor.getFields().stream())
+                .collect(Collectors.toSet());
         Set<String> includedFields = getIncludedFields(type);
         Set<String> excludedFields = getExcludedFields(type);
         if (includedFields.isEmpty() && excludedFields.isEmpty()) {

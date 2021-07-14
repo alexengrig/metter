@@ -14,23 +14,25 @@
  * limitations under the License.
  */
 
-plugins {
-    id 'java'
-}
+package dev.alexengrig.metter.demo.inheritance;
 
-group 'dev.alexengrig'
-version '0.2.0-SNAPSHOT'
+import dev.alexengrig.metter.annotation.GetterSupplier;
+import dev.alexengrig.metter.annotation.SetterSupplier;
 
-repositories {
-    mavenCentral()
-}
+@GetterSupplier
+@SetterSupplier
+public class FatherDomain {
+    private int fatherInt;
 
-dependencies {
-    compileOnly files('../target/metter.jar')
-    annotationProcessor files('../target/metter.jar')
+    public FatherDomain(int fatherInt) {
+        this.fatherInt = fatherInt;
+    }
 
-    compileOnly 'org.projectlombok:lombok:1.18.12'
-    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+    public int getFatherInt() {
+        return fatherInt;
+    }
 
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    public void setFatherInt(int fatherInt) {
+        this.fatherInt = fatherInt;
+    }
 }

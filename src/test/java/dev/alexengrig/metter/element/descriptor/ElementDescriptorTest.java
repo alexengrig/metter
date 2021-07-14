@@ -22,9 +22,16 @@ import org.junit.jupiter.api.Test;
 import javax.lang.model.element.Element;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ElementDescriptorTest {
+    @Test
+    void should_return_element() {
+        Element element = ElementMocks.element();
+        ElementDescriptor<Element> descriptor = new ElementDescriptor<>(element);
+        assertSame(element, descriptor.getElement(), "Element is incorrect");
+    }
 
     @Test
     void should_return_annotation() {

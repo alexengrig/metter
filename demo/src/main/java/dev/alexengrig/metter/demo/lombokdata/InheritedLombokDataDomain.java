@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-plugins {
-    id 'java'
-}
+package dev.alexengrig.metter.demo.lombokdata;
 
-group 'dev.alexengrig'
-version '0.2.0-SNAPSHOT'
+import dev.alexengrig.metter.annotation.GetterSupplier;
+import dev.alexengrig.metter.annotation.SetterSupplier;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-repositories {
-    mavenCentral()
-}
+@Data
+@GetterSupplier
+@SetterSupplier
+@EqualsAndHashCode(callSuper = true)
+public class InheritedLombokDataDomain extends LombokDataDomain {
+    private long longer;
 
-dependencies {
-    compileOnly files('../target/metter.jar')
-    annotationProcessor files('../target/metter.jar')
-
-    compileOnly 'org.projectlombok:lombok:1.18.12'
-    annotationProcessor 'org.projectlombok:lombok:1.18.12'
-
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    public InheritedLombokDataDomain(int integer, boolean bool, long longer) {
+        super(integer, bool);
+        this.longer = longer;
+    }
 }

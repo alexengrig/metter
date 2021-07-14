@@ -44,10 +44,14 @@ import static org.mockito.Mockito.when;
 public final class ElementMocks {
 
     public static <A extends Annotation> Element annotatedElement(Class<A> type) {
-        Element element = mock(Element.class);
+        Element element = element();
         A annotation = annotationMock(type);
         when(element.getAnnotation(type)).thenReturn(annotation);
         return element;
+    }
+
+    public static Element element() {
+        return mock(Element.class);
     }
 
     public static VariableElement fieldMock() {

@@ -29,9 +29,14 @@ import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
@@ -48,12 +53,14 @@ import static dev.alexengrig.metter.ElementMocks.fieldMock;
 import static dev.alexengrig.metter.ElementMocks.nameMock;
 import static dev.alexengrig.metter.ElementMocks.typeElementMock;
 import static java.lang.System.lineSeparator;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -282,10 +289,17 @@ class BaseMethodSupplierProcessorTest {
         when(filer.createSourceFile(any())).thenReturn(file);
         ProcessingEnvironment environment = mock(ProcessingEnvironment.class);
         when(environment.getFiler()).thenReturn(filer);
+
+        TypeMirror typeMirror = mock(TypeMirror.class);
+        Types types = mock(Types.class);
+        when(types.directSupertypes(same(typeMirror))).thenReturn(Collections.emptyList());
+        when(environment.getTypeUtils()).thenReturn(types);
+
         VariableElement variableElement = fieldMock("field", String.class);
         TypeElement typeElement = typeElementMock(String.class);
         Mockito.<List<? extends Element>>when(typeElement.getEnclosedElements())
                 .thenReturn(Collections.singletonList(variableElement));
+        when(typeElement.asType()).thenReturn(typeMirror);
 
         processor.init(environment);
         processor.process(typeElement);
@@ -304,6 +318,18 @@ class BaseMethodSupplierProcessorTest {
                 fieldMock("field1"),
                 fieldMock("field2")));
         TypeDescriptor typeDescriptor = new TypeDescriptor(typeElement);
+
+        TypeMirror typeMirror = mock(TypeMirror.class);
+        when(typeElement.asType()).thenReturn(typeMirror);
+
+        Types types = mock(Types.class);
+        when(types.directSupertypes(same(typeMirror))).thenReturn(Collections.emptyList());
+
+        ProcessingEnvironment environment = mock(ProcessingEnvironment.class);
+        when(environment.getTypeUtils()).thenReturn(types);
+
+        processor.init(environment);
+
         Map<String, String> field2MethodMap = processor.createField2MethodMap(typeDescriptor);
         assertEquals(2, field2MethodMap.size(), "Size of field-method map is incorrect");
         assertTrue(field2MethodMap.containsKey("field1"), "Field-method map has no 'field1'");
@@ -314,21 +340,90 @@ class BaseMethodSupplierProcessorTest {
     void should_return_fields() {
         BaseMethodSupplierProcessor<Deprecated> processor = getMock();
         TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
+
+        TypeMirror typeMirror = mock(TypeMirror.class);
+        TypeElement typeElement = mock(TypeElement.class);
+        when(typeElement.asType()).thenReturn(typeMirror);
+        when(typeDescriptor.getElement()).thenReturn(typeElement);
+
         FieldDescriptor field = new FieldDescriptor(fieldMock("field"));
         when(typeDescriptor.getFields()).thenReturn(Collections.singleton(field));
+
+        Types types = mock(Types.class);
+        when(types.directSupertypes(same(typeMirror))).thenReturn(Collections.emptyList());
+
+        ProcessingEnvironment environment = mock(ProcessingEnvironment.class);
+        when(environment.getTypeUtils()).thenReturn(types);
+
+        processor.init(environment);
         Set<FieldDescriptor> fields = processor.getFields(typeDescriptor);
         assertEquals(1, fields.size(), "Number of fields does not equal to 1");
         assertEquals("field", fields.iterator().next().getName(), "Field name does not equal to 'field'");
     }
 
     @Test
+    void should_return_fields_with_superClassFields() {
+        VariableElement superField = fieldMock("superField");
+
+        TypeElement superTypeElement = mock(TypeElement.class);
+        Mockito.<List<? extends Element>>when(superTypeElement.getEnclosedElements())
+                .thenReturn(Collections.singletonList(superField));
+        when(superTypeElement.getKind()).thenReturn(ElementKind.CLASS);
+        when(superTypeElement.toString()).thenReturn("NoObject");
+
+        DeclaredType declaredType = mock(DeclaredType.class);
+        when(declaredType.asElement()).thenReturn(superTypeElement);
+        when(declaredType.getKind()).thenReturn(TypeKind.DECLARED);
+
+        TypeMirror typeMirror = mock(TypeMirror.class);
+        TypeElement typeElement = mock(TypeElement.class);
+        when(typeElement.asType()).thenReturn(typeMirror);
+
+        Types types = mock(Types.class);
+        Mockito.<List<? extends TypeMirror>>when(types.directSupertypes(same(typeMirror)))
+                .thenReturn(Collections.singletonList(declaredType));
+
+        ProcessingEnvironment environment = mock(ProcessingEnvironment.class);
+        when(environment.getTypeUtils()).thenReturn(types);
+
+        BaseMethodSupplierProcessor<Deprecated> processor = getMock();
+
+        processor.init(environment);
+
+        FieldDescriptor field = new FieldDescriptor(fieldMock("field"));
+        TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
+        when(typeDescriptor.getElement()).thenReturn(typeElement);
+        when(typeDescriptor.getFields()).thenReturn(Collections.singleton(field));
+
+        Set<FieldDescriptor> fields = processor.getFields(typeDescriptor);
+        assertEquals(2, fields.size(), "Number of fields does not equal to 2");
+        assertArrayEquals(new String[]{"field", "superField"},
+                fields.stream().map(FieldDescriptor::getName).sorted().toArray(), "Fields are incorrect");
+    }
+
+    @Test
     void should_return_includedFields() {
         BaseMethodSupplierProcessor<Deprecated> processor = getMock();
         TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
+
+        TypeMirror typeMirror = mock(TypeMirror.class);
+        TypeElement typeElement = mock(TypeElement.class);
+        when(typeElement.asType()).thenReturn(typeMirror);
+        when(typeDescriptor.getElement()).thenReturn(typeElement);
+
         FieldDescriptor field = new FieldDescriptor(fieldMock("field"));
         FieldDescriptor included = new FieldDescriptor(fieldMock("included"));
         when(typeDescriptor.getFields()).thenReturn(new HashSet<>(Arrays.asList(field, included)));
         when(processor.getIncludedFields(any())).thenReturn(Collections.singleton("included"));
+
+        Types types = mock(Types.class);
+        when(types.directSupertypes(same(typeMirror))).thenReturn(Collections.emptyList());
+
+        ProcessingEnvironment environment = mock(ProcessingEnvironment.class);
+        when(environment.getTypeUtils()).thenReturn(types);
+
+        processor.init(environment);
+
         Set<FieldDescriptor> fields = processor.getFields(typeDescriptor);
         assertEquals(1, fields.size(), "Number of fields does not equal to 1");
         assertEquals("included", fields.iterator().next().getName(), "Field name does not equal to 'included'");
@@ -338,10 +433,25 @@ class BaseMethodSupplierProcessorTest {
     void should_return_notExcludedFields() {
         BaseMethodSupplierProcessor<Deprecated> processor = getMock();
         TypeDescriptor typeDescriptor = mock(TypeDescriptor.class);
+
+        TypeMirror typeMirror = mock(TypeMirror.class);
+        TypeElement typeElement = mock(TypeElement.class);
+        when(typeElement.asType()).thenReturn(typeMirror);
+        when(typeDescriptor.getElement()).thenReturn(typeElement);
+
         FieldDescriptor field = new FieldDescriptor(fieldMock("field"));
         FieldDescriptor excluded = new FieldDescriptor(fieldMock("excluded"));
         when(typeDescriptor.getFields()).thenReturn(new HashSet<>(Arrays.asList(field, excluded)));
         when(processor.getExcludedFields(any())).thenReturn(Collections.singleton("excluded"));
+
+        Types types = mock(Types.class);
+        when(types.directSupertypes(same(typeMirror))).thenReturn(Collections.emptyList());
+
+        ProcessingEnvironment environment = mock(ProcessingEnvironment.class);
+        when(environment.getTypeUtils()).thenReturn(types);
+
+        processor.init(environment);
+
         Set<FieldDescriptor> fields = processor.getFields(typeDescriptor);
         assertEquals(1, fields.size(), "Number of fields does not equal to 1");
         assertEquals("field", fields.iterator().next().getName(), "Field name does not equal to 'field'");

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2020-2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package dev.alexengrig.metter.demo.includingandexcluding;
 
+import dev.alexengrig.metter.demo.BaseDomainTest;
 import org.junit.Test;
 
 import java.util.Map;
@@ -23,36 +24,29 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
-public class IncludedAndExcludedDomainTest {
+public class IncludedAndExcludedDomainTest extends BaseDomainTest<IncludedAndExcludedDomain> {
     @Test
     public void should_contains_allIncludedGetters() {
-        Map<String, Function<IncludedAndExcludedDomain, Object>> getterByField
-                = new IncludedAndExcludedDomainGetterSupplier().get();
-        assertNotNull("Map is null", getterByField);
-        assertEquals("Map size not equal to 1", 1, getterByField.size());
-        assertTrue("Map not contain getter for 'included' field", getterByField.containsKey("included"));
-        assertFalse("Map contains getter for 'ignored' field", getterByField.containsKey("ignored"));
-        assertFalse("Map contains getter for 'excluded' field", getterByField.containsKey("excluded"));
+        Map<String, Function<IncludedAndExcludedDomain, Object>> getterByField = getGetterMap(new IncludedAndExcludedDomainGetterSupplier());
+        assertSize(getterByField, 1);
+        assertGetterFields(getterByField, "included");
         IncludedAndExcludedDomain domain = new IncludedAndExcludedDomain(1, 2, 3);
-        assertEquals("Getter for 'included' field returns wrong value",
-                1, getterByField.get("included").apply(domain));
+        assertGetterValue(getterByField, domain, "included", 1);
+        assertEquals("Ignored field value is incorrect", 2, domain.getIgnored());
+        assertEquals("Excluded field value is incorrect", 3, domain.getExcluded());
     }
 
     @Test
     public void should_contains_allIncludedSetters() {
-        Map<String, BiConsumer<IncludedAndExcludedDomain, Object>> setterByField
-                = new IncludedAndExcludedDomainSetterSupplier().get();
-        assertNotNull("Map is null", setterByField);
-        assertEquals("Map size not equal to 1", 1, setterByField.size());
-        assertTrue("Map not contain setter for 'included' field", setterByField.containsKey("included"));
-        assertFalse("Map contains setter for 'ignored' field", setterByField.containsKey("ignored"));
-        assertFalse("Map contains setter for 'excluded' field", setterByField.containsKey("excluded"));
-        IncludedAndExcludedDomain domain = new IncludedAndExcludedDomain(0, 2, 3);
-        setterByField.get("included").accept(domain, 1);
-        assertEquals("Setter for 'included' field sets wrong value", 1, domain.getIncluded());
+        Map<String, BiConsumer<IncludedAndExcludedDomain, Object>> setterByField = getSetterMap(new IncludedAndExcludedDomainSetterSupplier());
+        assertSize(setterByField, 1);
+        assertSetterFields(setterByField, "included");
+        IncludedAndExcludedDomain domain = new IncludedAndExcludedDomain(1, 2, 3);
+        assertSetterValue(setterByField, domain, "included", 10, IncludedAndExcludedDomain::getIncluded);
+        domain.setIgnored(20);
+        assertEquals("Ignored field value is incorrect", 20, domain.getIgnored());
+        domain.setExcluded(30);
+        assertEquals("Excluded field value is incorrect", 30, domain.getExcluded());
     }
 }
