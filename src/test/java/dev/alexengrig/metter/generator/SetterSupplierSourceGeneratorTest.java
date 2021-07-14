@@ -48,13 +48,13 @@ class SetterSupplierSourceGeneratorTest {
                 "    protected final java.util.Map<\n" +
                 "            java.lang.String,\n" +
                 "            java.util.function.BiConsumer<MyDomain, java.lang.Object>\n" +
-                "            > getterByField;\n" +
+                "            > setterByField;\n" +
                 "\n" +
                 "    /**\n" +
                 "     * Constructs this.\n" +
                 "     */\n" +
                 "    public MyClass() {\n" +
-                "        this.getterByField = createMap();\n" +
+                "        this.setterByField = createMap();\n" +
                 "    }\n" +
                 "\n" +
                 "    /**\n" +
@@ -89,7 +89,7 @@ class SetterSupplierSourceGeneratorTest {
                 "            java.lang.String,\n" +
                 "            java.util.function.BiConsumer<MyDomain, java.lang.Object>\n" +
                 "            > get() {\n" +
-                "        return getterByField;\n" +
+                "        return setterByField;\n" +
                 "    }\n" +
                 "}\n";
         SNAPSHOT_OF_SOURCE_WITH_PACKAGE = "" +
@@ -113,13 +113,13 @@ class SetterSupplierSourceGeneratorTest {
                 "    protected final java.util.Map<\n" +
                 "            java.lang.String,\n" +
                 "            java.util.function.BiConsumer<my.company.MyDomain, java.lang.Object>\n" +
-                "            > getterByField;\n" +
+                "            > setterByField;\n" +
                 "\n" +
                 "    /**\n" +
                 "     * Constructs this.\n" +
                 "     */\n" +
                 "    public MyClass() {\n" +
-                "        this.getterByField = createMap();\n" +
+                "        this.setterByField = createMap();\n" +
                 "    }\n" +
                 "\n" +
                 "    /**\n" +
@@ -154,7 +154,7 @@ class SetterSupplierSourceGeneratorTest {
                 "            java.lang.String,\n" +
                 "            java.util.function.BiConsumer<my.company.MyDomain, java.lang.Object>\n" +
                 "            > get() {\n" +
-                "        return getterByField;\n" +
+                "        return setterByField;\n" +
                 "    }\n" +
                 "}\n";
     }

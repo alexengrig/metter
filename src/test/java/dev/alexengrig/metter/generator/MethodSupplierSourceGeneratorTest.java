@@ -47,13 +47,13 @@ class MethodSupplierSourceGeneratorTest {
                 "    protected final java.util.Map<\n" +
                 "            java.lang.String,\n" +
                 "            Object\n" +
-                "            > getterByField;\n" +
+                "            > typeByField;\n" +
                 "\n" +
                 "    /**\n" +
                 "     * Constructs this.\n" +
                 "     */\n" +
                 "    public MyClass() {\n" +
-                "        this.getterByField = createMap();\n" +
+                "        this.typeByField = createMap();\n" +
                 "    }\n" +
                 "\n" +
                 "    /**\n" +
@@ -84,7 +84,7 @@ class MethodSupplierSourceGeneratorTest {
                 "            java.lang.String,\n" +
                 "            Object\n" +
                 "            > get() {\n" +
-                "        return getterByField;\n" +
+                "        return typeByField;\n" +
                 "    }\n" +
                 "}\n";
         SNAPSHOT_OF_SOURCE_WITH_PACKAGE = "" +
@@ -108,13 +108,13 @@ class MethodSupplierSourceGeneratorTest {
                 "    protected final java.util.Map<\n" +
                 "            java.lang.String,\n" +
                 "            Object\n" +
-                "            > getterByField;\n" +
+                "            > typeByField;\n" +
                 "\n" +
                 "    /**\n" +
                 "     * Constructs this.\n" +
                 "     */\n" +
                 "    public MyClass() {\n" +
-                "        this.getterByField = createMap();\n" +
+                "        this.typeByField = createMap();\n" +
                 "    }\n" +
                 "\n" +
                 "    /**\n" +
@@ -149,12 +149,17 @@ class MethodSupplierSourceGeneratorTest {
                 "            java.lang.String,\n" +
                 "            Object\n" +
                 "            > get() {\n" +
-                "        return getterByField;\n" +
+                "        return typeByField;\n" +
                 "    }\n" +
                 "}\n";
     }
 
     final MethodSupplierSourceGenerator generator = new MethodSupplierSourceGenerator(false) {
+        @Override
+        protected String getMapFieldName() {
+            return "typeByField";
+        }
+
         @Override
         protected String getMapValueType(String domainClassName) {
             return "Object";
@@ -175,6 +180,11 @@ class MethodSupplierSourceGeneratorTest {
     void should_create_instance() {
         // coverage
         MethodSupplierSourceGenerator generator = new MethodSupplierSourceGenerator() {
+            @Override
+            protected String getMapFieldName() {
+                return null;
+            }
+
             @Override
             protected String getMapValueType(String domainClassName) {
                 return null;

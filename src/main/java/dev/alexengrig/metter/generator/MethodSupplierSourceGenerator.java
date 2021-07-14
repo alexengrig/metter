@@ -25,7 +25,7 @@ import java.util.Map;
  * Base generator source of method supplier.
  *
  * @author Grig Alex
- * @version 0.1.0
+ * @version 0.2.0
  * @since 0.1.0
  */
 public abstract class MethodSupplierSourceGenerator {
@@ -67,6 +67,7 @@ public abstract class MethodSupplierSourceGenerator {
     public String generate(String className, String domainClassName, Map<String, String> field2Method) {
         String packageName = getPackageName(className);
         String simpleClassName = getSimpleName(className);
+        String mapFieldName = getMapFieldName();
         String mapValueType = getMapValueType(domainClassName);
         String javaDocTypeName = getJavaDocTypeName();
         return new LineJoiner()
@@ -90,13 +91,13 @@ public abstract class MethodSupplierSourceGenerator {
                 .ln("    protected final java.util.Map<")
                 .ln("            java.lang.String,")
                 .ft("            %s", mapValueType)
-                .ln("            > getterByField;")
+                .ft("            > %s;", mapFieldName)
                 .ln()
                 .ln("    /**")
                 .ln("     * Constructs this.")
                 .ln("     */")
                 .ft("    public %s() {", simpleClassName)
-                .ln("        this.getterByField = createMap();")
+                .ft("        this.%s = createMap();", mapFieldName)
                 .ln("    }")
                 .ln()
                 .ln("    /**")
@@ -112,7 +113,7 @@ public abstract class MethodSupplierSourceGenerator {
                 .ln("                java.lang.String,")
                 .ft("                %s", mapValueType)
                 .ft("                > map = new java.util.HashMap<>(%d);", field2Method.size())
-                .mp("        map.put(\"%s\",\n                %s);", (f, g) -> new Object[]{f, g}, field2Method)
+                .mp("        map.put(\"%s\",\n                %s);", (s, f) -> new Object[]{s, f}, field2Method)
                 .ln("        return map;")
                 .ln("    }")
                 .ln()
@@ -126,7 +127,7 @@ public abstract class MethodSupplierSourceGenerator {
                 .ln("            java.lang.String,")
                 .ft("            %s", mapValueType)
                 .ln("            > get() {")
-                .ln("        return getterByField;")
+                .ft("        return %s;", mapFieldName)
                 .ln("    }")
                 .ln("}")
                 .toString();
@@ -158,6 +159,14 @@ public abstract class MethodSupplierSourceGenerator {
         int lastIndexOfDot = className.lastIndexOf('.');
         return className.substring(lastIndexOfDot + 1);
     }
+
+    /**
+     * Returns a field name of map.
+     *
+     * @return field name of map
+     * @since 0.2.0
+     */
+    protected abstract String getMapFieldName();
 
     /**
      * Returns a type of map value from a domain class name.

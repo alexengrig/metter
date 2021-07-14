@@ -44,6 +44,16 @@ public class GetterSupplierSourceGenerator extends MethodSupplierSourceGenerator
     }
 
     /**
+     * Returns {@code getterByField}.
+     *
+     * @return {@code getterByField}
+     */
+    @Override
+    protected String getMapFieldName() {
+        return "getterByField";
+    }
+
+    /**
      * {@inheritDoc}
      *
      * <pre>{@code
