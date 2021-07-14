@@ -9,12 +9,12 @@
 [![Build Status](https://travis-ci.com/alexengrig/metter.svg?branch=master)](https://travis-ci.com/alexengrig/metter)
 [![Codecov Coverage Status](https://codecov.io/gh/alexengrig/metter/branch/master/graph/badge.svg)](https://codecov.io/gh/alexengrig/metter)
 [![Coveralls Coverage Status](https://coveralls.io/repos/github/alexengrig/metter/badge.svg?branch=master)](https://coveralls.io/github/alexengrig/metter?branch=master)
-[![Codacy Coverage Status](https://app.codacy.com/project/badge/Coverage/a90d2d32c03e4d83860bf4d73eae47bb)](https://www.codacy.com/gh/alexengrig/metter/dashboard?utm_source=github.com&utm_medium=referral&utm_content=alexengrig/metter&utm_campaign=Badge_Coverage)
-[![Codacy Compliance](https://api.codacy.com/project/badge/Grade/ebbf5747b92f4a0b87c5775b56a5c398)](https://app.codacy.com/gh/alexengrig/metter?utm_source=github.com&utm_medium=referral&utm_content=alexengrig/metter&utm_campaign=Badge_Grade_Settings)
+[![Codacy Coverage](https://app.codacy.com/project/badge/Coverage/a90d2d32c03e4d83860bf4d73eae47bb)](https://www.codacy.com/gh/alexengrig/metter/dashboard?utm_source=github.com&utm_medium=referral&utm_content=alexengrig/metter&utm_campaign=Badge_Coverage)
+[![Codacy Grade](https://app.codacy.com/project/badge/Grade/a90d2d32c03e4d83860bf4d73eae47bb)](https://www.codacy.com/gh/alexengrig/metter/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=alexengrig/metter&amp;utm_campaign=Badge_Grade)
 [![BCH Compliance](https://bettercodehub.com/edge/badge/alexengrig/metter?branch=master)](https://bettercodehub.com/)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Falexengrig%2Fmetter.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Falexengrig%2Fmetter?ref=badge_shield)
 
-Metter is an annotation processor for generating getter and setter suppliers.
+Metter (***met***a get***ter*** / set***ter***) is an annotation processor for generating getter and setter suppliers.
 
 - Supports [Lombok](https://github.com/rzwitserloot/lombok) annotations: `@Data`, `@Getter` and `@Setter`.
 - Supports inheritance (getters/setters of superclasses).
@@ -52,8 +52,8 @@ Metter is an annotation processor for generating getter and setter suppliers.
 Add this code to `dependencies` section in your `build.gradle`:
 
 ```groovy
-compileOnly 'dev.alexengrig:metter:0.1.0'
-annotationProcessor 'dev.alexengrig:metter:0.1.0'
+compileOnly 'dev.alexengrig:metter:0.1.1'
+annotationProcessor 'dev.alexengrig:metter:0.1.1'
 ```
 
 #### Maven
@@ -64,7 +64,7 @@ Add this code to `dependencies` section in your `pom.xml`:
 <dependency>
     <groupId>dev.alexengrig</groupId>
     <artifactId>metter</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
     <scope>provided</scope>
     <optional>true</optional>
 </dependency>
@@ -84,7 +84,7 @@ Specify the annotation processor to `maven-compiler-plugin` plugin:
                     <annotationProcessorPath>
                         <groupId>dev.alexengrig</groupId>
                         <artifactId>metter</artifactId>
-                        <version>0.1.0</version>
+                        <version>0.1.1</version>
                     </annotationProcessorPath>
                 </annotationProcessorPaths>
             </configuration>
@@ -135,7 +135,7 @@ public class Domain {
 }
 ```
 
-The generated suppliers have a default name consisting of a prefix as a class name
+The generated suppliers have a default name consisting of a prefix as a class name,
 and a suffix as the supplier name: `${CLASS_NAME}GetterSupplier` and `${CLASS_NAME}SetterSupplier`.
 You can set a custom name using the annotation parameter `value`.
 
