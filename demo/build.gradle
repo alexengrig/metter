@@ -26,8 +26,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly files('../target/metter-0.1.1.jar')
-    annotationProcessor files('../target/metter-0.1.1.jar')
+    compileOnly files('../target/metter-0.2.0-SNAPSHOT.jar')
+    annotationProcessor files('../target/metter-0.2.0-SNAPSHOT.jar')
 
     compileOnly 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
