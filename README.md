@@ -16,24 +16,24 @@
 
 Metter (***met***a get***ter*** / set***ter***) is an annotation processor for generating getter and setter suppliers.
 
-- Supports [Lombok](https://github.com/rzwitserloot/lombok) annotations: `@Data`, `@Getter` and `@Setter`.
-- Supports inheritance (getters/setters of superclasses).
+-   Supports [Lombok](https://github.com/rzwitserloot/lombok) annotations: `@Data`, `@Getter` and `@Setter`.
+-   Supports inheritance (getters/setters of superclasses).
 
 [See](demo) examples.
 
 ## Table of Contents
 
-- [Get Started](#get-started)
-    - [Install](#install)
-        - [Gradle](#gradle)
-        - [Maven](#maven)
-    - [Using](#using)
-        - [Instance](#instance)
-        - [Inheritance](#inheritance)
-        - [Bean](#bean)
-- [API](#api)
-    - [GetterSupplier](#gettersupplier)
-    - [SetterSupplier](#settersupplier)
+-   [Get Started](#get-started)
+    -   [Install](#install)
+        -   [Gradle](#gradle)
+        -   [Maven](#maven)
+    -   [Using](#using)
+        -   [Instance](#instance)
+        -   [Inheritance](#inheritance)
+        -   [Bean](#bean)
+-   [API](#api)
+    -   [GetterSupplier](#gettersupplier)
+    -   [SetterSupplier](#settersupplier)
 -   [Motivation](#motivation)
     -   [Problem](#problem)
     -   [Solution](#solution)
