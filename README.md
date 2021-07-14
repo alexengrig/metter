@@ -18,6 +18,7 @@ Metter (***met***a get***ter*** / set***ter***) is an annotation processor for g
 
 -   Supports [Lombok](https://github.com/rzwitserloot/lombok) annotations: `@Data`, `@Getter` and `@Setter`.
 -   Supports inheritance (getters/setters of superclasses).
+-   Ignores private methods.
 
 [See](demo) examples.
 
