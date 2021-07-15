@@ -42,7 +42,7 @@ import java.util.Set;
  * @since 0.1.0
  */
 @AutoService(Processor.class)
-public class SetterSupplierProcessor extends BaseMethodSupplierProcessor<SetterSupplier> {
+public class SetterSupplierProcessor extends OnClassMethodSupplierProcessor<SetterSupplier> {
     /**
      * Constructs.
      *

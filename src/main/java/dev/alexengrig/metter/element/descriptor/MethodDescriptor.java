@@ -30,16 +30,10 @@ import java.util.stream.Collectors;
  * A descriptor of method.
  *
  * @author Grig Alex
- * @version 0.1.0
+ * @version 0.2.0
  * @since 0.1.1
  */
-public class MethodDescriptor {
-    /**
-     * Executable element.
-     *
-     * @since 0.1.0
-     */
-    protected final ExecutableElement executableElement;
+public class MethodDescriptor extends ElementDescriptor<ExecutableElement> {
     /**
      * Name.
      *
@@ -60,7 +54,7 @@ public class MethodDescriptor {
      * @since 0.1.0
      */
     public MethodDescriptor(ExecutableElement executableElement) {
-        this.executableElement = executableElement;
+        super(executableElement);
     }
 
     /**
@@ -84,7 +78,7 @@ public class MethodDescriptor {
      * @since 0.1.0
      */
     public String getName() {
-        return executableElement.getSimpleName().toString();
+        return element.getSimpleName().toString();
     }
 
     /**
@@ -94,7 +88,7 @@ public class MethodDescriptor {
      * @since 0.1.1
      */
     public String getTypeName() {
-        return executableElement.getReturnType().toString();
+        return element.getReturnType().toString();
     }
 
     /**
@@ -105,7 +99,7 @@ public class MethodDescriptor {
      */
     public boolean isNotPrivate() {
         if (isNotPrivate == null) {
-            isNotPrivate = executableElement.getModifiers().stream().noneMatch(Modifier.PRIVATE::equals);
+            isNotPrivate = element.getModifiers().stream().noneMatch(Modifier.PRIVATE::equals);
         }
         return isNotPrivate;
     }
@@ -117,7 +111,7 @@ public class MethodDescriptor {
      * @since 0.1.1
      */
     public boolean hasNoParameters() {
-        return executableElement.getParameters().isEmpty();
+        return element.getParameters().isEmpty();
     }
 
     /**
@@ -128,7 +122,7 @@ public class MethodDescriptor {
      * @since 0.1.1
      */
     public boolean hasOnlyOneParameter(String parameterTypeName) {
-        List<? extends VariableElement> parameters = executableElement.getParameters();
+        List<? extends VariableElement> parameters = element.getParameters();
         return parameters.size() == 1 && parameterTypeName.equals(parameters.get(0).asType().toString());
     }
 }
