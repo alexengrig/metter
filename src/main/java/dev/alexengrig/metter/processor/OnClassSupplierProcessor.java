@@ -18,9 +18,7 @@ package dev.alexengrig.metter.processor;
 
 import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
 import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
-import dev.alexengrig.metter.exception.MetterException;
 
-import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
@@ -30,9 +28,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class OnClassMethodSupplierProcessor<A extends Annotation>
+public abstract class OnClassSupplierProcessor<A extends Annotation>
         extends BaseMethodSupplierProcessor<A, TypeElement, TypeDescriptor> {
-    public OnClassMethodSupplierProcessor(Class<? extends A> annotationClass) {
+    public OnClassSupplierProcessor(Class<? extends A> annotationClass) {
         super(annotationClass);
     }
 
@@ -82,20 +80,6 @@ public abstract class OnClassMethodSupplierProcessor<A extends Annotation>
      * @since 0.1.0
      */
     protected abstract String getCustomClassName(TypeDescriptor type);
-
-    /**
-     * Asserts a valid custom class name.
-     *
-     * @param className custom class name
-     * @throws MetterException if for {@code className} {@link SourceVersion#isKeyword(java.lang.CharSequence)} returns {@code true}
-     *                         or {@link SourceVersion#isIdentifier(java.lang.CharSequence)} returns {@code false}
-     * @since 0.1.1
-     */
-    protected void assertValidCustomClassName(String className) {
-        if (SourceVersion.isKeyword(className) || !SourceVersion.isIdentifier(className)) {
-            throw new MetterException("Custom class name is invalid: '" + className + "'");
-        }
-    }
 
     /**
      * Returns a default class name from a type descriptor.
