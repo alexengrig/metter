@@ -17,21 +17,15 @@
 package dev.alexengrig.metter.processor;
 
 import dev.alexengrig.metter.element.descriptor.ElementDescriptor;
-import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
-import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
 import dev.alexengrig.metter.exception.MetterException;
 import dev.alexengrig.metter.generator.MethodSupplierSourceGenerator;
 
+import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.annotation.Annotation;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Base processor of method supplier.
@@ -96,6 +90,20 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation, E extend
      * @since 0.2.0
      */
     protected abstract String createSourceClassName(D descriptor);
+
+    /**
+     * Asserts a valid custom class name.
+     *
+     * @param className custom class name
+     * @throws MetterException if for {@code className} {@link SourceVersion#isKeyword(java.lang.CharSequence)} returns {@code true}
+     *                         or {@link SourceVersion#isIdentifier(java.lang.CharSequence)} returns {@code false}
+     * @since 0.2.0
+     */
+    protected void assertValidCustomClassName(String className) {
+        if (SourceVersion.isKeyword(className) || !SourceVersion.isIdentifier(className)) {
+            throw new MetterException("Custom class name is invalid: '" + className + "'");
+        }
+    }
 
     /**
      * Creates a source file for a class name.
