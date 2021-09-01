@@ -91,6 +91,10 @@ public class MethodDescriptor extends ElementDescriptor<ExecutableElement> {
         return element.getReturnType().toString();
     }
 
+    public TypeDescriptor getParent() {
+        return new TypeDescriptor((TypeElement) element.getEnclosingElement());
+    }
+
     /**
      * Checks if method is private.
      *
