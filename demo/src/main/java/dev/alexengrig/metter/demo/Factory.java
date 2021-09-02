@@ -16,12 +16,12 @@
 
 package dev.alexengrig.metter.demo;
 
-import dev.alexengrig.metter.annotation.GetterSupplierFactory;
-import dev.alexengrig.metter.demo.simple.SimpleDomain;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
-public class Factory {
-    @GetterSupplierFactory(SimpleDomain.class)
-    public Object supplier() {
-        return new SimpleDomainGetterSupplierFactory();
-    }
+public interface Factory<T> {
+    Map<String, Function<T, Object>> getters();
+
+    Map<String, BiConsumer<T, Object>> setters();
 }
