@@ -16,6 +16,7 @@
 
 package dev.alexengrig.metter.demo.simple;
 
+import dev.alexengrig.metter.demo.BaseDomainTest;
 import org.junit.Test;
 
 import java.util.Map;
@@ -23,41 +24,27 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
-public class SimpleDomainTest {
+public class SimpleDomainTest extends BaseDomainTest<SimpleDomain> {
     @Test
     public void should_contains_allGetters() {
-        Map<String, Function<SimpleDomain, Object>> getterByField = new SimpleDomainGetterSupplier().get();
-        assertNotNull("Map is null", getterByField);
-        assertEquals("Map size not equal to 3", 3, getterByField.size());
-        assertTrue("Map not contain getter for 'integer' field", getterByField.containsKey("integer"));
-        assertTrue("Map not contain getter for 'bool' field", getterByField.containsKey("bool"));
-        assertTrue("Map not contain getter for 'string' field", getterByField.containsKey("string"));
+        Map<String, Function<SimpleDomain, Object>> getterByField = getGetterMap(new SimpleDomainGetterSupplier());
+        assertSize(getterByField, 3);
+        assertGetterFields(getterByField, "integer", "bool");
         SimpleDomain domain = new SimpleDomain(1, true, "text");
-        assertEquals("Getter for 'integer' field returns wrong value",
-                1, getterByField.get("integer").apply(domain));
-        assertEquals("Getter for 'bool' field returns wrong value",
-                true, getterByField.get("bool").apply(domain));
-        assertEquals("Getter for 'string' field returns wrong value",
-                "text", getterByField.get("string").apply(domain));
+        assertGetterValue(getterByField, domain, "integer", 1);
+        assertGetterValue(getterByField, domain, "bool", true);
+        assertGetterValue(getterByField, domain, "string", "text4");
     }
 
     @Test
     public void should_contains_allSetters() {
-        Map<String, BiConsumer<SimpleDomain, Object>> setterByField = new SimpleDomainSetterSupplier().get();
-        assertNotNull("Map is null", setterByField);
-        assertEquals("Map size not equal to 3", 3, setterByField.size());
-        assertTrue("Map not contain setter for 'integer' field", setterByField.containsKey("integer"));
-        assertTrue("Map not contain setter for 'bool' field", setterByField.containsKey("bool"));
-        assertTrue("Map not contain setter for 'string' field", setterByField.containsKey("string"));
-        SimpleDomain domain = new SimpleDomain(0, false, "");
-        setterByField.get("integer").accept(domain, 1);
-        assertEquals("Setter for 'integer' field sets wrong value", 1, domain.getInteger());
-        setterByField.get("bool").accept(domain, true);
-        assertTrue("Setter for 'bool' field sets wrong value", domain.isBool());
-        setterByField.get("string").accept(domain, "text");
-        assertEquals("Setter for 'string' field sets wrong value", "text", domain.getString());
+        Map<String, BiConsumer<SimpleDomain, Object>> setterByField = getSetterMap(new SimpleDomainSetterSupplier());
+        assertSize(setterByField, 3);
+        assertSetterFields(setterByField, "integer", "bool");
+        SimpleDomain domain = new SimpleDomain(1, true, "text");
+        assertSetterValue(setterByField, domain, "integer", 10, SimpleDomain::getInteger);
+        assertSetterValue(setterByField, domain, "bool", false, SimpleDomain::isBool);
+        assertSetterValue(setterByField, domain, "string", "new", SimpleDomain::getString);
     }
 }
