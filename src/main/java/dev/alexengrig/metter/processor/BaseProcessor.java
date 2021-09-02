@@ -109,6 +109,16 @@ public abstract class BaseProcessor<A extends Annotation, E extends Element> ext
     }
 
     /**
+     * Prints a note message from an object.
+     *
+     * @param object object for message
+     * @since 0.2.0
+     */
+    protected void note(Object object) {
+        note(object.toString());
+    }
+
+    /**
      * Prints an error message.
      *
      * @param message   message text
