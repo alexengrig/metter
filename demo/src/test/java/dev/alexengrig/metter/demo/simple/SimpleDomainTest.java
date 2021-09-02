@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2020-2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,6 @@ import org.junit.Test;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-
-import static org.junit.Assert.assertEquals;
 
 public class SimpleDomainTest extends BaseDomainTest<SimpleDomain> {
     @Test
