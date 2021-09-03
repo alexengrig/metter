@@ -36,6 +36,6 @@ public class SimpleDomainFactory implements Factory<SimpleDomain> {
     @Override
     @SetterSupplierFactory(SimpleDomain.class)
     public Map<String, BiConsumer<SimpleDomain, Object>> setters() {
-        return new SimpleDomainSetterSupplierFactory();
+        return new SimpleDomainSetterSupplierFactory().get();
     }
 }

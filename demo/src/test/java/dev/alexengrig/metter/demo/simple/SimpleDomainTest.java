@@ -32,7 +32,7 @@ public class SimpleDomainTest extends BaseDomainTest<SimpleDomain> {
         SimpleDomain domain = new SimpleDomain(1, true, "text");
         assertGetterValue(getterByField, domain, "integer", 1);
         assertGetterValue(getterByField, domain, "bool", true);
-        assertGetterValue(getterByField, domain, "string", "text4");
+        assertGetterValue(getterByField, domain, "string", "text");
     }
 
     @Test
