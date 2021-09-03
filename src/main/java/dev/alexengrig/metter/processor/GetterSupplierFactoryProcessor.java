@@ -19,15 +19,20 @@ package dev.alexengrig.metter.processor;
 import com.google.auto.service.AutoService;
 import dev.alexengrig.metter.annotation.GetterSupplier;
 import dev.alexengrig.metter.annotation.GetterSupplierFactory;
+import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
 import dev.alexengrig.metter.element.descriptor.MethodDescriptor;
 import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
 import dev.alexengrig.metter.exception.MetterException;
 import dev.alexengrig.metter.generator.GetterSupplierSourceGenerator;
 import dev.alexengrig.metter.generator.MethodSupplierSourceGenerator;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Getter;
 
 import javax.annotation.processing.Processor;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @AutoService(Processor.class)
 public class GetterSupplierFactoryProcessor extends OnMethodSupplierProcessor<GetterSupplierFactory> {
@@ -41,45 +46,53 @@ public class GetterSupplierFactoryProcessor extends OnMethodSupplierProcessor<Ge
     }
 
     @Override
-    protected String createSource(String sourceClassName, MethodDescriptor method) {
-        Class<?> domainClass = method.getAnnotation(GetterSupplierFactory.class)
-                .map(GetterSupplierFactory::value)
-                .orElseThrow(() -> /*TODO*/ new MetterException("TODO"));
-        return sourceGenerator.generate(sourceClassName, domainClass.getName(), Collections.emptyMap());
-    }
-
-    @Override
-    protected Optional<String> getClassName(MethodDescriptor method) {
-        String customClassName = method.getAnnotation(GetterSupplierFactory.class)
+    protected String getCustomClassName(MethodDescriptor descriptor) {
+        return descriptor.getAnnotation(annotationClass)
                 .map(GetterSupplierFactory::props)
                 .map(GetterSupplier::value)
-                .orElseThrow(() -> new MetterException("Method has no annotation: " + method + ", " + annotationClass));
-        if (customClassName.isEmpty()) {
-            return Optional.empty();
-        }
-        assertValidCustomClassName(customClassName);
-        TypeDescriptor type = method.getParent();
-        if (type.hasPackage()) {
-            return Optional.of(type.getPackage() + "." + customClassName);
-        } else {
-            return Optional.of(customClassName);
-        }
+                .orElseThrow(() -> new MetterException("Type has no annotation: " + descriptor + ", " + annotationClass));
     }
 
     @Override
-    protected String getDefaultClassName(MethodDescriptor method) {
-        Optional<GetterSupplierFactory> annotation = method.getAnnotation(GetterSupplierFactory.class);
-        note(annotation.get().value().toString());
-        return "";
-        /*Class<?> domainClass = annotation
-                .map(GetterSupplierFactory::value)
-                .orElseThrow(() -> new MetterException("Method has no annotation: " + method + ", " + annotationClass));
-        String className = domainClass.getSimpleName() + annotationClass.getSimpleName();
-        TypeDescriptor typeDescriptor = method.getParent();
-        if (typeDescriptor.hasPackage()) {
-            return className;
+    protected Set<String> getIncludedFields(MethodDescriptor descriptor) {
+        return descriptor.getAnnotation(annotationClass)
+                .map(GetterSupplierFactory::props)
+                .map(GetterSupplier::includedFields)
+                .map(Arrays::asList)
+                .map(HashSet::new)
+                .orElseThrow(() -> new MetterException("Method " + descriptor + " has no annotation: " + annotationClass));
+    }
+
+    @Override
+    protected Set<String> getExcludedFields(MethodDescriptor descriptor) {
+        return descriptor.getAnnotation(annotationClass)
+                .map(GetterSupplierFactory::props)
+                .map(GetterSupplier::excludedFields)
+                .map(Arrays::asList)
+                .map(HashSet::new)
+                .orElseThrow(() -> new MetterException("Method " + descriptor + " has no annotation: " + annotationClass));
+    }
+
+    @Override
+    protected boolean isTargetField(FieldDescriptor field) {
+        if (field.hasAnnotation(Getter.class)) {
+            return !field.getAnnotation(Getter.class)
+                    .map(Getter::value)
+                    .filter(AccessLevel.PRIVATE::equals)
+                    .isPresent();
         }
-        String packageName = typeDescriptor.getPackage();
-        return packageName + "." + className;*/
+        TypeDescriptor type = field.getParent();
+        if (type.hasAnnotation(Getter.class)) {
+            return !type.getAnnotation(Getter.class)
+                    .map(Getter::value)
+                    .filter(AccessLevel.PRIVATE::equals)
+                    .isPresent();
+        }
+        return type.hasAnnotation(Data.class) || hasGetterMethod(field);
+    }
+
+    @Override
+    protected String getMethod(FieldDescriptor field) {
+        return field.getParent().getQualifiedName() + "::" + getGetterMethod(field);
     }
 }
