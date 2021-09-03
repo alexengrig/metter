@@ -66,47 +66,47 @@ public class SetterSupplierProcessor extends OnClassSupplierProcessor<SetterSupp
     /**
      * Returns a custom class name from {@link dev.alexengrig.metter.annotation.SetterSupplier#value()}.
      *
-     * @param type descriptor
+     * @param descriptor descriptor
      * @return custom class name from {@link dev.alexengrig.metter.annotation.SetterSupplier#value()}
      * @since 0.1.0
      */
     @Override
-    protected String getCustomClassName(TypeDescriptor type) {
-        return type.getAnnotation(annotationClass)
+    protected String getCustomClassName(TypeDescriptor descriptor) {
+        return descriptor.getAnnotation(annotationClass)
                 .map(SetterSupplier::value)
-                .orElseThrow(() -> new MetterException("Type " + type + " has no annotation: " + annotationClass));
+                .orElseThrow(() -> new MetterException("Type " + descriptor + " has no annotation: " + annotationClass));
     }
 
     /**
      * Returns included fields from {@link dev.alexengrig.metter.annotation.SetterSupplier#includedFields()}.
      *
-     * @param type descriptor
+     * @param descriptor descriptor
      * @return included fields from {@link dev.alexengrig.metter.annotation.SetterSupplier#includedFields()}
      * @since 0.1.0
      */
     @Override
-    protected Set<String> getIncludedFields(TypeDescriptor type) {
-        return type.getAnnotation(annotationClass)
+    protected Set<String> getIncludedFields(TypeDescriptor descriptor) {
+        return descriptor.getAnnotation(annotationClass)
                 .map(SetterSupplier::includedFields)
                 .map(Arrays::asList)
                 .map(HashSet::new)
-                .orElseThrow(() -> new MetterException("Type " + type + " has no annotation: " + annotationClass));
+                .orElseThrow(() -> new MetterException("Type " + descriptor + " has no annotation: " + annotationClass));
     }
 
     /**
      * Returns excluded fields from {@link dev.alexengrig.metter.annotation.SetterSupplier#excludedFields()}.
      *
-     * @param type descriptor
+     * @param descriptor descriptor
      * @return excluded fields from {@link dev.alexengrig.metter.annotation.SetterSupplier#excludedFields()}
      * @since 0.1.0
      */
     @Override
-    protected Set<String> getExcludedFields(TypeDescriptor type) {
-        return type.getAnnotation(annotationClass)
+    protected Set<String> getExcludedFields(TypeDescriptor descriptor) {
+        return descriptor.getAnnotation(annotationClass)
                 .map(SetterSupplier::excludedFields)
                 .map(Arrays::asList)
                 .map(HashSet::new)
-                .orElseThrow(() -> new MetterException("Type " + type + " has no annotation: " + annotationClass));
+                .orElseThrow(() -> new MetterException("Type " + descriptor + " has no annotation: " + annotationClass));
     }
 
     /**
