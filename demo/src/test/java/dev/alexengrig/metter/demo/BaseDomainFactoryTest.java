@@ -22,7 +22,7 @@ import java.util.function.Function;
 
 import static org.junit.Assert.assertNotNull;
 
-public class BaseDomainFactoryTest<T> extends BaseDomainTest<T> {
+public abstract class BaseDomainFactoryTest<T> extends BaseDomainTest<T> {
     protected Map<String, Function<T, Object>> getGetterMap(Factory<T> factory) {
         Map<String, Function<T, Object>> getterByField = factory.getters();
         assertNotNull("Map is null", getterByField);
