@@ -19,11 +19,9 @@ package dev.alexengrig.metter.processor;
 import com.google.auto.service.AutoService;
 import dev.alexengrig.metter.annotation.SetterSupplier;
 import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
-import dev.alexengrig.metter.element.descriptor.MethodDescriptor;
 import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
 import dev.alexengrig.metter.exception.MetterException;
 import dev.alexengrig.metter.generator.SetterSupplierSourceGenerator;
-import dev.alexengrig.metter.util.Strings;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
@@ -138,36 +136,6 @@ public class SetterSupplierProcessor extends OnClassSupplierProcessor<SetterSupp
                     .isPresent();
         }
         return type.hasAnnotation(Data.class) || hasSetterMethod(field);
-    }
-
-    /**
-     * Checks if a type descriptor of a field descriptor has a setter method
-     *
-     * @param field descriptor
-     * @return if a type descriptor of {@code field} has a setter method
-     * @since 0.1.1
-     */
-    protected boolean hasSetterMethod(FieldDescriptor field) {
-        String methodName = getSetterMethod(field);
-        TypeDescriptor type = field.getParent();
-        if (type.hasMethod(methodName)) {
-            Set<MethodDescriptor> methods = type.getMethods(methodName);
-            return methods.stream().anyMatch(method -> method.isNotPrivate() && "void".equals(method.getTypeName())
-                    && method.hasOnlyOneParameter(field.getTypeName()));
-        }
-        return false;
-    }
-
-    /**
-     * Returns a setter-method for a field descriptor.
-     *
-     * @param field descriptor
-     * @return setter-method for {@code field}
-     * @since 0.1.1
-     */
-    protected String getSetterMethod(FieldDescriptor field) {
-        String name = field.getName();
-        return "set" + Strings.capitalize(name);
     }
 
     /**
