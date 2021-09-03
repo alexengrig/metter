@@ -29,7 +29,7 @@ public class SimpleDomainFactoryTest extends BaseDomainFactoryTest<SimpleDomain>
     public void should_contains_allGetters() {
         Map<String, Function<SimpleDomain, Object>> getterByField = getGetterMap(new SimpleDomainFactory());
         assertSize(getterByField, 3);
-        assertGetterFields(getterByField, "integer", "bool");
+        assertGetterFields(getterByField, "integer", "bool", "string");
         SimpleDomain domain = new SimpleDomain(1, true, "text");
         assertGetterValue(getterByField, domain, "integer", 1);
         assertGetterValue(getterByField, domain, "bool", true);
@@ -40,7 +40,7 @@ public class SimpleDomainFactoryTest extends BaseDomainFactoryTest<SimpleDomain>
     public void should_contains_allSetters() {
         Map<String, BiConsumer<SimpleDomain, Object>> setterByField = getSetterMap(new SimpleDomainFactory());
         assertSize(setterByField, 3);
-        assertSetterFields(setterByField, "integer", "bool");
+        assertSetterFields(setterByField, "integer", "bool", "string");
         SimpleDomain domain = new SimpleDomain(1, true, "text");
         assertSetterValue(setterByField, domain, "integer", 10, SimpleDomain::getInteger);
         assertSetterValue(setterByField, domain, "bool", false, SimpleDomain::isBool);
