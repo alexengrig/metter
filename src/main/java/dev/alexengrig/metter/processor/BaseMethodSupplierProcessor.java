@@ -251,6 +251,37 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation, E extend
         return methodNamePrefix + Strings.capitalize(name);
     }
 
+
+    /**
+     * Checks if a type descriptor of a field descriptor has a setter method
+     *
+     * @param field descriptor
+     * @return if a type descriptor of {@code field} has a setter method
+     * @since 0.1.1
+     */
+    protected boolean hasSetterMethod(FieldDescriptor field) {
+        String methodName = getSetterMethod(field);
+        TypeDescriptor type = field.getParent();
+        if (type.hasMethod(methodName)) {
+            Set<MethodDescriptor> methods = type.getMethods(methodName);
+            return methods.stream().anyMatch(method -> method.isNotPrivate() && "void".equals(method.getTypeName())
+                    && method.hasOnlyOneParameter(field.getTypeName()));
+        }
+        return false;
+    }
+
+    /**
+     * Returns a setter-method for a field descriptor.
+     *
+     * @param field descriptor
+     * @return setter-method for {@code field}
+     * @since 0.1.1
+     */
+    protected String getSetterMethod(FieldDescriptor field) {
+        String name = field.getName();
+        return "set" + Strings.capitalize(name);
+    }
+
     /**
      * Writes a source to a source file.
      *
