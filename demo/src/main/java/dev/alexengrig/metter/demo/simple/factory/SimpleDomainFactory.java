@@ -30,7 +30,7 @@ public class SimpleDomainFactory implements Factory<SimpleDomain> {
     @Override
     @GetterSupplierFactory(SimpleDomain.class)
     public Map<String, Function<SimpleDomain, Object>> getters() {
-        return new SimpleDomainGetterSupplierFactory();
+        return new SimpleDomainGetterSupplierFactory().get();
     }
 
     @Override
