@@ -21,9 +21,7 @@ import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
 
 import javax.lang.model.element.TypeElement;
 import java.lang.annotation.Annotation;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -48,49 +46,19 @@ public abstract class OnClassSupplierProcessor<A extends Annotation>
      */
     @Override
     protected String createSourceClassName(TypeDescriptor descriptor) {
-        return getClassName(descriptor).orElseGet(() -> getDefaultClassName(descriptor));
-    }
-
-    /**
-     * Returns a class name from a type descriptor.
-     *
-     * @param type descriptor
-     * @return class name from {@code type}
-     * @since 0.1.0
-     */
-    protected Optional<String> getClassName(TypeDescriptor type) {
-        String customClassName = getCustomClassName(type);
+        String customClassName = getCustomClassName(descriptor);
         if (customClassName.isEmpty()) {
-            return Optional.empty();
+            String defaultClassName = getDefaultClassName(descriptor.getSimpleName());
+            if (descriptor.hasPackage()) {
+                return descriptor.getPackage().concat(".").concat(defaultClassName);
+            }
+            return defaultClassName;
         }
         assertValidCustomClassName(customClassName);
-        String className = type.getQualifiedName();
-        int lastIndexOfDot = className.lastIndexOf('.');
-        if (lastIndexOfDot > 0) {
-            return Optional.of(className.substring(0, lastIndexOfDot).concat(".").concat(customClassName));
+        if (descriptor.hasPackage()) {
+            return descriptor.getPackage().concat(".").concat(customClassName);
         }
-        return Optional.of(customClassName);
-    }
-
-    /**
-     * Returns a custom class name from a type descriptor.
-     *
-     * @param type descriptor
-     * @return custom class name from {@code type}
-     * @since 0.1.0
-     */
-    protected abstract String getCustomClassName(TypeDescriptor type);
-
-    /**
-     * Returns a default class name from a type descriptor.
-     *
-     * @param type descriptor
-     * @return default class name from {@code type}
-     * @since 0.1.0
-     */
-    protected String getDefaultClassName(TypeDescriptor type) {
-        String className = type.getQualifiedName();
-        return className + annotationClass.getSimpleName();
+        return customClassName;
     }
 
     @Override
@@ -99,38 +67,14 @@ public abstract class OnClassSupplierProcessor<A extends Annotation>
         return sourceGenerator.generate(sourceClassName, descriptor.getQualifiedName(), field2Method);
     }
 
-    /**
-     * Creates a map of field to method from a type descriptor.
-     *
-     * @param type descriptor
-     * @return map of field to method from {@code type}
-     * @since 0.1.0
-     */
-    protected Map<String, String> createField2MethodMap(TypeDescriptor type) {
-        Map<String, String> field2Method = new HashMap<>();
-        Set<FieldDescriptor> fields = getFields(type);
-        for (FieldDescriptor field : fields) {
-            if (isTargetField(field)) {
-                field2Method.put(field.getName(), getMethod(field));
-            }
-        }
-        return field2Method;
-    }
-
-    /**
-     * Returns fields from a type descriptor with fields of super classes.
-     *
-     * @param type descriptor
-     * @return fields from {@code type} with fields of super classes
-     * @since 0.1.0
-     */
-    protected Set<FieldDescriptor> getFields(TypeDescriptor type) {
-        Set<TypeDescriptor> superTypes = getAllSuperTypes(type);
-        Set<FieldDescriptor> fields = Stream.concat(Stream.of(type), superTypes.stream())
+    @Override
+    protected Set<FieldDescriptor> getFields(TypeDescriptor typeDescriptor) {
+        Set<TypeDescriptor> superTypes = getAllSuperTypes(typeDescriptor);
+        Set<FieldDescriptor> fields = Stream.concat(Stream.of(typeDescriptor), superTypes.stream())
                 .flatMap(descriptor -> descriptor.getFields().stream())
                 .collect(Collectors.toSet());
-        Set<String> includedFields = getIncludedFields(type);
-        Set<String> excludedFields = getExcludedFields(type);
+        Set<String> includedFields = getIncludedFields(typeDescriptor);
+        Set<String> excludedFields = getExcludedFields(typeDescriptor);
         if (includedFields.isEmpty() && excludedFields.isEmpty()) {
             return fields;
         }
@@ -140,40 +84,4 @@ public abstract class OnClassSupplierProcessor<A extends Annotation>
             return fields.stream().filter(f -> !excludedFields.contains(f.getName())).collect(Collectors.toSet());
         }
     }
-
-    /**
-     * Returns included fields from a type descriptor.
-     *
-     * @param type descriptor
-     * @return included fields from {@code type}
-     * @since 0.1.0
-     */
-    protected abstract Set<String> getIncludedFields(TypeDescriptor type);
-
-    /**
-     * Returns excluded fields from a type descriptor.
-     *
-     * @param type descriptor
-     * @return excluded fields from {@code type}
-     * @since 0.1.0
-     */
-    protected abstract Set<String> getExcludedFields(TypeDescriptor type);
-
-    /**
-     * Checks if a field descriptor is target field.
-     *
-     * @param field descriptor
-     * @return {@code field} is target field.
-     * @since 0.1.0
-     */
-    protected abstract boolean isTargetField(FieldDescriptor field);
-
-    /**
-     * Returns a method for a field descriptor.
-     *
-     * @param field descriptor
-     * @return method for {@code field}
-     * @since 0.1.1
-     */
-    protected abstract String getMethod(FieldDescriptor field);
 }
