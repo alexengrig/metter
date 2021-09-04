@@ -17,37 +17,44 @@
 package dev.alexengrig.metter.demo.simple;
 
 import dev.alexengrig.metter.demo.BaseDomainTest;
-import org.junit.Test;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class InheritedSimpleDomainTest extends BaseDomainTest<InheritedSimpleDomain> {
-    @Test
-    public void should_contains_allGetters() {
-        Map<String, Function<InheritedSimpleDomain, Object>> getterByField
-                = getGetterMap(new InheritedSimpleDomainGetterSupplier());
-        assertSize(getterByField, 4);
-        assertGetterFields(getterByField, "integer", "bool", "string", "longer");
-        InheritedSimpleDomain domain = new InheritedSimpleDomain(1, true, "text", 4);
-        assertGetterValue(getterByField, domain, "integer", 1);
-        assertGetterValue(getterByField, domain, "bool", true);
-        assertGetterValue(getterByField, domain, "string", "text");
-        assertGetterValue(getterByField, domain, "longer", 4L);
+    @Override
+    protected Supplier<Map<String, Function<InheritedSimpleDomain, Object>>> createGetterSupplier() {
+        return new InheritedSimpleDomainGetterSupplier();
     }
 
-    @Test
-    public void should_contains_allSetters() {
-        Map<String, BiConsumer<InheritedSimpleDomain, Object>> setterByField
-                = getSetterMap(new InheritedSimpleDomainSetterSupplier());
-        assertSize(setterByField, 4);
-        assertSetterFields(setterByField, "integer", "bool", "string", "longer");
-        InheritedSimpleDomain domain = new InheritedSimpleDomain(1, true, "text", 4);
-        assertSetterValue(setterByField, domain, "integer", 10, InheritedSimpleDomain::getInteger);
-        assertSetterValue(setterByField, domain, "bool", false, InheritedSimpleDomain::isBool);
-        assertSetterValue(setterByField, domain, "string", "new", InheritedSimpleDomain::getString);
-        assertSetterValue(setterByField, domain, "longer", 40L, InheritedSimpleDomain::getLonger);
+    @Override
+    protected Supplier<Map<String, BiConsumer<InheritedSimpleDomain, Object>>> createSetterSupplier() {
+        return new InheritedSimpleDomainSetterSupplier();
     }
 
+    @Override
+    protected String[] getFieldNames() {
+        return createNames("integer", "bool", "string", "longer");
+    }
+
+    @Override
+    protected Object[] getFieldValues() {
+        return createValues(1, true, "text", 4L);
+    }
+
+    @Override
+    protected Function<InheritedSimpleDomain, Object>[] getFieldGetters() {
+        return createGetters(
+                InheritedSimpleDomain::getInteger,
+                InheritedSimpleDomain::isBool,
+                InheritedSimpleDomain::getString,
+                InheritedSimpleDomain::getLonger);
+    }
+
+    @Override
+    protected InheritedSimpleDomain createDomain() {
+        return new InheritedSimpleDomain(1, true, "text", 4);
+    }
 }

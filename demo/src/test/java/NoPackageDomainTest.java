@@ -15,28 +15,40 @@
  */
 
 import dev.alexengrig.metter.demo.BaseDomainTest;
-import org.junit.Test;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class NoPackageDomainTest extends BaseDomainTest<NoPackageDomain> {
-    @Test
-    public void should_contains_allGetters() {
-        Map<String, Function<NoPackageDomain, Object>> getterByField = getGetterMap(new NoPackageDomainGetterSupplier());
-        assertSize(getterByField, 1);
-        assertGetterFields(getterByField, "integer");
-        NoPackageDomain domain = new NoPackageDomain(1);
-        assertGetterValue(getterByField, domain, "integer", 1);
+    @Override
+    protected Supplier<Map<String, Function<NoPackageDomain, Object>>> createGetterSupplier() {
+        return new NoPackageDomainGetterSupplier();
     }
 
-    @Test
-    public void should_contains_allSetters() {
-        Map<String, BiConsumer<NoPackageDomain, Object>> setterByField = getSetterMap(new NoPackageDomainSetterSupplier());
-        assertSize(setterByField, 1);
-        assertSetterFields(setterByField, "integer");
-        NoPackageDomain domain = new NoPackageDomain(1);
-        assertSetterValue(setterByField, domain, "integer", 10, NoPackageDomain::getInteger);
+    @Override
+    protected Supplier<Map<String, BiConsumer<NoPackageDomain, Object>>> createSetterSupplier() {
+        return new NoPackageDomainSetterSupplier();
+    }
+
+    @Override
+    protected String[] getFieldNames() {
+        return createNames("integer");
+    }
+
+    @Override
+    protected Object[] getFieldValues() {
+        return createValues(1);
+    }
+
+    @Override
+    protected Function<NoPackageDomain, Object>[] getFieldGetters() {
+        return createGetters(NoPackageDomain::getInteger);
+    }
+
+    @Override
+    protected NoPackageDomain createDomain() {
+        return new NoPackageDomain(1);
     }
 }

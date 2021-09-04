@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2020-2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,36 +16,41 @@
 
 package dev.alexengrig.metter.demo.naming;
 
-import org.junit.Test;
+import dev.alexengrig.metter.demo.BaseDomainTest;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-public class NamedDomainTest {
-    @Test
-    public void should_contains_allGetters() {
-        Map<String, Function<NamedDomain, Object>> getterByField = new MyDomainGetterSupplier().get();
-        assertNotNull("Map is null", getterByField);
-        assertEquals("Map size not equal to 1", 1, getterByField.size());
-        assertTrue("Map not contain getter for 'integer' field", getterByField.containsKey("integer"));
-        NamedDomain domain = new NamedDomain(1);
-        assertEquals("Getter for 'integer' field returns wrong value",
-                1, getterByField.get("integer").apply(domain));
+public class NamedDomainTest extends BaseDomainTest<NamedDomain> {
+    @Override
+    protected Supplier<Map<String, Function<NamedDomain, Object>>> createGetterSupplier() {
+        return new MyDomainGetterSupplier();
     }
 
-    @Test
-    public void should_contains_allSetters() {
-        Map<String, BiConsumer<NamedDomain, Object>> setterByField = new MyDomainSetterSupplier().get();
-        assertNotNull("Map is null", setterByField);
-        assertEquals("Map size not equal to 1", 1, setterByField.size());
-        assertTrue("Map not contain setter for 'integer' field", setterByField.containsKey("integer"));
-        NamedDomain domain = new NamedDomain(0);
-        setterByField.get("integer").accept(domain, 1);
-        assertEquals("Setter for 'integer' field sets wrong value", 1, domain.getInteger());
+    @Override
+    protected Supplier<Map<String, BiConsumer<NamedDomain, Object>>> createSetterSupplier() {
+        return new MyDomainSetterSupplier();
+    }
+
+    @Override
+    protected String[] getFieldNames() {
+        return createNames("integer");
+    }
+
+    @Override
+    protected Object[] getFieldValues() {
+        return createValues(1);
+    }
+
+    @Override
+    protected Function<NamedDomain, Object>[] getFieldGetters() {
+        return createGetters(NamedDomain::getInteger);
+    }
+
+    @Override
+    protected NamedDomain createDomain() {
+        return new NamedDomain(1);
     }
 }

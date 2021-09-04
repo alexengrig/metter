@@ -17,24 +17,40 @@
 package dev.alexengrig.metter.demo.privatelombokgettersandsetters;
 
 import dev.alexengrig.metter.demo.BaseDomainTest;
-import org.junit.Test;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class InheritedPrivateLombokGettersAndSettersDomainTest extends BaseDomainTest<InheritedPrivateLombokGettersAndSettersDomain> {
-    @Test
-    public void should_ignores_privateGetters() {
-        Map<String, Function<InheritedPrivateLombokGettersAndSettersDomain, Object>> getterByField
-                = getGetterMap(new InheritedPrivateLombokGettersAndSettersDomainGetterSupplier());
-        assertEmpty(getterByField);
+    @Override
+    protected Supplier<Map<String, Function<InheritedPrivateLombokGettersAndSettersDomain, Object>>> createGetterSupplier() {
+        return new InheritedPrivateLombokGettersAndSettersDomainGetterSupplier();
     }
 
-    @Test
-    public void should_ignores_privateSetters() {
-        Map<String, BiConsumer<InheritedPrivateLombokGettersAndSettersDomain, Object>> setterByField
-                = getSetterMap(new InheritedPrivateLombokGettersAndSettersDomainSetterSupplier());
-        assertEmpty(setterByField);
+    @Override
+    protected Supplier<Map<String, BiConsumer<InheritedPrivateLombokGettersAndSettersDomain, Object>>> createSetterSupplier() {
+        return new InheritedPrivateLombokGettersAndSettersDomainSetterSupplier();
+    }
+
+    @Override
+    protected String[] getFieldNames() {
+        return createNames();
+    }
+
+    @Override
+    protected Object[] getFieldValues() {
+        return createValues();
+    }
+
+    @Override
+    protected Function<InheritedPrivateLombokGettersAndSettersDomain, Object>[] getFieldGetters() {
+        return createGetters();
+    }
+
+    @Override
+    protected InheritedPrivateLombokGettersAndSettersDomain createDomain() {
+        return new InheritedPrivateLombokGettersAndSettersDomain();
     }
 }

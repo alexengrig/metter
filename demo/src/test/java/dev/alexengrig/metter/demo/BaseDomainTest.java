@@ -16,16 +16,83 @@
 
 package dev.alexengrig.metter.demo;
 
+import org.junit.Test;
+
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public abstract class BaseDomainTest<T> {
+    @Test
+    public void should_contains_allGetters() {
+        Supplier<Map<String, Function<T, Object>>> getterSupplier = createGetterSupplier();
+        Map<String, Function<T, Object>> getterByField = getGetterMap(getterSupplier);
+        String[] fieldNames = getFieldNames();
+        assertSize(getterByField, fieldNames.length);
+        assertGetterFields(getterByField, fieldNames);
+        Object[] fieldValues = getFieldValues();
+        assertSame("Number of field names and number of field values must be same",
+                fieldNames.length, fieldValues.length);
+        T domain = createDomain();
+        for (int i = 0, l = fieldNames.length; i < l; i++) {
+            String fieldName = fieldNames[i];
+            Object fieldValue = fieldValues[i];
+            assertGetterValue(getterByField, domain, fieldName, fieldValue);
+        }
+    }
+
+    @Test
+    public void should_contains_allSetters() {
+        Supplier<Map<String, BiConsumer<T, Object>>> setterSupplier = createSetterSupplier();
+        Map<String, BiConsumer<T, Object>> setterByField = getSetterMap(setterSupplier);
+        String[] fieldNames = getFieldNames();
+        assertSize(setterByField, fieldNames.length);
+        assertSetterFields(setterByField, fieldNames);
+        Object[] fieldValues = getFieldValues();
+        assertSame("Number of field names and number of field values must be same",
+                fieldNames.length, fieldValues.length);
+        Function<T, Object>[] fieldGetters = getFieldGetters();
+        assertSame("Number of field names and number of field getters must be same",
+                fieldNames.length, fieldGetters.length);
+        T domain = createDomain();
+        for (int i = 0, l = fieldNames.length; i < l; i++) {
+            String fieldName = fieldNames[i];
+            Object fieldValue = fieldValues[i];
+            Function<T, Object> fieldGetter = fieldGetters[i];
+            assertSetterValue(setterByField, domain, fieldName, fieldValue, fieldGetter);
+        }
+    }
+
+    protected abstract Supplier<Map<String, BiConsumer<T, Object>>> createSetterSupplier();
+
+    protected abstract Supplier<Map<String, Function<T, Object>>> createGetterSupplier();
+
+    protected abstract String[] getFieldNames();
+
+    protected abstract Object[] getFieldValues();
+
+    protected abstract Function<T, Object>[] getFieldGetters();
+
+    protected abstract T createDomain();
+
+    @SafeVarargs
+    protected final String[] createNames(String... fieldNames) {
+        return fieldNames;
+    }
+
+    @SafeVarargs
+    protected final Object[] createValues(Object... fieldValues) {
+        return fieldValues;
+    }
+
+    @SafeVarargs
+    protected final Function<T, Object>[] createGetters(Function<T, Object>... getters) {
+        return getters;
+    }
+
     protected Map<String, Function<T, Object>> getGetterMap(Supplier<Map<String, Function<T, Object>>> domainGetterSupplier) {
         Map<String, Function<T, Object>> getterByField = domainGetterSupplier.get();
         assertNotNull("Map is null", getterByField);

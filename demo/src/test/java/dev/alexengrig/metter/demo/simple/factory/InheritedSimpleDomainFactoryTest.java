@@ -17,35 +17,38 @@
 package dev.alexengrig.metter.demo.simple.factory;
 
 import dev.alexengrig.metter.demo.BaseDomainFactoryTest;
+import dev.alexengrig.metter.demo.Factory;
 import dev.alexengrig.metter.demo.simple.InheritedSimpleDomain;
-import org.junit.Test;
 
-import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public class InheritedSimpleDomainFactoryTest extends BaseDomainFactoryTest<InheritedSimpleDomain> {
-    @Test
-    public void should_contains_allGetters() {
-        Map<String, Function<InheritedSimpleDomain, Object>> getterByField = getGetterMap(new InheritedSimpleDomainFactory());
-        assertSize(getterByField, 4);
-        assertGetterFields(getterByField, "integer", "bool", "string", "longer");
-        InheritedSimpleDomain domain = new InheritedSimpleDomain(1, true, "text", 4);
-        assertGetterValue(getterByField, domain, "integer", 1);
-        assertGetterValue(getterByField, domain, "bool", true);
-        assertGetterValue(getterByField, domain, "string", "text");
-        assertGetterValue(getterByField, domain, "longer", 4L);
+    @Override
+    protected Factory<InheritedSimpleDomain> createFactory() {
+        return new InheritedSimpleDomainFactory();
     }
 
-    @Test
-    public void should_contains_allSetters() {
-        Map<String, BiConsumer<InheritedSimpleDomain, Object>> setterByField = getSetterMap(new InheritedSimpleDomainFactory());
-        assertSize(setterByField, 4);
-        assertSetterFields(setterByField, "integer", "bool", "string", "longer");
-        InheritedSimpleDomain domain = new InheritedSimpleDomain(1, true, "text", 4);
-        assertSetterValue(setterByField, domain, "integer", 10, InheritedSimpleDomain::getInteger);
-        assertSetterValue(setterByField, domain, "bool", false, InheritedSimpleDomain::isBool);
-        assertSetterValue(setterByField, domain, "string", "new", InheritedSimpleDomain::getString);
-        assertSetterValue(setterByField, domain, "longer", 40L, InheritedSimpleDomain::getLonger);
+    @Override
+    protected String[] getFieldNames() {
+        return createNames("integer", "bool", "string", "longer");
+    }
+
+    @Override
+    protected Object[] getFieldValues() {
+        return createValues(1, true, "text", 4L);
+    }
+
+    @Override
+    protected Function<InheritedSimpleDomain, Object>[] getFieldGetters() {
+        return createGetters(
+                InheritedSimpleDomain::getInteger,
+                InheritedSimpleDomain::isBool,
+                InheritedSimpleDomain::getString,
+                InheritedSimpleDomain::getLonger);
+    }
+
+    @Override
+    protected InheritedSimpleDomain createDomain() {
+        return new InheritedSimpleDomain(1, true, "text", 4);
     }
 }

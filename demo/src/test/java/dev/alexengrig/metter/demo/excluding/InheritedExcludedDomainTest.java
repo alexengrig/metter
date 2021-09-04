@@ -17,36 +17,40 @@
 package dev.alexengrig.metter.demo.excluding;
 
 import dev.alexengrig.metter.demo.BaseDomainTest;
-import org.junit.Test;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-
-import static org.junit.Assert.assertEquals;
+import java.util.function.Supplier;
 
 public class InheritedExcludedDomainTest extends BaseDomainTest<InheritedExcludedDomain> {
-    @Test
-    public void should_contains_allNotExcludedGettersWithSuper() {
-        Map<String, Function<InheritedExcludedDomain, Object>> getterByField = getGetterMap(new InheritedExcludedDomainGetterSupplier());
-        assertSize(getterByField, 1);
-        assertGetterFields(getterByField, "integer");
-        InheritedExcludedDomain domain = new InheritedExcludedDomain(1, 2, 3);
-        assertGetterValue(getterByField, domain, "integer", 1);
-        assertEquals("Excluded field value is incorrect", 2, domain.getExcluded());
-        assertEquals("Also excluded field value is incorrect", 3, domain.getAlsoExcluded());
+    @Override
+    protected Supplier<Map<String, Function<InheritedExcludedDomain, Object>>> createGetterSupplier() {
+        return new InheritedExcludedDomainGetterSupplier();
     }
 
-    @Test
-    public void should_contains_allNotExcludedSetters() {
-        Map<String, BiConsumer<InheritedExcludedDomain, Object>> setterByField = getSetterMap(new InheritedExcludedDomainSetterSupplier());
-        assertSize(setterByField, 1);
-        assertSetterFields(setterByField, "integer");
-        InheritedExcludedDomain domain = new InheritedExcludedDomain(1, 2, 3);
-        assertSetterValue(setterByField, domain, "integer", 10, InheritedExcludedDomain::getInteger);
-        domain.setExcluded(20);
-        assertEquals("Excluded field value is incorrect", 20, domain.getExcluded());
-        domain.setAlsoExcluded(30);
-        assertEquals("Also excluded field value is incorrect", 30, domain.getAlsoExcluded());
+    @Override
+    protected Supplier<Map<String, BiConsumer<InheritedExcludedDomain, Object>>> createSetterSupplier() {
+        return new InheritedExcludedDomainSetterSupplier();
+    }
+
+    @Override
+    protected String[] getFieldNames() {
+        return createNames("integer");
+    }
+
+    @Override
+    protected Object[] getFieldValues() {
+        return createValues(1);
+    }
+
+    @Override
+    protected Function<InheritedExcludedDomain, Object>[] getFieldGetters() {
+        return createGetters(InheritedExcludedDomain::getInteger);
+    }
+
+    @Override
+    protected InheritedExcludedDomain createDomain() {
+        return new InheritedExcludedDomain(1, 2, 3);
     }
 }

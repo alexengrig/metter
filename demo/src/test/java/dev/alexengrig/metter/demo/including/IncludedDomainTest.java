@@ -17,33 +17,40 @@
 package dev.alexengrig.metter.demo.including;
 
 import dev.alexengrig.metter.demo.BaseDomainTest;
-import org.junit.Test;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-
-import static org.junit.Assert.assertEquals;
+import java.util.function.Supplier;
 
 public class IncludedDomainTest extends BaseDomainTest<IncludedDomain> {
-    @Test
-    public void should_contains_allIncludedGetters() {
-        Map<String, Function<IncludedDomain, Object>> getterByField = getGetterMap(new IncludedDomainGetterSupplier());
-        assertSize(getterByField, 1);
-        assertGetterFields(getterByField, "included");
-        IncludedDomain domain = new IncludedDomain(1, 2);
-        assertGetterValue(getterByField, domain, "included", 1);
-        assertEquals("Ignored field value is incorrect", 2, domain.getIgnored());
+    @Override
+    protected Supplier<Map<String, Function<IncludedDomain, Object>>> createGetterSupplier() {
+        return new IncludedDomainGetterSupplier();
     }
 
-    @Test
-    public void should_contains_allIncludedSetters() {
-        Map<String, BiConsumer<IncludedDomain, Object>> setterByField = getSetterMap(new IncludedDomainSetterSupplier());
-        assertSize(setterByField, 1);
-        assertSetterFields(setterByField, "included");
-        IncludedDomain domain = new IncludedDomain(1, 2);
-        assertSetterValue(setterByField, domain, "included", 10, IncludedDomain::getIncluded);
-        domain.setIgnored(20);
-        assertEquals("Ignored field value is incorrect", 20, domain.getIgnored());
+    @Override
+    protected Supplier<Map<String, BiConsumer<IncludedDomain, Object>>> createSetterSupplier() {
+        return new IncludedDomainSetterSupplier();
+    }
+
+    @Override
+    protected String[] getFieldNames() {
+        return createNames("included");
+    }
+
+    @Override
+    protected Object[] getFieldValues() {
+        return createValues(1);
+    }
+
+    @Override
+    protected Function<IncludedDomain, Object>[] getFieldGetters() {
+        return createGetters(IncludedDomain::getIncluded);
+    }
+
+    @Override
+    protected IncludedDomain createDomain() {
+        return new IncludedDomain(1, 2);
     }
 }

@@ -17,32 +17,43 @@
 package dev.alexengrig.metter.demo.lombokdata;
 
 import dev.alexengrig.metter.demo.BaseDomainTest;
-import org.junit.Test;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class InheritedLombokDataDomainTest extends BaseDomainTest<InheritedLombokDataDomain> {
-    @Test
-    public void should_contains_allGetters() {
-        Map<String, Function<InheritedLombokDataDomain, Object>> getterByField = getGetterMap(new InheritedLombokDataDomainGetterSupplier());
-        assertSize(getterByField, 3);
-        assertGetterFields(getterByField, "integer", "bool", "longer");
-        InheritedLombokDataDomain domain = new InheritedLombokDataDomain(1, true, 3);
-        assertGetterValue(getterByField, domain, "integer", 1);
-        assertGetterValue(getterByField, domain, "bool", true);
-        assertGetterValue(getterByField, domain, "longer", 3L);
+    @Override
+    protected Supplier<Map<String, Function<InheritedLombokDataDomain, Object>>> createGetterSupplier() {
+        return new InheritedLombokDataDomainGetterSupplier();
     }
 
-    @Test
-    public void should_contains_allSetters() {
-        Map<String, BiConsumer<InheritedLombokDataDomain, Object>> setterByField = getSetterMap(new InheritedLombokDataDomainSetterSupplier());
-        assertSize(setterByField, 3);
-        assertSetterFields(setterByField, "integer", "bool", "longer");
-        InheritedLombokDataDomain domain = new InheritedLombokDataDomain(1, true, 3);
-        assertSetterValue(setterByField, domain, "integer", 10, InheritedLombokDataDomain::getInteger);
-        assertSetterValue(setterByField, domain, "bool", false, InheritedLombokDataDomain::isBool);
-        assertSetterValue(setterByField, domain, "longer", 30L, InheritedLombokDataDomain::getLonger);
+    @Override
+    protected Supplier<Map<String, BiConsumer<InheritedLombokDataDomain, Object>>> createSetterSupplier() {
+        return new InheritedLombokDataDomainSetterSupplier();
+    }
+
+    @Override
+    protected String[] getFieldNames() {
+        return createNames("integer", "bool", "longer");
+    }
+
+    @Override
+    protected Object[] getFieldValues() {
+        return createValues(1, true, 3L);
+    }
+
+    @Override
+    protected Function<InheritedLombokDataDomain, Object>[] getFieldGetters() {
+        return createGetters(
+                InheritedLombokDataDomain::getInteger,
+                InheritedLombokDataDomain::isBool,
+                InheritedLombokDataDomain::getLonger);
+    }
+
+    @Override
+    protected InheritedLombokDataDomain createDomain() {
+        return new InheritedLombokDataDomain(1, true, 3);
     }
 }

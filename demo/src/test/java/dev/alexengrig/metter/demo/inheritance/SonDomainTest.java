@@ -17,30 +17,42 @@
 package dev.alexengrig.metter.demo.inheritance;
 
 import dev.alexengrig.metter.demo.BaseDomainTest;
-import org.junit.Test;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class SonDomainTest extends BaseDomainTest<SonDomain> {
-    @Test
-    public void should_contains_allGettersWithSuper() {
-        Map<String, Function<SonDomain, Object>> getterByField = getGetterMap(new SonDomainGetterSupplier());
-        assertSize(getterByField, 2);
-        assertGetterFields(getterByField, "fatherInt", "sonInt");
-        SonDomain domain = new SonDomain(1, 2);
-        assertGetterValue(getterByField, domain, "fatherInt", 1);
-        assertGetterValue(getterByField, domain, "sonInt", 2);
+    @Override
+    protected Supplier<Map<String, Function<SonDomain, Object>>> createGetterSupplier() {
+        return new SonDomainGetterSupplier();
     }
 
-    @Test
-    public void should_contains_allSettersWithSuper() {
-        Map<String, BiConsumer<SonDomain, Object>> setterByField = getSetterMap(new SonDomainSetterSupplier());
-        assertSize(setterByField, 2);
-        assertSetterFields(setterByField, "fatherInt", "sonInt");
-        SonDomain domain = new SonDomain(1, 2);
-        assertSetterValue(setterByField, domain, "fatherInt", 10, SonDomain::getFatherInt);
-        assertSetterValue(setterByField, domain, "sonInt", 20, SonDomain::getSonInt);
+    @Override
+    protected Supplier<Map<String, BiConsumer<SonDomain, Object>>> createSetterSupplier() {
+        return new SonDomainSetterSupplier();
+    }
+
+    @Override
+    protected String[] getFieldNames() {
+        return createNames("fatherInt", "sonInt");
+    }
+
+    @Override
+    protected Object[] getFieldValues() {
+        return createValues(1, 2);
+    }
+
+    @Override
+    protected Function<SonDomain, Object>[] getFieldGetters() {
+        return createGetters(
+                SonDomain::getFatherInt,
+                SonDomain::getSonInt);
+    }
+
+    @Override
+    protected SonDomain createDomain() {
+        return new SonDomain(1, 2);
     }
 }

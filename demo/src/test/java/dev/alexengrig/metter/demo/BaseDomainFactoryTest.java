@@ -19,19 +19,18 @@ package dev.alexengrig.metter.demo;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-
-import static org.junit.Assert.assertNotNull;
+import java.util.function.Supplier;
 
 public abstract class BaseDomainFactoryTest<T> extends BaseDomainTest<T> {
-    protected Map<String, Function<T, Object>> getGetterMap(Factory<T> factory) {
-        Map<String, Function<T, Object>> getterByField = factory.getters();
-        assertNotNull("Map is null", getterByField);
-        return getterByField;
+    @Override
+    protected Supplier<Map<String, Function<T, Object>>> createGetterSupplier() {
+        return () -> createFactory().getters();
     }
 
-    protected Map<String, BiConsumer<T, Object>> getSetterMap(Factory<T> factory) {
-        Map<String, BiConsumer<T, Object>> setterByField = factory.setters();
-        assertNotNull("Map is null", setterByField);
-        return setterByField;
+    @Override
+    protected Supplier<Map<String, BiConsumer<T, Object>>> createSetterSupplier() {
+        return () -> createFactory().setters();
     }
+
+    protected abstract Factory<T> createFactory();
 }

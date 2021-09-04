@@ -17,32 +17,43 @@
 package dev.alexengrig.metter.demo.simple;
 
 import dev.alexengrig.metter.demo.BaseDomainTest;
-import org.junit.Test;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class SimpleDomainTest extends BaseDomainTest<SimpleDomain> {
-    @Test
-    public void should_contains_allGetters() {
-        Map<String, Function<SimpleDomain, Object>> getterByField = getGetterMap(new SimpleDomainGetterSupplier());
-        assertSize(getterByField, 3);
-        assertGetterFields(getterByField, "integer", "bool", "string");
-        SimpleDomain domain = new SimpleDomain(1, true, "text");
-        assertGetterValue(getterByField, domain, "integer", 1);
-        assertGetterValue(getterByField, domain, "bool", true);
-        assertGetterValue(getterByField, domain, "string", "text");
+    @Override
+    protected Supplier<Map<String, Function<SimpleDomain, Object>>> createGetterSupplier() {
+        return new SimpleDomainGetterSupplier();
     }
 
-    @Test
-    public void should_contains_allSetters() {
-        Map<String, BiConsumer<SimpleDomain, Object>> setterByField = getSetterMap(new SimpleDomainSetterSupplier());
-        assertSize(setterByField, 3);
-        assertSetterFields(setterByField, "integer", "bool", "string");
-        SimpleDomain domain = new SimpleDomain(1, true, "text");
-        assertSetterValue(setterByField, domain, "integer", 10, SimpleDomain::getInteger);
-        assertSetterValue(setterByField, domain, "bool", false, SimpleDomain::isBool);
-        assertSetterValue(setterByField, domain, "string", "new", SimpleDomain::getString);
+    @Override
+    protected Supplier<Map<String, BiConsumer<SimpleDomain, Object>>> createSetterSupplier() {
+        return new SimpleDomainSetterSupplier();
+    }
+
+    @Override
+    protected String[] getFieldNames() {
+        return createNames("integer", "bool", "string");
+    }
+
+    @Override
+    protected Object[] getFieldValues() {
+        return createValues(1, true, "text");
+    }
+
+    @Override
+    protected Function<SimpleDomain, Object>[] getFieldGetters() {
+        return createGetters(
+                SimpleDomain::getInteger,
+                SimpleDomain::isBool,
+                SimpleDomain::getString);
+    }
+
+    @Override
+    protected SimpleDomain createDomain() {
+        return new SimpleDomain(1, true, "text");
     }
 }
