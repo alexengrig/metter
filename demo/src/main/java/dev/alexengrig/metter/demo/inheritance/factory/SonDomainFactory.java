@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package dev.alexengrig.metter.demo.inheritance.factory.factory;
+package dev.alexengrig.metter.demo.inheritance.factory;
 
 import dev.alexengrig.metter.annotation.GetterSupplierFactory;
 import dev.alexengrig.metter.annotation.SetterSupplierFactory;
 import dev.alexengrig.metter.demo.Factory;
 import dev.alexengrig.metter.demo.inheritance.SonDomain;
+import dev.alexengrig.metter.demo.inheritance.factory.factory.SonDomainGetterSupplierFactory;
+import dev.alexengrig.metter.demo.inheritance.factory.factory.SonDomainSetterSupplierFactory;
 
 import java.util.Map;
 import java.util.function.BiConsumer;

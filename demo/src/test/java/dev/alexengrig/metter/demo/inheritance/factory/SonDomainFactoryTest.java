@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dev.alexengrig.metter.demo.inheritance.factory.factory;
+package dev.alexengrig.metter.demo.inheritance.factory;
 
 import dev.alexengrig.metter.demo.BaseDomainFactoryTest;
 import dev.alexengrig.metter.demo.Factory;
