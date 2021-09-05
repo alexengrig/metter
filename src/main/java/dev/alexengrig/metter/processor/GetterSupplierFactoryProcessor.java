@@ -17,6 +17,7 @@
 package dev.alexengrig.metter.processor;
 
 import com.google.auto.service.AutoService;
+import dev.alexengrig.metter.FieldChecker;
 import dev.alexengrig.metter.annotation.GetterSupplier;
 import dev.alexengrig.metter.annotation.GetterSupplierFactory;
 import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
@@ -32,6 +33,7 @@ import lombok.Getter;
 import javax.annotation.processing.Processor;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @AutoService(Processor.class)
@@ -74,25 +76,44 @@ public class GetterSupplierFactoryProcessor extends OnMethodSupplierProcessor<Ge
     }
 
     @Override
-    protected boolean isTargetField(FieldDescriptor field) {
-        if (field.hasAnnotation(Getter.class)) {
-            return !field.getAnnotation(Getter.class)
-                    .map(Getter::value)
-                    .filter(AccessLevel.PRIVATE::equals)
-                    .isPresent();
+    protected FieldChecker getFieldChecker(MethodDescriptor descriptor) {
+        String methodPackage;
+        if (descriptor.getParent().hasPackage()) {
+            methodPackage = descriptor.getParent().getPackage();
+        } else {
+            methodPackage = "";
         }
-        TypeDescriptor type = field.getParent();
-        if (type.hasAnnotation(Getter.class)) {
-            return !type.getAnnotation(Getter.class)
-                    .map(Getter::value)
-                    .filter(AccessLevel.PRIVATE::equals)
-                    .isPresent();
-        }
-        return type.hasAnnotation(Data.class) || hasGetterMethod(field);
+        return field -> {
+            if (field.hasAnnotation(Getter.class)) {
+                return !field.getAnnotation(Getter.class)
+                        .map(Getter::value)
+                        .filter(AccessLevel.PRIVATE::equals)
+                        .isPresent();
+            }
+            TypeDescriptor type = field.getParent();
+            if (type.hasAnnotation(Getter.class)) {
+                return !type.getAnnotation(Getter.class)
+                        .map(Getter::value)
+                        .filter(AccessLevel.PRIVATE::equals)
+                        .isPresent();
+            }
+            if (type.hasAnnotation(Data.class)) {
+                return true;
+            }
+            Optional<MethodDescriptor> getterOptional = getGetter(field);
+            if (!getterOptional.isPresent()) {
+                return false;
+            }
+            MethodDescriptor method = getterOptional.get();
+            if (method.isPublic()) {
+                return true;
+            }
+            return methodPackage.equals(field.getParent().getPackage());
+        };
     }
 
     @Override
     protected String getMethod(FieldDescriptor field) {
-        return field.getParent().getQualifiedName() + "::" + getGetterMethod(field);
+        return field.getParent().getQualifiedName() + "::" + getGetterMethodName(field);
     }
 }

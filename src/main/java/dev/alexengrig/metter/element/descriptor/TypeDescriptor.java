@@ -90,7 +90,7 @@ public class TypeDescriptor extends ElementDescriptor<TypeElement> {
         if (lastIndexOfDot > 0) {
             return qualifiedName.substring(0, lastIndexOfDot);
         }
-        throw new IllegalStateException("No package");
+        return "";
     }
 
     /**

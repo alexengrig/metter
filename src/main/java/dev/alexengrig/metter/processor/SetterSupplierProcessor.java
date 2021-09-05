@@ -17,6 +17,7 @@
 package dev.alexengrig.metter.processor;
 
 import com.google.auto.service.AutoService;
+import dev.alexengrig.metter.FieldChecker;
 import dev.alexengrig.metter.annotation.SetterSupplier;
 import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
 import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
@@ -107,6 +108,11 @@ public class SetterSupplierProcessor extends OnClassSupplierProcessor<SetterSupp
                 .orElseThrow(() -> new MetterException("Type " + descriptor + " has no annotation: " + annotationClass));
     }
 
+    @Override
+    protected FieldChecker getFieldChecker(TypeDescriptor descriptor) {
+        return this::isTargetField;
+    }
+
     /**
      * Checks if a field descriptor has {@link lombok.Setter} annotation (not private)
      * or a type descriptor of field descriptor has {@link lombok.Setter} annotation (not private)
@@ -120,8 +126,7 @@ public class SetterSupplierProcessor extends OnClassSupplierProcessor<SetterSupp
      * or type descriptor of {@code descriptor} has a setter method
      * @since 0.1.0
      */
-    @Override
-    protected boolean isTargetField(FieldDescriptor field) {
+    private boolean isTargetField(FieldDescriptor field) {
         if (field.hasAnnotation(Setter.class)) {
             return !field.getAnnotation(Setter.class)
                     .map(Setter::value)
@@ -147,6 +152,6 @@ public class SetterSupplierProcessor extends OnClassSupplierProcessor<SetterSupp
      */
     @Override
     protected String getMethod(FieldDescriptor field) {
-        return "(instance, value) -> instance." + getSetterMethod(field) + "((" + field.getTypeName() + ") value)";
+        return "(instance, value) -> instance." + getSetterMethodName(field) + "((" + field.getTypeName() + ") value)";
     }
 }

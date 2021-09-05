@@ -16,6 +16,7 @@
 
 package dev.alexengrig.metter.processor;
 
+import dev.alexengrig.metter.FieldChecker;
 import dev.alexengrig.metter.element.descriptor.ElementDescriptor;
 import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
 import dev.alexengrig.metter.element.descriptor.MethodDescriptor;
@@ -32,6 +33,7 @@ import java.io.PrintWriter;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -167,8 +169,9 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation, E extend
     protected Map<String, String> createField2MethodMap(D descriptor) {
         Map<String, String> field2Method = new HashMap<>();
         Set<FieldDescriptor> fields = getFields(descriptor);
+        FieldChecker fieldChecker = getFieldChecker(descriptor);
         for (FieldDescriptor field : fields) {
-            if (isTargetField(field)) {
+            if (fieldChecker.isTarget(field)) {
                 field2Method.put(field.getName(), getMethod(field));
             }
         }
@@ -202,14 +205,7 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation, E extend
      */
     protected abstract Set<String> getExcludedFields(D descriptor);
 
-    /**
-     * Checks if a field descriptor is target field.
-     *
-     * @param field descriptor
-     * @return {@code field} is target field.
-     * @since 0.1.0
-     */
-    protected abstract boolean isTargetField(FieldDescriptor field);
+    protected abstract FieldChecker getFieldChecker(D descriptor);
 
     /**
      * Returns a method for a field descriptor.
@@ -228,14 +224,20 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation, E extend
      * @since 0.1.1
      */
     protected boolean hasGetterMethod(FieldDescriptor field) {
-        String getter = getGetterMethod(field);
+        return getGetter(field).isPresent();
+    }
+
+    protected Optional<MethodDescriptor> getGetter(FieldDescriptor field) {
+        String getter = getGetterMethodName(field);
         TypeDescriptor type = field.getParent();
-        if (type.hasMethod(getter)) {
-            Set<MethodDescriptor> methods = type.getMethods(getter);
-            return methods.stream().anyMatch(method -> method.isNotPrivate() && method.hasNoParameters()
-                    && field.getTypeName().equals(method.getTypeName()));
+        if (!type.hasMethod(getter)) {
+            return Optional.empty();
         }
-        return false;
+        Set<MethodDescriptor> methods = type.getMethods(getter);
+        return methods.stream()
+                .filter(method -> method.isNotPrivate() && method.hasNoParameters()
+                        && field.getTypeName().equals(method.getTypeName()))
+                .findFirst();
     }
 
     /**
@@ -245,7 +247,7 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation, E extend
      * @return getter-method for {@code field}
      * @since 0.1.1
      */
-    protected String getGetterMethod(FieldDescriptor field) {
+    protected String getGetterMethodName(FieldDescriptor field) {
         String methodNamePrefix = "boolean".equals(field.getTypeName()) ? "is" : "get";
         String name = field.getName();
         return methodNamePrefix + Strings.capitalize(name);
@@ -260,7 +262,7 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation, E extend
      * @since 0.1.1
      */
     protected boolean hasSetterMethod(FieldDescriptor field) {
-        String methodName = getSetterMethod(field);
+        String methodName = getSetterMethodName(field);
         TypeDescriptor type = field.getParent();
         if (type.hasMethod(methodName)) {
             Set<MethodDescriptor> methods = type.getMethods(methodName);
@@ -270,6 +272,19 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation, E extend
         return false;
     }
 
+    protected Optional<MethodDescriptor> getSetter(FieldDescriptor field) {
+        String methodName = getSetterMethodName(field);
+        TypeDescriptor type = field.getParent();
+        if (!type.hasMethod(methodName)) {
+            return Optional.empty();
+        }
+        Set<MethodDescriptor> methods = type.getMethods(methodName);
+        return methods.stream()
+                .filter(method -> method.isNotPrivate() && "void".equals(method.getTypeName())
+                        && method.hasOnlyOneParameter(field.getTypeName()))
+                .findFirst();
+    }
+
     /**
      * Returns a setter-method for a field descriptor.
      *
@@ -277,7 +292,7 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation, E extend
      * @return setter-method for {@code field}
      * @since 0.1.1
      */
-    protected String getSetterMethod(FieldDescriptor field) {
+    protected String getSetterMethodName(FieldDescriptor field) {
         String name = field.getName();
         return "set" + Strings.capitalize(name);
     }

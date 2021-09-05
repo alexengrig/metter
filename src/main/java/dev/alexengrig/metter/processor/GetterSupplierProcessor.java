@@ -17,6 +17,7 @@
 package dev.alexengrig.metter.processor;
 
 import com.google.auto.service.AutoService;
+import dev.alexengrig.metter.FieldChecker;
 import dev.alexengrig.metter.annotation.GetterSupplier;
 import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
 import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
@@ -107,6 +108,11 @@ public class GetterSupplierProcessor extends OnClassSupplierProcessor<GetterSupp
                 .orElseThrow(() -> new MetterException("Type " + descriptor + " has no annotation: " + annotationClass));
     }
 
+    @Override
+    protected FieldChecker getFieldChecker(TypeDescriptor descriptor) {
+        return this::isTargetField;
+    }
+
     /**
      * Checks if a field descriptor has {@link lombok.Getter} (not private) annotation
      * or a type descriptor of field descriptor has {@link lombok.Getter} (not private) annotation
@@ -120,8 +126,7 @@ public class GetterSupplierProcessor extends OnClassSupplierProcessor<GetterSupp
      * or type descriptor of {@code descriptor} has a getter method
      * @since 0.1.1
      */
-    @Override
-    protected boolean isTargetField(FieldDescriptor field) {
+    private boolean isTargetField(FieldDescriptor field) {
         if (field.hasAnnotation(Getter.class)) {
             return !field.getAnnotation(Getter.class)
                     .map(Getter::value)
@@ -147,6 +152,6 @@ public class GetterSupplierProcessor extends OnClassSupplierProcessor<GetterSupp
      */
     @Override
     protected String getMethod(FieldDescriptor field) {
-        return field.getParent().getQualifiedName() + "::" + getGetterMethod(field);
+        return field.getParent().getQualifiedName() + "::" + getGetterMethodName(field);
     }
 }

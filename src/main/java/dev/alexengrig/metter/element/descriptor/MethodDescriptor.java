@@ -46,6 +46,7 @@ public class MethodDescriptor extends ElementDescriptor<ExecutableElement> {
      * @since 0.1.1
      */
     protected transient Boolean isNotPrivate;
+    protected transient Boolean isPublic;
 
     /**
      * Constructs with an executable element.
@@ -103,9 +104,16 @@ public class MethodDescriptor extends ElementDescriptor<ExecutableElement> {
      */
     public boolean isNotPrivate() {
         if (isNotPrivate == null) {
-            isNotPrivate = element.getModifiers().stream().noneMatch(Modifier.PRIVATE::equals);
+            isNotPrivate = !element.getModifiers().contains(Modifier.PRIVATE);
         }
         return isNotPrivate;
+    }
+
+    public boolean isPublic() {
+        if (isPublic == null) {
+            isPublic = element.getModifiers().contains(Modifier.PUBLIC);
+        }
+        return isPublic;
     }
 
     /**
