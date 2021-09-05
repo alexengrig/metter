@@ -21,9 +21,6 @@ import dev.alexengrig.metter.annotation.GetterSupplier;
 import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
 import dev.alexengrig.metter.element.descriptor.MethodDescriptor;
 import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Getter;
 import org.junit.jupiter.api.Test;
 
 import javax.lang.model.element.TypeElement;
@@ -32,11 +29,8 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -103,11 +97,11 @@ class GetterSupplierProcessorTest {
     void should_return_getterMethod() {
         VariableElement booleanField = ElementMocks.fieldMock("booleanField", boolean.class);
         FieldDescriptor booleanFieldDescriptor = new FieldDescriptor(booleanField);
-        assertEquals("isBooleanField", PROCESSOR.getGetterMethod(booleanFieldDescriptor),
+        assertEquals("isBooleanField", PROCESSOR.getGetterMethodName(booleanFieldDescriptor),
                 "Method name does not equal to 'isBooleanField'");
         VariableElement stringField = ElementMocks.fieldMock("stringField", String.class);
         FieldDescriptor stringFieldDescriptor = new FieldDescriptor(stringField);
-        assertEquals("getStringField", PROCESSOR.getGetterMethod(stringFieldDescriptor),
+        assertEquals("getStringField", PROCESSOR.getGetterMethodName(stringFieldDescriptor),
                 "Method name does not equal to 'getStringField'");
     }
 
@@ -212,7 +206,7 @@ class GetterSupplierProcessorTest {
         assertFalse(hasGetterMethod, "Class has getter-method with boolean return type");
     }
 
-    @Test
+    /*@Test
     void should_check_isTargetField_for_notPrivateLombokGetterOnField() {
         Getter getter = mock(Getter.class);
         when(getter.value()).thenReturn(AccessLevel.PUBLIC);
@@ -326,5 +320,5 @@ class GetterSupplierProcessorTest {
         boolean isTargetField = PROCESSOR.isTargetField(fieldDescriptor);
 
         assertFalse(isTargetField, "Class have getter-method with int return type");
-    }
+    }*/
 }
