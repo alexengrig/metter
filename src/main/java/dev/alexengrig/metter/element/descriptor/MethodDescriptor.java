@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2020-2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,10 @@ package dev.alexengrig.metter.element.descriptor;
 import dev.alexengrig.metter.element.collector.MethodCollector;
 
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,7 +31,7 @@ import java.util.stream.Collectors;
  *
  * @author Grig Alex
  * @version 0.1.0
- * @since 0.1.0
+ * @since 0.1.1
  */
 public class MethodDescriptor {
     /**
@@ -42,8 +45,13 @@ public class MethodDescriptor {
      *
      * @since 0.1.0
      */
-
     protected transient String name;
+    /**
+     * Mark about not private modifier.
+     *
+     * @since 0.1.1
+     */
+    protected transient Boolean isNotPrivate;
 
     /**
      * Constructs with an executable element.
@@ -76,9 +84,51 @@ public class MethodDescriptor {
      * @since 0.1.0
      */
     public String getName() {
-        if (name == null) {
-            name = executableElement.getSimpleName().toString();
+        return executableElement.getSimpleName().toString();
+    }
+
+    /**
+     * Returns a type name.
+     *
+     * @return type name
+     * @since 0.1.1
+     */
+    public String getTypeName() {
+        return executableElement.getReturnType().toString();
+    }
+
+    /**
+     * Checks if method is private.
+     *
+     * @return if method is private
+     * @since 0.1.1
+     */
+    public boolean isNotPrivate() {
+        if (isNotPrivate == null) {
+            isNotPrivate = executableElement.getModifiers().stream().noneMatch(Modifier.PRIVATE::equals);
         }
-        return name;
+        return isNotPrivate;
+    }
+
+    /**
+     * Checks if method has no parameters.
+     *
+     * @return if method has no parameters
+     * @since 0.1.1
+     */
+    public boolean hasNoParameters() {
+        return executableElement.getParameters().isEmpty();
+    }
+
+    /**
+     * Checks if method has only one parameter with parameter type name.
+     *
+     * @param parameterTypeName parameter type name
+     * @return if method has only one parameter with {@code parameterTypeName}
+     * @since 0.1.1
+     */
+    public boolean hasOnlyOneParameter(String parameterTypeName) {
+        List<? extends VariableElement> parameters = executableElement.getParameters();
+        return parameters.size() == 1 && parameterTypeName.equals(parameters.get(0).asType().toString());
     }
 }

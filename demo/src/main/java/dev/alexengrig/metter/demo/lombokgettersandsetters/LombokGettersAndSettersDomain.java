@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2020-2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import lombok.Setter;
 @GetterSupplier
 @SetterSupplier
 public class LombokGettersAndSettersDomain {
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private final int ignored;
     @Getter
     @Setter

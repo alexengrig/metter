@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2020-2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ package dev.alexengrig.metter.generator;
  * Generator source of setter supplier.
  *
  * @author Grig Alex
- * @version 0.1.0
+ * @version 0.2.0
  * @since 0.1.0
  */
 public class SetterSupplierSourceGenerator extends MethodSupplierSourceGenerator {
@@ -44,8 +44,19 @@ public class SetterSupplierSourceGenerator extends MethodSupplierSourceGenerator
     }
 
     /**
+     * Returns {@code setterByField}.
+     *
+     * @return {@code setterByField}
+     * @since 0.2.0
+     */
+    @Override
+    protected String getMapFieldName() {
+        return "setterByField";
+    }
+
+    /**
      * {@inheritDoc}
-     * <p>
+     *
      * <pre>{@code
      * java.util.function.BiConsumer<DomainClass, java.lang.Object>
      * }</pre>
@@ -55,5 +66,27 @@ public class SetterSupplierSourceGenerator extends MethodSupplierSourceGenerator
     @Override
     protected String getMapValueType(String domainClassName) {
         return String.format("java.util.function.BiConsumer<%s, java.lang.Object>", domainClassName);
+    }
+
+    /**
+     * Returns {@code Setters}.
+     *
+     * @return {@code Setters}
+     * @since 0.2.0
+     */
+    @Override
+    protected String getJavaDocTypeNameForClass() {
+        return "Setters";
+    }
+
+    /**
+     * Returns {@code setter}.
+     *
+     * @return {@code setter}
+     * @since 0.2.0
+     */
+    @Override
+    protected String getJavaDocTypeName() {
+        return "setter";
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2020-2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package dev.alexengrig.metter.demo.excluding;
 
+import dev.alexengrig.metter.demo.BaseDomainTest;
 import org.junit.Test;
 
 import java.util.Map;
@@ -23,32 +24,26 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
-public class ExcludedDomainTest {
+public class ExcludedDomainTest extends BaseDomainTest<ExcludedDomain> {
     @Test
     public void should_contains_allNotExcludedGetters() {
-        Map<String, Function<ExcludedDomain, Object>> getterByField = new ExcludedDomainGetterSupplier().get();
-        assertNotNull("Map is null", getterByField);
-        assertEquals("Map size not equal to 1", 1, getterByField.size());
-        assertTrue("Map not contain getter for 'integer' field", getterByField.containsKey("integer"));
-        assertFalse("Map contains getter for 'excluded' field", getterByField.containsKey("excluded"));
+        Map<String, Function<ExcludedDomain, Object>> getterByField = getGetterMap(new ExcludedDomainGetterSupplier());
+        assertSize(getterByField, 1);
+        assertGetterFields(getterByField, "integer");
         ExcludedDomain domain = new ExcludedDomain(1, 2);
-        assertEquals("Getter for 'integer' field returns wrong value",
-                1, getterByField.get("integer").apply(domain));
+        assertGetterValue(getterByField, domain, "integer", 1);
+        assertEquals("Excluded field value is incorrect", 2, domain.getExcluded());
     }
 
     @Test
     public void should_contains_allNotExcludedSetters() {
-        Map<String, BiConsumer<ExcludedDomain, Object>> setterByField = new ExcludedDomainSetterSupplier().get();
-        assertNotNull("Map is null", setterByField);
-        assertEquals("Map size not equal to 1", 1, setterByField.size());
-        assertTrue("Map not contain setter for 'integer' field", setterByField.containsKey("integer"));
-        assertFalse("Map contains setter for 'excluded' field", setterByField.containsKey("excluded"));
-        ExcludedDomain domain = new ExcludedDomain(0, 2);
-        setterByField.get("integer").accept(domain, 1);
-        assertEquals("Setter for 'integer' field sets wrong value", 1, domain.getInteger());
+        Map<String, BiConsumer<ExcludedDomain, Object>> setterByField = getSetterMap(new ExcludedDomainSetterSupplier());
+        assertSize(setterByField, 1);
+        assertSetterFields(setterByField, "integer");
+        ExcludedDomain domain = new ExcludedDomain(1, 2);
+        assertSetterValue(setterByField, domain, "integer", 10, ExcludedDomain::getInteger);
+        domain.setExcluded(20);
+        assertEquals("Excluded field value is incorrect", 20, domain.getExcluded());
     }
 }

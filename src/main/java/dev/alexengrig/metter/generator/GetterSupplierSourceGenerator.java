@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2020-2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,8 +44,18 @@ public class GetterSupplierSourceGenerator extends MethodSupplierSourceGenerator
     }
 
     /**
+     * Returns {@code getterByField}.
+     *
+     * @return {@code getterByField}
+     */
+    @Override
+    protected String getMapFieldName() {
+        return "getterByField";
+    }
+
+    /**
      * {@inheritDoc}
-     * <p>
+     *
      * <pre>{@code
      * java.util.Function<DomainClass, java.lang.Object>
      * }</pre>
@@ -55,5 +65,25 @@ public class GetterSupplierSourceGenerator extends MethodSupplierSourceGenerator
     @Override
     protected String getMapValueType(String domainClassName) {
         return String.format("java.util.function.Function<%s, java.lang.Object>", domainClassName);
+    }
+
+    /**
+     * Returns {@code Getters}.
+     *
+     * @return {@code Getters}
+     */
+    @Override
+    protected String getJavaDocTypeNameForClass() {
+        return "Getters";
+    }
+
+    /**
+     * Returns {@code getter}.
+     *
+     * @return {@code getter}
+     */
+    @Override
+    protected String getJavaDocTypeName() {
+        return "getter";
     }
 }

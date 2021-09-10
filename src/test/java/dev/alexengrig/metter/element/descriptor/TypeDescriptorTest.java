@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2020-2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,18 @@
 
 package dev.alexengrig.metter.element.descriptor;
 
-import dev.alexengrig.metter.element.ElementMocks;
 import org.junit.jupiter.api.Test;
 
-import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import static dev.alexengrig.metter.element.ElementMocks.executableElementMock;
-import static dev.alexengrig.metter.element.ElementMocks.typeElementMock;
-import static dev.alexengrig.metter.element.ElementMocks.variableElementMock;
+import static dev.alexengrig.metter.ElementMocks.executableElementMock;
+import static dev.alexengrig.metter.ElementMocks.fieldMock;
+import static dev.alexengrig.metter.ElementMocks.typeElementMock;
+import static dev.alexengrig.metter.ElementMocks.variableElementMock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 class TypeDescriptorTest {
@@ -41,104 +35,63 @@ class TypeDescriptorTest {
     void should_return_qualifiedName() {
         TypeElement typeElement = typeElementMock(String.class);
         TypeDescriptor descriptor = new TypeDescriptor(typeElement);
-        assertEquals("java.lang.String", descriptor.getQualifiedName(),
-                "Qualified name does not equal to 'java.lang.String'");
-        descriptor.getQualifiedName();
-        verify(typeElement).getQualifiedName();
+        assertEquals("java.lang.String", descriptor.getQualifiedName(), "Qualified name is incorrect");
     }
 
     @Test
     void should_return_simpleName() {
         TypeElement typeElement = typeElementMock(String.class);
         TypeDescriptor descriptor = new TypeDescriptor(typeElement);
-        assertEquals("String", descriptor.getSimpleName(), "Simple name does not equal to 'String'");
-        descriptor.getSimpleName();
-        verify(typeElement).getSimpleName();
+        assertEquals("String", descriptor.getSimpleName(), "Simple name is incorrect");
     }
 
     @Test
     void should_return_fields() {
-        VariableElement field1 = variableElementMock("field1");
-        VariableElement field2 = variableElementMock("field2");
-        ExecutableElement method = executableElementMock();
-        TypeElement typeElement = typeElementMock(Arrays.asList(field1, field2, method));
-        Set<String> expected = new HashSet<>(Arrays.asList("field1", "field2"));
+        TypeElement typeElement = typeElementMock(Arrays.asList(
+                fieldMock("field1"),
+                fieldMock("field2"),
+                executableElementMock("method")));
         TypeDescriptor descriptor = new TypeDescriptor(typeElement);
-        Set<String> actual = descriptor.getFields().stream()
-                .map(FieldDescriptor::getName)
-                .collect(Collectors.toSet());
-        assertEquals(expected, actual, "Fields of class are not 'field1' and 'field2'");
+        assertEquals(2, descriptor.getFields().size(), "Number of type fields is incorrect");
         descriptor.getFields();
         verify(typeElement).getEnclosedElements();
     }
 
     @Test
     void should_return_methods() {
-        ExecutableElement method1 = executableElementMock("method1");
-        ExecutableElement method2 = executableElementMock("method2");
-        VariableElement field = variableElementMock();
-        TypeElement typeElement = typeElementMock(Arrays.asList(method1, method2, field));
-        Set<String> expected = new HashSet<>(Arrays.asList("method1", "method2"));
+        TypeElement typeElement = typeElementMock(Arrays.asList(
+                executableElementMock("method1"),
+                executableElementMock("method2"),
+                variableElementMock("field")));
         TypeDescriptor descriptor = new TypeDescriptor(typeElement);
-        Set<String> actual = descriptor.getMethods().stream()
-                .map(MethodDescriptor::getName)
-                .collect(Collectors.toSet());
-        assertEquals(expected, actual, "Methods of class are not 'method1' and 'method2'");
+        assertEquals(2, descriptor.getMethods().size(), "Number of type methods is incorrect");
+        descriptor.getMethods();
+        verify(typeElement).getEnclosedElements();
+    }
+
+    @Test
+    void should_return_methods_by_name() {
+        TypeElement typeElement = typeElementMock(Arrays.asList(
+                executableElementMock("method1"),
+                executableElementMock("method1"),
+                executableElementMock("method2"),
+                variableElementMock("field")));
+        TypeDescriptor descriptor = new TypeDescriptor(typeElement);
+        assertEquals(2, descriptor.getMethods("method1").size(), "Number of type methods 'method1' is incorrect");
         descriptor.getMethods();
         verify(typeElement).getEnclosedElements();
     }
 
     @Test
     void should_check_hasMethod() {
-        ExecutableElement method1 = executableElementMock("getOne");
-        ExecutableElement method2 = executableElementMock("getTwo");
-        TypeElement typeElement = typeElementMock(Arrays.asList(method1, method2));
+        TypeElement typeElement = typeElementMock(Arrays.asList(
+                executableElementMock("getOne"),
+                executableElementMock("getTwo")));
         TypeDescriptor descriptor = new TypeDescriptor(typeElement);
         assertTrue(descriptor.hasMethod("getOne"), "Class has no 'getOne' method");
         assertTrue(descriptor.hasMethod("getOne"), "Second time: Class has no 'getOne' method");
         assertTrue(descriptor.hasMethod("getTwo"), "Class has no 'getTwo' method");
         assertFalse(descriptor.hasMethod("getThree"), "Class has 'getThree' method");
         verify(typeElement).getEnclosedElements();
-    }
-
-    @Test
-    void should_return_annotations() {
-        TypeElement typeElement = ElementMocks.typeElementMockWithAnnotations(Deprecated.class, SuppressWarnings.class);
-        HashSet<String> expected = new HashSet<>(Arrays.asList("java.lang.Deprecated", "java.lang.SuppressWarnings"));
-        TypeDescriptor descriptor = new TypeDescriptor(typeElement);
-        Set<String> actual = descriptor.getAnnotations().stream()
-                .map(AnnotationDescriptor::getQualifiedName)
-                .collect(Collectors.toSet());
-        assertEquals(expected, actual,
-                "Annotations of class are not 'java.lang.Deprecated' and 'java.lang.SuppressWarnings'");
-        descriptor.getAnnotations();
-        verify(typeElement).getAnnotationMirrors();
-    }
-
-    @Test
-    void should_check_hasAnnotation() {
-        TypeElement typeElement = ElementMocks.typeElementMockWithAnnotations(Deprecated.class, SuppressWarnings.class);
-        TypeDescriptor descriptor = new TypeDescriptor(typeElement);
-        assertTrue(descriptor.hasAnnotation("java.lang.Deprecated"),
-                "Class has no 'java.lang.Deprecated' annotation");
-        assertTrue(descriptor.hasAnnotation("java.lang.Deprecated"),
-                "Second time: Class has no 'java.lang.Deprecated' annotation");
-        assertTrue(descriptor.hasAnnotation("java.lang.SuppressWarnings"),
-                "Class has no 'java.lang.SuppressWarnings' annotation");
-        assertFalse(descriptor.hasAnnotation("java.lang.Override"),
-                "Class has 'java.lang.Override' annotation");
-        verify(typeElement).getAnnotationMirrors();
-    }
-
-    @Test
-    void should_return_annotation() {
-        TypeElement typeElement = ElementMocks.typeElementMockWithAnnotations(Deprecated.class, SuppressWarnings.class);
-        TypeDescriptor descriptor = new TypeDescriptor(typeElement);
-        assertEquals(Deprecated.class, descriptor.getAnnotation(Deprecated.class).annotationType(),
-                "Class has no 'java.lang.Deprecated' annotation");
-        assertEquals(SuppressWarnings.class, descriptor.getAnnotation(SuppressWarnings.class).annotationType(),
-                "Class has no 'java.lang.SuppressWarnings' annotation");
-        verify(typeElement).getAnnotation(eq(Deprecated.class));
-        verify(typeElement).getAnnotation(eq(SuppressWarnings.class));
     }
 }
