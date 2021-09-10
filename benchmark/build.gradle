@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2020-2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly files('../target/metter-0.1.1-SNAPSHOT.jar')
-    annotationProcessor files('../target/metter-0.1.1-SNAPSHOT.jar')
+    compileOnly files('../target/metter.jar')
+    annotationProcessor files('../target/metter.jar')
 
     compile 'org.openjdk.jmh:jmh-core:1.17.4'
     annotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.17.4'
