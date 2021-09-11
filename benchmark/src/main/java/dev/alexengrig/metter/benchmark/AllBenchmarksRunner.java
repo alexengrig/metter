@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Alexengrig Dev.
+ * Copyright 2020-2021 Alexengrig Dev.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,19 @@
 
 package dev.alexengrig.metter.benchmark;
 
+import lombok.SneakyThrows;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
-public class BenchmarkRunner {
-    public static void main(String[] args) throws RunnerException {
+public class AllBenchmarksRunner {
+    @SneakyThrows(RunnerException.class)
+    public static void main(String[] args) {
         Options options = new OptionsBuilder()
-                .include(GetterSupplierBenchmark.class.getSimpleName())
-                .output("BENCHMARK.txt")
+                .include(GetterSupplierBenchmarks.class.getSimpleName())
                 .build();
-        new Runner(options).run();
+        Runner runner = new Runner(options);
+        runner.run();
     }
 }
