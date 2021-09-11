@@ -15,6 +15,7 @@
  */
 
 plugins {
+    id "me.champeau.jmh" version "0.6.6"
     id 'java'
 }
 
@@ -29,9 +30,9 @@ dependencies {
     compileOnly files('../target/metter.jar')
     annotationProcessor files('../target/metter.jar')
 
-    compile 'org.openjdk.jmh:jmh-core:1.17.4'
-    annotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.17.4'
-
     compileOnly 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
+
+    jmh 'org.openjdk.jmh:jmh-core:1.33'
+    jmh 'org.openjdk.jmh:jmh-generator-annprocess:1.33'
 }
