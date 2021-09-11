@@ -8,3 +8,5 @@ install:
   - cd ..
 after_success:
   - mvn jacoco:report codecov:upload coveralls:report codacy:coverage
+  - cd benchmark
+  - gradle jmh
