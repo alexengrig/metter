@@ -14,13 +14,26 @@
  * limitations under the License.
  */
 
-package dev.alexengrig.metter.benchmark;
+package dev.alexengrig.metter.benchmark;/*
+ * Copyright 2020-2021 Alexengrig Dev.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 import dev.alexengrig.metter.benchmark.domain.Domain12;
 import dev.alexengrig.metter.benchmark.domain.Domain12GetterSupplier;
 import dev.alexengrig.metter.benchmark.util.HandlingUtils;
 import dev.alexengrig.metter.benchmark.util.ReflectionUtils;
-import lombok.SneakyThrows;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
@@ -45,11 +58,7 @@ import java.util.function.Supplier;
 public class GetterSupplierBenchmarks {
     private static final Supplier<Map<String, Function<Domain12, Object>>> DOMAIN12_MAP_SUPPLIER;
     private static final Supplier<Map<String, Function<Domain12, Object>>> DOMAIN12_REFLECTION_SUPPLIER;
-
-    //    MANUALLY
     private static final Supplier<Map<String, Function<Domain12, Object>>> DOMAIN12_HANDLING_SUPPLIER;
-
-    //    MAP
     private static final Supplier<Map<String, Function<Domain12, Object>>> DOMAIN12_GENERATION_SUPPLIER;
 
     static {
@@ -67,60 +76,41 @@ public class GetterSupplierBenchmarks {
         map.put("string1", Domain12::getString1);
         map.put("string2", Domain12::getString2);
         DOMAIN12_MAP_SUPPLIER = () -> map;
-    }
 
-    static {
-        HashMap<String, Function<Domain12, Object>> map = new HashMap<>(12);
-        map.put("int0", ReflectionUtils.getMethod(Domain12.class, "getInt0"));
-        map.put("int1", ReflectionUtils.getMethod(Domain12.class, "getInt1"));
-        map.put("int2", ReflectionUtils.getMethod(Domain12.class, "getInt2"));
-        map.put("long0", ReflectionUtils.getMethod(Domain12.class, "getLong0"));
-        map.put("long1", ReflectionUtils.getMethod(Domain12.class, "getLong1"));
-        map.put("long2", ReflectionUtils.getMethod(Domain12.class, "getLong2"));
-        map.put("bool0", ReflectionUtils.getMethod(Domain12.class, "isBool0"));
-        map.put("bool1", ReflectionUtils.getMethod(Domain12.class, "isBool1"));
-        map.put("bool2", ReflectionUtils.getMethod(Domain12.class, "isBool2"));
-        map.put("string0", ReflectionUtils.getMethod(Domain12.class, "getString0"));
-        map.put("string1", ReflectionUtils.getMethod(Domain12.class, "getString1"));
-        map.put("string2", ReflectionUtils.getMethod(Domain12.class, "getString2"));
-        DOMAIN12_REFLECTION_SUPPLIER = () -> map;
-    }
+        HashMap<String, Function<Domain12, Object>> reflectionMap = new HashMap<>(12);
+        reflectionMap.put("int0", ReflectionUtils.getMethod(Domain12.class, "getInt0"));
+        reflectionMap.put("int1", ReflectionUtils.getMethod(Domain12.class, "getInt1"));
+        reflectionMap.put("int2", ReflectionUtils.getMethod(Domain12.class, "getInt2"));
+        reflectionMap.put("long0", ReflectionUtils.getMethod(Domain12.class, "getLong0"));
+        reflectionMap.put("long1", ReflectionUtils.getMethod(Domain12.class, "getLong1"));
+        reflectionMap.put("long2", ReflectionUtils.getMethod(Domain12.class, "getLong2"));
+        reflectionMap.put("bool0", ReflectionUtils.getMethod(Domain12.class, "isBool0"));
+        reflectionMap.put("bool1", ReflectionUtils.getMethod(Domain12.class, "isBool1"));
+        reflectionMap.put("bool2", ReflectionUtils.getMethod(Domain12.class, "isBool2"));
+        reflectionMap.put("string0", ReflectionUtils.getMethod(Domain12.class, "getString0"));
+        reflectionMap.put("string1", ReflectionUtils.getMethod(Domain12.class, "getString1"));
+        reflectionMap.put("string2", ReflectionUtils.getMethod(Domain12.class, "getString2"));
+        DOMAIN12_REFLECTION_SUPPLIER = () -> reflectionMap;
 
-//    REFLECTION
+        HashMap<String, Function<Domain12, Object>> handlingMap = new HashMap<>(12);
+        handlingMap.put("int0", HandlingUtils.getMethod(Domain12.class, "getInt0", int.class));
+        handlingMap.put("int1", HandlingUtils.getMethod(Domain12.class, "getInt1", int.class));
+        handlingMap.put("int2", HandlingUtils.getMethod(Domain12.class, "getInt2", int.class));
+        handlingMap.put("long0", HandlingUtils.getMethod(Domain12.class, "getLong0", long.class));
+        handlingMap.put("long1", HandlingUtils.getMethod(Domain12.class, "getLong1", long.class));
+        handlingMap.put("long2", HandlingUtils.getMethod(Domain12.class, "getLong2", long.class));
+        handlingMap.put("bool0", HandlingUtils.getMethod(Domain12.class, "isBool0", boolean.class));
+        handlingMap.put("bool1", HandlingUtils.getMethod(Domain12.class, "isBool1", boolean.class));
+        handlingMap.put("bool2", HandlingUtils.getMethod(Domain12.class, "isBool2", boolean.class));
+        handlingMap.put("string0", HandlingUtils.getMethod(Domain12.class, "getString0", String.class));
+        handlingMap.put("string1", HandlingUtils.getMethod(Domain12.class, "getString1", String.class));
+        handlingMap.put("string2", HandlingUtils.getMethod(Domain12.class, "getString2", String.class));
+        DOMAIN12_HANDLING_SUPPLIER = () -> handlingMap;
 
-    static {
-        HashMap<String, Function<Domain12, Object>> map = new HashMap<>(12);
-        map.put("int0", HandlingUtils.getMethod(Domain12.class, "getInt0", int.class));
-        map.put("int1", HandlingUtils.getMethod(Domain12.class, "getInt1", int.class));
-        map.put("int2", HandlingUtils.getMethod(Domain12.class, "getInt2", int.class));
-        map.put("long0", HandlingUtils.getMethod(Domain12.class, "getLong0", long.class));
-        map.put("long1", HandlingUtils.getMethod(Domain12.class, "getLong1", long.class));
-        map.put("long2", HandlingUtils.getMethod(Domain12.class, "getLong2", long.class));
-        map.put("bool0", HandlingUtils.getMethod(Domain12.class, "isBool0", boolean.class));
-        map.put("bool1", HandlingUtils.getMethod(Domain12.class, "isBool1", boolean.class));
-        map.put("bool2", HandlingUtils.getMethod(Domain12.class, "isBool2", boolean.class));
-        map.put("string0", HandlingUtils.getMethod(Domain12.class, "getString0", String.class));
-        map.put("string1", HandlingUtils.getMethod(Domain12.class, "getString1", String.class));
-        map.put("string2", HandlingUtils.getMethod(Domain12.class, "getString2", String.class));
-        DOMAIN12_HANDLING_SUPPLIER = () -> map;
-    }
-
-    static {
         DOMAIN12_GENERATION_SUPPLIER = new Domain12GetterSupplier();
     }
 
-    @SneakyThrows(RunnerException.class)
-    public static void main(String[] args) {
-        Options options = new OptionsBuilder()
-                .include(GetterSupplierBenchmarks.class.getSimpleName())
-                .build();
-        Runner runner = new Runner(options);
-        runner.run();
-    }
-
-//    METHOD HANDLING
-
-    private <T> List<Object> getDomainValues(T domain, Supplier<Map<String, Function<T, Object>>> supplier) {
+    private static <T> List<Object> getDomainValues(T domain, Supplier<Map<String, Function<T, Object>>> supplier) {
         Map<String, Function<T, Object>> getters = supplier.get();
         ArrayList<Object> values = new ArrayList<>(getters.size());
         for (Function<T, Object> getter : getters.values()) {
@@ -128,6 +118,14 @@ public class GetterSupplierBenchmarks {
             values.add(value);
         }
         return values;
+    }
+
+    public static void main(String[] args) throws RunnerException {
+        Options options = new OptionsBuilder()
+                .include(GetterSupplierBenchmarks.class.getSimpleName())
+                .build();
+        Runner runner = new Runner(options);
+        runner.run();
     }
 
     @Benchmark
@@ -153,8 +151,6 @@ public class GetterSupplierBenchmarks {
     public Object get_allValuesOf_domain12_via_map() {
         return getDomainValues(new Domain12(), DOMAIN12_MAP_SUPPLIER);
     }
-
-//    GENERATION
 
     @Benchmark
     public Object get_allValuesOf_domain12_via_reflection() {
