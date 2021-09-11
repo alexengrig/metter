@@ -3,10 +3,7 @@ jdk:
   - openjdk8
 install:
   - mvn install -Dgpg.skip=true -Djar.finalName=metter -B -V
-  - cd demo
-  - gradle test
-  - cd ..
+  - cd demo && gradle test && cd ..
 after_success:
   - mvn jacoco:report codecov:upload coveralls:report codacy:coverage
-  - cd benchmark
-  - gradle jmh
+  - cd benchmark && gradle jmh && cd ..
