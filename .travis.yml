@@ -6,6 +6,4 @@ install:
   - cd demo && gradle test && cd ..
 after_success:
   - mvn jacoco:report codecov:upload coveralls:report codacy:coverage
-  - cd benchmark
-  - gradle wrapper --gradle-version 7.2
-  - ./gradlew jmh && cd ..
+  - cd benchmark && gradle jmh && cd ..
