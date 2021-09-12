@@ -14,29 +14,24 @@
  * limitations under the License.
  */
 
-package dev.alexengrig.metter.benchmark;/*
- * Copyright 2020-2021 Alexengrig Dev.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package dev.alexengrig.metter.benchmark;
 
-import dev.alexengrig.metter.benchmark.domain.Domain12;
-import dev.alexengrig.metter.benchmark.domain.Domain12GetterSupplier;
+import dev.alexengrig.metter.benchmark.domain.Domain16;
+import dev.alexengrig.metter.benchmark.domain.Domain16GetterSupplier;
 import dev.alexengrig.metter.benchmark.domain.Domain32;
 import dev.alexengrig.metter.benchmark.domain.Domain32GetterSupplier;
 import dev.alexengrig.metter.benchmark.util.HandlingUtils;
 import dev.alexengrig.metter.benchmark.util.ReflectionUtils;
-import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.BenchmarkMode;
+import org.openjdk.jmh.annotations.CompilerControl;
+import org.openjdk.jmh.annotations.Fork;
+import org.openjdk.jmh.annotations.Measurement;
+import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.OutputTimeUnit;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
@@ -59,12 +54,12 @@ import java.util.function.Supplier;
 @CompilerControl(CompilerControl.Mode.DONT_INLINE)
 public class GetterSupplierBenchmarks {
 
-//    12
+//    16
 
-    private static final Supplier<Map<String, Function<Domain12, Object>>> DOMAIN12_MAP_SUPPLIER;
-    private static final Supplier<Map<String, Function<Domain12, Object>>> DOMAIN12_REFLECTION_SUPPLIER;
-    private static final Supplier<Map<String, Function<Domain12, Object>>> DOMAIN12_HANDLING_SUPPLIER;
-    private static final Supplier<Map<String, Function<Domain12, Object>>> DOMAIN12_GENERATION_SUPPLIER;
+    private static final Supplier<Map<String, Function<Domain16, Object>>> DOMAIN16_MAP_SUPPLIER;
+    private static final Supplier<Map<String, Function<Domain16, Object>>> DOMAIN16_REFLECTION_SUPPLIER;
+    private static final Supplier<Map<String, Function<Domain16, Object>>> DOMAIN16_HANDLING_SUPPLIER;
+    private static final Supplier<Map<String, Function<Domain16, Object>>> DOMAIN16_GENERATION_SUPPLIER;
 
 //    32
 
@@ -74,53 +69,66 @@ public class GetterSupplierBenchmarks {
     private static final Supplier<Map<String, Function<Domain32, Object>>> DOMAIN32_GENERATION_SUPPLIER;
 
     static {
-//        12
-        HashMap<String, Function<Domain12, Object>> map12 = new HashMap<String, Function<Domain12, Object>>(12) {{
-            put("int0", Domain12::getInt0);
-            put("int1", Domain12::getInt1);
-            put("int2", Domain12::getInt2);
-            put("long0", Domain12::getLong0);
-            put("long1", Domain12::getLong1);
-            put("long2", Domain12::getLong2);
-            put("bool0", Domain12::isBool0);
-            put("bool1", Domain12::isBool1);
-            put("bool2", Domain12::isBool2);
-            put("string0", Domain12::getString0);
-            put("string1", Domain12::getString1);
-            put("string2", Domain12::getString2);
+//        16
+        HashMap<String, Function<Domain16, Object>> map16 = new HashMap<String, Function<Domain16, Object>>(16) {{
+            put("int0", Domain16::getInt0);
+            put("int1", Domain16::getInt1);
+            put("int2", Domain16::getInt2);
+            put("long0", Domain16::getLong0);
+            put("long1", Domain16::getLong1);
+            put("long2", Domain16::getLong2);
+            put("bool0", Domain16::isBool0);
+            put("bool1", Domain16::isBool1);
+            put("bool2", Domain16::isBool2);
+            put("string0", Domain16::getString0);
+            put("string1", Domain16::getString1);
+            put("string2", Domain16::getString2);
         }};
-        DOMAIN12_MAP_SUPPLIER = () -> map12;
-        HashMap<String, Function<Domain12, Object>> reflectionMap12 = new HashMap<String, Function<Domain12, Object>>(12) {{
-            put("int0", ReflectionUtils.getMethod(Domain12.class, "getInt0"));
-            put("int1", ReflectionUtils.getMethod(Domain12.class, "getInt1"));
-            put("int2", ReflectionUtils.getMethod(Domain12.class, "getInt2"));
-            put("long0", ReflectionUtils.getMethod(Domain12.class, "getLong0"));
-            put("long1", ReflectionUtils.getMethod(Domain12.class, "getLong1"));
-            put("long2", ReflectionUtils.getMethod(Domain12.class, "getLong2"));
-            put("bool0", ReflectionUtils.getMethod(Domain12.class, "isBool0"));
-            put("bool1", ReflectionUtils.getMethod(Domain12.class, "isBool1"));
-            put("bool2", ReflectionUtils.getMethod(Domain12.class, "isBool2"));
-            put("string0", ReflectionUtils.getMethod(Domain12.class, "getString0"));
-            put("string1", ReflectionUtils.getMethod(Domain12.class, "getString1"));
-            put("string2", ReflectionUtils.getMethod(Domain12.class, "getString2"));
+        assert map16.size() == 16 : "Map size must be 16";
+        DOMAIN16_MAP_SUPPLIER = () -> map16;
+        HashMap<String, Function<Domain16, Object>> reflectionMap16 = new HashMap<String, Function<Domain16, Object>>(16) {{
+            put("int0", ReflectionUtils.getMethod(Domain16.class, "getInt0"));
+            put("int1", ReflectionUtils.getMethod(Domain16.class, "getInt1"));
+            put("int2", ReflectionUtils.getMethod(Domain16.class, "getInt2"));
+            put("int3", ReflectionUtils.getMethod(Domain16.class, "getInt3"));
+            put("long0", ReflectionUtils.getMethod(Domain16.class, "getLong0"));
+            put("long1", ReflectionUtils.getMethod(Domain16.class, "getLong1"));
+            put("long2", ReflectionUtils.getMethod(Domain16.class, "getLong2"));
+            put("long3", ReflectionUtils.getMethod(Domain16.class, "getLong3"));
+            put("bool0", ReflectionUtils.getMethod(Domain16.class, "isBool0"));
+            put("bool1", ReflectionUtils.getMethod(Domain16.class, "isBool1"));
+            put("bool2", ReflectionUtils.getMethod(Domain16.class, "isBool2"));
+            put("bool3", ReflectionUtils.getMethod(Domain16.class, "isBool3"));
+            put("string0", ReflectionUtils.getMethod(Domain16.class, "getString0"));
+            put("string1", ReflectionUtils.getMethod(Domain16.class, "getString1"));
+            put("string2", ReflectionUtils.getMethod(Domain16.class, "getString2"));
+            put("string3", ReflectionUtils.getMethod(Domain16.class, "getString3"));
         }};
-        DOMAIN12_REFLECTION_SUPPLIER = () -> reflectionMap12;
-        HashMap<String, Function<Domain12, Object>> handlingMap12 = new HashMap<String, Function<Domain12, Object>>(12) {{
-            put("int0", HandlingUtils.getMethod(Domain12.class, "getInt0", int.class));
-            put("int1", HandlingUtils.getMethod(Domain12.class, "getInt1", int.class));
-            put("int2", HandlingUtils.getMethod(Domain12.class, "getInt2", int.class));
-            put("long0", HandlingUtils.getMethod(Domain12.class, "getLong0", long.class));
-            put("long1", HandlingUtils.getMethod(Domain12.class, "getLong1", long.class));
-            put("long2", HandlingUtils.getMethod(Domain12.class, "getLong2", long.class));
-            put("bool0", HandlingUtils.getMethod(Domain12.class, "isBool0", boolean.class));
-            put("bool1", HandlingUtils.getMethod(Domain12.class, "isBool1", boolean.class));
-            put("bool2", HandlingUtils.getMethod(Domain12.class, "isBool2", boolean.class));
-            put("string0", HandlingUtils.getMethod(Domain12.class, "getString0", String.class));
-            put("string1", HandlingUtils.getMethod(Domain12.class, "getString1", String.class));
-            put("string2", HandlingUtils.getMethod(Domain12.class, "getString2", String.class));
+        assert reflectionMap16.size() == 16 : "Reflection map size must be 16";
+        DOMAIN16_REFLECTION_SUPPLIER = () -> reflectionMap16;
+        HashMap<String, Function<Domain16, Object>> handlingMap16 = new HashMap<String, Function<Domain16, Object>>(16) {{
+            put("int0", HandlingUtils.getMethod(Domain16.class, "getInt0", int.class));
+            put("int1", HandlingUtils.getMethod(Domain16.class, "getInt1", int.class));
+            put("int2", HandlingUtils.getMethod(Domain16.class, "getInt2", int.class));
+            put("int3", HandlingUtils.getMethod(Domain16.class, "getInt3", int.class));
+            put("long0", HandlingUtils.getMethod(Domain16.class, "getLong0", long.class));
+            put("long1", HandlingUtils.getMethod(Domain16.class, "getLong1", long.class));
+            put("long2", HandlingUtils.getMethod(Domain16.class, "getLong2", long.class));
+            put("long3", HandlingUtils.getMethod(Domain16.class, "getLong3", long.class));
+            put("bool0", HandlingUtils.getMethod(Domain16.class, "isBool0", boolean.class));
+            put("bool1", HandlingUtils.getMethod(Domain16.class, "isBool1", boolean.class));
+            put("bool2", HandlingUtils.getMethod(Domain16.class, "isBool2", boolean.class));
+            put("bool3", HandlingUtils.getMethod(Domain16.class, "isBool3", boolean.class));
+            put("string0", HandlingUtils.getMethod(Domain16.class, "getString0", String.class));
+            put("string1", HandlingUtils.getMethod(Domain16.class, "getString1", String.class));
+            put("string2", HandlingUtils.getMethod(Domain16.class, "getString2", String.class));
+            put("string3", HandlingUtils.getMethod(Domain16.class, "getString3", String.class));
         }};
-        DOMAIN12_HANDLING_SUPPLIER = () -> handlingMap12;
-        DOMAIN12_GENERATION_SUPPLIER = new Domain12GetterSupplier();
+        assert handlingMap16.size() == 16 : "Handling map size must be 16";
+        DOMAIN16_HANDLING_SUPPLIER = () -> handlingMap16;
+        Domain16GetterSupplier getterSupplier16 = new Domain16GetterSupplier();
+        assert getterSupplier16.get().size() == 16 : "Getter supplier map size must be 16";
+        DOMAIN16_GENERATION_SUPPLIER = getterSupplier16;
 //        32
         HashMap<String, Function<Domain32, Object>> map32 = new HashMap<String, Function<Domain32, Object>>(32) {{
             put("int0", Domain32::getInt0);
@@ -156,6 +164,7 @@ public class GetterSupplierBenchmarks {
             put("string6", Domain32::getString6);
             put("string7", Domain32::getString7);
         }};
+        assert map32.size() == 32 : "Map size must be 32";
         DOMAIN32_MAP_SUPPLIER = () -> map32;
         HashMap<String, Function<Domain32, Object>> reflectionMap32 = new HashMap<String, Function<Domain32, Object>>(32) {{
             put("int0", ReflectionUtils.getMethod(Domain32.class, "getInt0"));
@@ -191,6 +200,7 @@ public class GetterSupplierBenchmarks {
             put("string6", ReflectionUtils.getMethod(Domain32.class, "getString6"));
             put("string7", ReflectionUtils.getMethod(Domain32.class, "getString7"));
         }};
+        assert reflectionMap32.size() == 32 : "Reflection map size must be 32";
         DOMAIN32_REFLECTION_SUPPLIER = () -> reflectionMap32;
         HashMap<String, Function<Domain32, Object>> handlingMap32 = new HashMap<String, Function<Domain32, Object>>(32) {{
             put("int0", HandlingUtils.getMethod(Domain32.class, "getInt0", int.class));
@@ -226,8 +236,11 @@ public class GetterSupplierBenchmarks {
             put("string6", HandlingUtils.getMethod(Domain32.class, "getString6", String.class));
             put("string7", HandlingUtils.getMethod(Domain32.class, "getString7", String.class));
         }};
+        assert handlingMap32.size() == 32 : "Handling map size must be 32";
         DOMAIN32_HANDLING_SUPPLIER = () -> handlingMap32;
-        DOMAIN32_GENERATION_SUPPLIER = new Domain32GetterSupplier();
+        Domain32GetterSupplier getterSupplier32 = new Domain32GetterSupplier();
+        assert getterSupplier32.get().size() == 32 : "Getter supplier map size must be 32";
+        DOMAIN32_GENERATION_SUPPLIER = getterSupplier32;
     }
 
     private static <T> List<Object> getDomainValues(T domain, Supplier<Map<String, Function<T, Object>>> supplier) {
@@ -248,45 +261,50 @@ public class GetterSupplierBenchmarks {
         runner.run();
     }
 
-//    12
+//    16
 
     @Benchmark
-    public Object get_allValuesOf_domain12_via_manually() {
-        Domain12 domain = new Domain12();
-        ArrayList<Object> values = new ArrayList<>(12);
+    public Object get_allValuesOf_domain16_via_manually() {
+        Domain16 domain = new Domain16();
+        ArrayList<Object> values = new ArrayList<>(16);
         values.add(domain.getInt0());
         values.add(domain.getInt1());
         values.add(domain.getInt2());
+        values.add(domain.getInt3());
         values.add(domain.getLong0());
         values.add(domain.getLong1());
         values.add(domain.getLong2());
+        values.add(domain.getLong3());
         values.add(domain.isBool0());
         values.add(domain.isBool1());
         values.add(domain.isBool2());
+        values.add(domain.isBool3());
         values.add(domain.getString0());
         values.add(domain.getString1());
         values.add(domain.getString2());
+        values.add(domain.getString3());
+        assert values.size() == 16 : "Values size must be 16";
         return values;
     }
 
     @Benchmark
-    public Object get_allValuesOf_domain12_via_map() {
-        return getDomainValues(new Domain12(), DOMAIN12_MAP_SUPPLIER);
+    public Object get_allValuesOf_domain16_via_map() {
+        return getDomainValues(new Domain16(), DOMAIN16_MAP_SUPPLIER);
     }
 
     @Benchmark
-    public Object get_allValuesOf_domain12_via_reflection() {
-        return getDomainValues(new Domain12(), DOMAIN12_REFLECTION_SUPPLIER);
+    public Object get_allValuesOf_domain16_via_reflection() {
+        return getDomainValues(new Domain16(), DOMAIN16_REFLECTION_SUPPLIER);
     }
 
     @Benchmark
-    public Object get_allValuesOf_domain12_via_handling() {
-        return getDomainValues(new Domain12(), DOMAIN12_HANDLING_SUPPLIER);
+    public Object get_allValuesOf_domain16_via_handling() {
+        return getDomainValues(new Domain16(), DOMAIN16_HANDLING_SUPPLIER);
     }
 
     @Benchmark
-    public Object get_allValuesOf_domain12_via_generation() {
-        return getDomainValues(new Domain12(), DOMAIN12_GENERATION_SUPPLIER);
+    public Object get_allValuesOf_domain16_via_generation() {
+        return getDomainValues(new Domain16(), DOMAIN16_GENERATION_SUPPLIER);
     }
 
 //    32
