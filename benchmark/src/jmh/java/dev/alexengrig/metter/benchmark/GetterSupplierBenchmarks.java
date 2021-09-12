@@ -50,8 +50,8 @@ import java.util.function.Supplier;
 
 @Fork(1)
 @State(Scope.Benchmark)
-@Warmup(iterations = 2)
-@Measurement(iterations = 10)
+@Warmup(iterations = 2, time = 3)
+@Measurement(iterations = 10, time = 3)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @CompilerControl(CompilerControl.Mode.DONT_INLINE)
