@@ -48,10 +48,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-@Fork(2)
+@Fork(1)
 @State(Scope.Benchmark)
-@Warmup(iterations = 10)
-@Measurement(iterations = 20)
+@Warmup(iterations = 2)
+@Measurement(iterations = 10)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @CompilerControl(CompilerControl.Mode.DONT_INLINE)
