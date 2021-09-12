@@ -45,7 +45,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-@Fork(1)
+@Fork(value = 1, jvmArgs = "-ea")
 @State(Scope.Benchmark)
 @Warmup(iterations = 2, time = 3)
 @Measurement(iterations = 10, time = 3)
@@ -74,17 +74,21 @@ public class GetterSupplierBenchmarks {
             put("int0", Domain16::getInt0);
             put("int1", Domain16::getInt1);
             put("int2", Domain16::getInt2);
+            put("int3", Domain16::getInt3);
             put("long0", Domain16::getLong0);
             put("long1", Domain16::getLong1);
             put("long2", Domain16::getLong2);
+            put("long3", Domain16::getLong3);
             put("bool0", Domain16::isBool0);
             put("bool1", Domain16::isBool1);
             put("bool2", Domain16::isBool2);
+            put("bool3", Domain16::isBool3);
             put("string0", Domain16::getString0);
             put("string1", Domain16::getString1);
             put("string2", Domain16::getString2);
+            put("string3", Domain16::getString3);
         }};
-        assert map16.size() == 16 : "Map size must be 16";
+        assert map16.size() == 16 : "Map size must be 16, not " + map16.size();
         DOMAIN16_MAP_SUPPLIER = () -> map16;
         HashMap<String, Function<Domain16, Object>> reflectionMap16 = new HashMap<String, Function<Domain16, Object>>(16) {{
             put("int0", ReflectionUtils.getMethod(Domain16.class, "getInt0"));
@@ -104,7 +108,7 @@ public class GetterSupplierBenchmarks {
             put("string2", ReflectionUtils.getMethod(Domain16.class, "getString2"));
             put("string3", ReflectionUtils.getMethod(Domain16.class, "getString3"));
         }};
-        assert reflectionMap16.size() == 16 : "Reflection map size must be 16";
+        assert reflectionMap16.size() == 16 : "Reflection map size must be 16, not " + reflectionMap16.size();
         DOMAIN16_REFLECTION_SUPPLIER = () -> reflectionMap16;
         HashMap<String, Function<Domain16, Object>> handlingMap16 = new HashMap<String, Function<Domain16, Object>>(16) {{
             put("int0", HandlingUtils.getMethod(Domain16.class, "getInt0", int.class));
@@ -124,10 +128,10 @@ public class GetterSupplierBenchmarks {
             put("string2", HandlingUtils.getMethod(Domain16.class, "getString2", String.class));
             put("string3", HandlingUtils.getMethod(Domain16.class, "getString3", String.class));
         }};
-        assert handlingMap16.size() == 16 : "Handling map size must be 16";
+        assert handlingMap16.size() == 16 : "Handling map size must be 16, not " + handlingMap16.size();
         DOMAIN16_HANDLING_SUPPLIER = () -> handlingMap16;
         Domain16GetterSupplier getterSupplier16 = new Domain16GetterSupplier();
-        assert getterSupplier16.get().size() == 16 : "Getter supplier map size must be 16";
+        assert getterSupplier16.get().size() == 16 : "Getter supplier map size must be 16, not " + getterSupplier16.get().size();
         DOMAIN16_GENERATION_SUPPLIER = getterSupplier16;
 //        32
         HashMap<String, Function<Domain32, Object>> map32 = new HashMap<String, Function<Domain32, Object>>(32) {{
@@ -164,7 +168,7 @@ public class GetterSupplierBenchmarks {
             put("string6", Domain32::getString6);
             put("string7", Domain32::getString7);
         }};
-        assert map32.size() == 32 : "Map size must be 32";
+        assert map32.size() == 32 : "Map size must be 32, not " + map32.size();
         DOMAIN32_MAP_SUPPLIER = () -> map32;
         HashMap<String, Function<Domain32, Object>> reflectionMap32 = new HashMap<String, Function<Domain32, Object>>(32) {{
             put("int0", ReflectionUtils.getMethod(Domain32.class, "getInt0"));
@@ -200,7 +204,7 @@ public class GetterSupplierBenchmarks {
             put("string6", ReflectionUtils.getMethod(Domain32.class, "getString6"));
             put("string7", ReflectionUtils.getMethod(Domain32.class, "getString7"));
         }};
-        assert reflectionMap32.size() == 32 : "Reflection map size must be 32";
+        assert reflectionMap32.size() == 32 : "Reflection map size must be 32, not " + reflectionMap32.size();
         DOMAIN32_REFLECTION_SUPPLIER = () -> reflectionMap32;
         HashMap<String, Function<Domain32, Object>> handlingMap32 = new HashMap<String, Function<Domain32, Object>>(32) {{
             put("int0", HandlingUtils.getMethod(Domain32.class, "getInt0", int.class));
@@ -236,10 +240,10 @@ public class GetterSupplierBenchmarks {
             put("string6", HandlingUtils.getMethod(Domain32.class, "getString6", String.class));
             put("string7", HandlingUtils.getMethod(Domain32.class, "getString7", String.class));
         }};
-        assert handlingMap32.size() == 32 : "Handling map size must be 32";
+        assert handlingMap32.size() == 32 : "Handling map size must be 32, not " + handlingMap32.size();
         DOMAIN32_HANDLING_SUPPLIER = () -> handlingMap32;
         Domain32GetterSupplier getterSupplier32 = new Domain32GetterSupplier();
-        assert getterSupplier32.get().size() == 32 : "Getter supplier map size must be 32";
+        assert getterSupplier32.get().size() == 32 : "Getter supplier map size must be 32, not " + getterSupplier32.get().size();
         DOMAIN32_GENERATION_SUPPLIER = getterSupplier32;
     }
 
@@ -283,7 +287,7 @@ public class GetterSupplierBenchmarks {
         values.add(domain.getString1());
         values.add(domain.getString2());
         values.add(domain.getString3());
-        assert values.size() == 16 : "Values size must be 16";
+        assert values.size() == 16 : "Values size must be 16, not " + values.size();
         return values;
     }
 
@@ -345,6 +349,7 @@ public class GetterSupplierBenchmarks {
         values.add(domain.getString5());
         values.add(domain.getString6());
         values.add(domain.getString7());
+        assert values.size() == 32 : "Values size must be 32, not " + values.size();
         return values;
     }
 
