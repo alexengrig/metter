@@ -21,17 +21,21 @@ import lombok.Getter;
 
 @Getter
 @GetterSupplier
-public class Domain12 {
+public class Domain16 {
     private int int0;
     private int int1;
     private int int2;
+    private int int3;
     private long long0;
     private long long1;
     private long long2;
+    private long long3;
     private boolean bool0;
     private boolean bool1;
     private boolean bool2;
+    private boolean bool3;
     private String string0;
     private String string1;
     private String string2;
+    private String string3;
 }

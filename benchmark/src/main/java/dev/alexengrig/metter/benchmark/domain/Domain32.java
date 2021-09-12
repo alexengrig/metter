@@ -21,35 +21,19 @@ import lombok.Getter;
 
 @Getter
 @GetterSupplier
-public class Domain32 {
-    private int int0;
-    private int int1;
-    private int int2;
-    private int int3;
+public class Domain32 extends Domain16 {
     private int int4;
     private int int5;
     private int int6;
     private int int7;
-    private long long0;
-    private long long1;
-    private long long2;
-    private long long3;
     private long long4;
     private long long5;
     private long long6;
     private long long7;
-    private boolean bool0;
-    private boolean bool1;
-    private boolean bool2;
-    private boolean bool3;
     private boolean bool4;
     private boolean bool5;
     private boolean bool6;
     private boolean bool7;
-    private String string0;
-    private String string1;
-    private String string2;
-    private String string3;
     private String string4;
     private String string5;
     private String string6;
