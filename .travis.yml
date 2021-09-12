@@ -13,4 +13,4 @@ install:
   - cd demo && gradle test && cd ..
 after_success:
   - mvn jacoco:report codecov:upload coveralls:report codacy:coverage
-  - cd benchmark && gradle jmh && cd ..
+  - cd benchmark && gradle -b wrapper.gradle wrapper && ./gradlew jmh && cd ..
