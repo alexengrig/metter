@@ -42,6 +42,7 @@ Metter (***met***a get***ter*** / set***ter***) is an annotation processor for g
         -   [Reflection](#reflection)
         -   [Generation](#generation)
     -   [Conclusion](#conclusion)
+-   [Benchmarks](#benchmarks)
 -   [License](#license)
 
 ## Get Started
@@ -395,7 +396,40 @@ class GenerationManChangeLogGenerator extends MapManChangeLogGenerator {
 If you add a new field to `Man`,
 then the reflection solution and the generation solution will continue to work,
 unlike the manual solution.
-The generation solution is faster than the reflection solution (reflection is slow).
+The generation solution is faster than the reflection solution (reflection is slow, [see benchmarks](#benchmarks)).
+
+## Benchmarks
+
+[See source](/benchmark).
+[See build](https://app.travis-ci.com/github/alexengrig/metter/builds/237465741#L3294).
+
+domain`N` (16-128), where `N` is number of fields.
+
+`generation` - using `metter`; `handling` - using `MethodHandle`.
+
+```
+Benchmark                                                          Mode  Cnt     Score    Error  Units
+GetterSupplierBenchmarks.get_allValuesOf_domain128_via_generation  avgt   10  1836.680 ±  8.683  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain128_via_handling    avgt   10  1971.993 ± 23.805  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain128_via_manually    avgt   10   623.479 ±  2.022  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain128_via_map         avgt   10  1980.814 ± 20.461  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain128_via_reflection  avgt   10  2270.653 ±  7.215  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain16_via_generation   avgt   10   180.996 ±  2.814  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain16_via_handling     avgt   10   173.622 ±  1.497  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain16_via_manually     avgt   10    20.144 ±  0.082  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain16_via_map          avgt   10   194.326 ±  1.782  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain16_via_reflection   avgt   10   228.640 ±  0.383  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain32_via_generation   avgt   10   387.412 ±  3.227  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain32_via_handling     avgt   10   385.374 ±  3.620  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain32_via_manually     avgt   10    43.568 ±  4.528  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain32_via_map          avgt   10   404.031 ±  3.095  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain32_via_reflection   avgt   10   478.926 ±  2.169  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain64_via_generation   avgt   10   883.569 ± 22.253  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain64_via_handling     avgt   10   760.162 ±  6.751  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain64_via_manually     avgt   10   215.115 ±  1.616  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain64_via_map          avgt   10   990.678 ±  8.583  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain64_via_reflection   avgt   10  1012.503 ±  3.272  ns/op
+```
 
 ## License
 
