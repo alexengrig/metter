@@ -27,19 +27,26 @@ class ReflectionManChangeLogGenerator extends MapManChangeLogGenerator {
     @Override
     protected Map<String, Function<Man, Object>> createMap() {
         Field[] fields = Man.class.getDeclaredFields();
-        HashMap<String, Function<Man, Object>> map = new HashMap<>(fields.length);
+        HashMap<String, Function<Man, Object>> target = new HashMap<>(fields.length);
         for (Field field : fields) {
-            String fieldName = field.getName();
-            String capitalizedFieldName = getCapitalized(fieldName);
             for (Method method : Man.class.getDeclaredMethods()) {
-                String methodName = method.getName();
-                if (isGetter(methodName, capitalizedFieldName)) {
-                    map.put(fieldName, createGetter(method));
+                if (isGetter(field, method)) {
+                    target.put(field.getName(), createGetter(method));
                     break;
                 }
             }
         }
-        return map;
+        return target;
+    }
+
+    private boolean isGetter(Field field, Method method) {
+        if (method.getParameterCount() != 0 || !field.getType().equals(method.getReturnType())) {
+            return false;
+        }
+        String fieldName = field.getName();
+        String capitalizedFieldName = getCapitalized(fieldName);
+        String methodName = method.getName();
+        return isGetter(methodName, capitalizedFieldName);
     }
 
     private String getCapitalized(String name) {
