@@ -16,26 +16,11 @@
 
 package dev.alexengrig.metter.benchmark;
 
-import dev.alexengrig.metter.benchmark.domain.Domain128;
-import dev.alexengrig.metter.benchmark.domain.Domain128GetterSupplier;
-import dev.alexengrig.metter.benchmark.domain.Domain16;
-import dev.alexengrig.metter.benchmark.domain.Domain16GetterSupplier;
-import dev.alexengrig.metter.benchmark.domain.Domain32;
-import dev.alexengrig.metter.benchmark.domain.Domain32GetterSupplier;
-import dev.alexengrig.metter.benchmark.domain.Domain64;
-import dev.alexengrig.metter.benchmark.domain.Domain64GetterSupplier;
+import dev.alexengrig.metter.benchmark.domain.*;
+import dev.alexengrig.metter.benchmark.experimental.CustomMatrixGettersMap;
 import dev.alexengrig.metter.benchmark.util.HandlingUtils;
 import dev.alexengrig.metter.benchmark.util.ReflectionUtils;
-import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.BenchmarkMode;
-import org.openjdk.jmh.annotations.CompilerControl;
-import org.openjdk.jmh.annotations.Fork;
-import org.openjdk.jmh.annotations.Measurement;
-import org.openjdk.jmh.annotations.Mode;
-import org.openjdk.jmh.annotations.OutputTimeUnit;
-import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.State;
-import org.openjdk.jmh.annotations.Warmup;
+import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
@@ -85,6 +70,7 @@ public class GetterSupplierBenchmarks {
     private static final Supplier<Map<String, Function<Domain128, Object>>> DOMAIN128_MAP_SUPPLIER;
     private static final Supplier<Map<String, Function<Domain128, Object>>> DOMAIN128_REFLECTION_SUPPLIER;
     private static final Supplier<Map<String, Function<Domain128, Object>>> DOMAIN128_HANDLING_SUPPLIER;
+    private static final Supplier<Map<String, Function<Domain128, Object>>> DOMAIN128_CUSTOM_MAP_SUPPLIER;
     private static final Supplier<Map<String, Function<Domain128, Object>>> DOMAIN128_GENERATION_SUPPLIER;
 
     static {
@@ -869,6 +855,8 @@ public class GetterSupplierBenchmarks {
         }};
         assert handlingMap128.size() == 128 : "Handling map size must be 128, not " + handlingMap128.size();
         DOMAIN128_HANDLING_SUPPLIER = () -> handlingMap128;
+        CustomMatrixGettersMap<Domain128> customMap128 = new CustomMatrixGettersMap<>(map128);
+        DOMAIN128_CUSTOM_MAP_SUPPLIER = () -> customMap128;
         Domain128GetterSupplier getterSupplier128 = new Domain128GetterSupplier();
         assert getterSupplier128.get().size() == 128 : "Getter supplier map size must be 128, not " + getterSupplier128.get().size();
         DOMAIN128_GENERATION_SUPPLIER = getterSupplier128;
@@ -1245,6 +1233,11 @@ public class GetterSupplierBenchmarks {
     @Benchmark
     public Object get_allValuesOf_domain128_via_handling() {
         return getDomainValues(new Domain128(), DOMAIN128_HANDLING_SUPPLIER);
+    }
+
+    @Benchmark
+    public Object get_allValuesOf_domain128_via_custom_map() {
+        return getDomainValues(new Domain128(), DOMAIN128_CUSTOM_MAP_SUPPLIER);
     }
 
     @Benchmark
