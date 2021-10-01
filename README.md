@@ -401,7 +401,7 @@ The generation solution is faster than the reflection solution (reflection is sl
 ## Benchmarks
 
 [See source](/benchmark).
-[See build](https://app.travis-ci.com/github/alexengrig/metter/builds/237465741#L3294).
+[See build](https://app.travis-ci.com/github/alexengrig/metter/builds/238934693#L3294).
 
 domain`N` (16-128), where `N` is number of fields.
 
@@ -409,26 +409,26 @@ domain`N` (16-128), where `N` is number of fields.
 
 ```
 Benchmark                                                          Mode  Cnt     Score    Error  Units
-GetterSupplierBenchmarks.get_allValuesOf_domain128_via_generation  avgt   10  1836.680 ±  8.683  ns/op
-GetterSupplierBenchmarks.get_allValuesOf_domain128_via_handling    avgt   10  1971.993 ± 23.805  ns/op
-GetterSupplierBenchmarks.get_allValuesOf_domain128_via_manually    avgt   10   623.479 ±  2.022  ns/op
-GetterSupplierBenchmarks.get_allValuesOf_domain128_via_map         avgt   10  1980.814 ± 20.461  ns/op
-GetterSupplierBenchmarks.get_allValuesOf_domain128_via_reflection  avgt   10  2270.653 ±  7.215  ns/op
-GetterSupplierBenchmarks.get_allValuesOf_domain16_via_generation   avgt   10   180.996 ±  2.814  ns/op
-GetterSupplierBenchmarks.get_allValuesOf_domain16_via_handling     avgt   10   173.622 ±  1.497  ns/op
-GetterSupplierBenchmarks.get_allValuesOf_domain16_via_manually     avgt   10    20.144 ±  0.082  ns/op
-GetterSupplierBenchmarks.get_allValuesOf_domain16_via_map          avgt   10   194.326 ±  1.782  ns/op
-GetterSupplierBenchmarks.get_allValuesOf_domain16_via_reflection   avgt   10   228.640 ±  0.383  ns/op
-GetterSupplierBenchmarks.get_allValuesOf_domain32_via_generation   avgt   10   387.412 ±  3.227  ns/op
-GetterSupplierBenchmarks.get_allValuesOf_domain32_via_handling     avgt   10   385.374 ±  3.620  ns/op
-GetterSupplierBenchmarks.get_allValuesOf_domain32_via_manually     avgt   10    43.568 ±  4.528  ns/op
-GetterSupplierBenchmarks.get_allValuesOf_domain32_via_map          avgt   10   404.031 ±  3.095  ns/op
-GetterSupplierBenchmarks.get_allValuesOf_domain32_via_reflection   avgt   10   478.926 ±  2.169  ns/op
-GetterSupplierBenchmarks.get_allValuesOf_domain64_via_generation   avgt   10   883.569 ± 22.253  ns/op
-GetterSupplierBenchmarks.get_allValuesOf_domain64_via_handling     avgt   10   760.162 ±  6.751  ns/op
-GetterSupplierBenchmarks.get_allValuesOf_domain64_via_manually     avgt   10   215.115 ±  1.616  ns/op
-GetterSupplierBenchmarks.get_allValuesOf_domain64_via_map          avgt   10   990.678 ±  8.583  ns/op
-GetterSupplierBenchmarks.get_allValuesOf_domain64_via_reflection   avgt   10  1012.503 ±  3.272  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain128_via_generation  avgt   10  1849.651 ± 16.663  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain128_via_handling    avgt   10  1984.062 ± 24.774  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain128_via_manually    avgt   10   785.069 ±  5.008  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain128_via_map         avgt   10  1988.466 ± 27.310  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain128_via_reflection  avgt   10  2339.250 ± 11.748  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain16_via_generation   avgt   10   199.299 ±  2.471  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain16_via_handling     avgt   10   195.565 ±  1.666  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain16_via_manually     avgt   10    40.004 ±  1.263  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain16_via_map          avgt   10   195.722 ±  1.465  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain16_via_reflection   avgt   10   225.331 ±  2.115  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain32_via_generation   avgt   10   386.447 ±  3.224  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain32_via_handling     avgt   10   354.387 ±  4.330  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain32_via_manually     avgt   10    87.422 ±  4.101  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain32_via_map          avgt   10   423.696 ±  3.109  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain32_via_reflection   avgt   10   482.624 ± 10.645  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain64_via_generation   avgt   10   868.321 ±  9.389  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain64_via_handling     avgt   10   775.914 ± 11.301  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain64_via_manually     avgt   10   247.175 ±  1.137  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain64_via_map          avgt   10   965.654 ± 10.060  ns/op
+GetterSupplierBenchmarks.get_allValuesOf_domain64_via_reflection   avgt   10  1043.159 ± 10.393  ns/op
 ```
 
 ## License
