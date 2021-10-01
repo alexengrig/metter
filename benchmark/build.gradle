@@ -30,8 +30,8 @@ dependencies {
     compileOnly files('../target/metter.jar')
     annotationProcessor files('../target/metter.jar')
 
-    compileOnly 'org.projectlombok:lombok:1.18.12'
-    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
 
     jmh 'org.openjdk.jmh:jmh-core:1.33'
     jmh 'org.openjdk.jmh:jmh-generator-annprocess:1.33'
