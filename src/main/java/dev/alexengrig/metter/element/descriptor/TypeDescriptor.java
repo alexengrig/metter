@@ -80,6 +80,19 @@ public class TypeDescriptor extends ElementDescriptor<TypeElement> {
         return element.getSimpleName().toString();
     }
 
+    public boolean hasPackage() {
+        return getQualifiedName().contains(".");
+    }
+
+    public String getPackage() {
+        String qualifiedName = getQualifiedName();
+        int lastIndexOfDot = qualifiedName.lastIndexOf('.');
+        if (lastIndexOfDot > 0) {
+            return qualifiedName.substring(0, lastIndexOfDot);
+        }
+        return "";
+    }
+
     /**
      * Returns a set of field descriptors.
      *

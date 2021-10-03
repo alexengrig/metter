@@ -17,33 +17,40 @@
 package dev.alexengrig.metter.demo.excluding;
 
 import dev.alexengrig.metter.demo.BaseDomainTest;
-import org.junit.Test;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-
-import static org.junit.Assert.assertEquals;
+import java.util.function.Supplier;
 
 public class ExcludedDomainTest extends BaseDomainTest<ExcludedDomain> {
-    @Test
-    public void should_contains_allNotExcludedGetters() {
-        Map<String, Function<ExcludedDomain, Object>> getterByField = getGetterMap(new ExcludedDomainGetterSupplier());
-        assertSize(getterByField, 1);
-        assertGetterFields(getterByField, "integer");
-        ExcludedDomain domain = new ExcludedDomain(1, 2);
-        assertGetterValue(getterByField, domain, "integer", 1);
-        assertEquals("Excluded field value is incorrect", 2, domain.getExcluded());
+    @Override
+    protected Supplier<Map<String, Function<ExcludedDomain, Object>>> createGetterSupplier() {
+        return new ExcludedDomainGetterSupplier();
     }
 
-    @Test
-    public void should_contains_allNotExcludedSetters() {
-        Map<String, BiConsumer<ExcludedDomain, Object>> setterByField = getSetterMap(new ExcludedDomainSetterSupplier());
-        assertSize(setterByField, 1);
-        assertSetterFields(setterByField, "integer");
-        ExcludedDomain domain = new ExcludedDomain(1, 2);
-        assertSetterValue(setterByField, domain, "integer", 10, ExcludedDomain::getInteger);
-        domain.setExcluded(20);
-        assertEquals("Excluded field value is incorrect", 20, domain.getExcluded());
+    @Override
+    protected Supplier<Map<String, BiConsumer<ExcludedDomain, Object>>> createSetterSupplier() {
+        return new ExcludedDomainSetterSupplier();
+    }
+
+    @Override
+    protected String[] getFieldNames() {
+        return createNames("integer");
+    }
+
+    @Override
+    protected Object[] getFieldValues() {
+        return createValues(1);
+    }
+
+    @Override
+    protected Function<ExcludedDomain, Object>[] getFieldGetters() {
+        return createGetters(ExcludedDomain::getInteger);
+    }
+
+    @Override
+    protected ExcludedDomain createDomain() {
+        return new ExcludedDomain(1, 2);
     }
 }

@@ -16,13 +16,17 @@
 
 package dev.alexengrig.metter.processor;
 
+import dev.alexengrig.metter.FieldChecker;
+import dev.alexengrig.metter.element.descriptor.ElementDescriptor;
 import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
+import dev.alexengrig.metter.element.descriptor.MethodDescriptor;
 import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
 import dev.alexengrig.metter.exception.MetterException;
 import dev.alexengrig.metter.generator.MethodSupplierSourceGenerator;
+import dev.alexengrig.metter.util.Strings;
 
 import javax.lang.model.SourceVersion;
-import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.Element;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -31,18 +35,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Base processor of method supplier.
  *
  * @param <A> type of annotation
+ * @param <E> type of element
+ * @param <D> type of element descriptor
  * @author Grig Alex
  * @version 0.2.0
  * @since 0.1.0
  */
-public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends BaseProcessor<A, TypeElement> {
+public abstract class BaseMethodSupplierProcessor<A extends Annotation, E extends Element, D extends ElementDescriptor<E>>
+        extends BaseProcessor<A, E> {
     /**
      * Source generator.
      *
@@ -70,61 +75,50 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
     protected abstract MethodSupplierSourceGenerator getSourceGenerator();
 
     /**
-     * Process a type element.
+     * Process an element.
      *
-     * @param typeElement type element
-     * @since 0.1.0
+     * @param element element
+     * @since 0.2.0
      */
     @Override
-    protected void process(TypeElement typeElement) {
-        TypeDescriptor type = new TypeDescriptor(typeElement);
-        String sourceClassName = createSourceClassName(type);
+    protected void process(E element) {
+        D descriptor = createDescriptor(element);
+        String sourceClassName = createSourceClassName(descriptor);
         JavaFileObject sourceFile = createSourceFile(sourceClassName);
-        Map<String, String> field2Method = createField2MethodMap(type);
-        String source = createSource(type, field2Method, sourceClassName);
+        String source = createSource(sourceClassName, descriptor);
         writeSourceFile(sourceFile, source);
     }
 
-    /**
-     * Creates a source class name from a type descriptor.
-     *
-     * @param type descriptor
-     * @return source class name from {@code type}
-     * @since 0.1.0
-     */
-    protected String createSourceClassName(TypeDescriptor type) {
-        return getClassName(type).orElseGet(() -> getDefaultClassName(type));
-    }
+    protected abstract D createDescriptor(E element);
 
     /**
-     * Returns a class name from a type descriptor.
+     * Creates a source class name from a descriptor.
      *
-     * @param type descriptor
-     * @return class name from {@code type}
-     * @since 0.1.0
+     * @param descriptor descriptor
+     * @return source class name from {@code descriptor}
+     * @since 0.2.0
      */
-    protected Optional<String> getClassName(TypeDescriptor type) {
-        String customClassName = getCustomClassName(type);
-        if (customClassName.isEmpty()) {
-            return Optional.empty();
-        }
-        assertValidCustomClassName(customClassName);
-        String className = type.getQualifiedName();
-        int lastIndexOfDot = className.lastIndexOf('.');
-        if (lastIndexOfDot > 0) {
-            return Optional.of(className.substring(0, lastIndexOfDot).concat(".").concat(customClassName));
-        }
-        return Optional.of(customClassName);
-    }
+    protected abstract String createSourceClassName(D descriptor);
 
     /**
-     * Returns a custom class name from a type descriptor.
+     * Returns a custom class name from a descriptor.
      *
-     * @param type descriptor
-     * @return custom class name from {@code type}
+     * @param descriptor descriptor
+     * @return custom class name from {@code descriptor}
      * @since 0.1.0
      */
-    protected abstract String getCustomClassName(TypeDescriptor type);
+    protected abstract String getCustomClassName(D descriptor);
+
+    /**
+     * Returns a default class name from a domain class name.
+     *
+     * @param domainClassName domain class name
+     * @return default class name from {@code domainClassName}
+     * @since 0.1.0
+     */
+    protected String getDefaultClassName(String domainClassName) {
+        return domainClassName.concat(annotationClass.getSimpleName());
+    }
 
     /**
      * Asserts a valid custom class name.
@@ -132,7 +126,7 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
      * @param className custom class name
      * @throws MetterException if for {@code className} {@link SourceVersion#isKeyword(java.lang.CharSequence)} returns {@code true}
      *                         or {@link SourceVersion#isIdentifier(java.lang.CharSequence)} returns {@code false}
-     * @since 0.1.1
+     * @since 0.2.0
      */
     protected void assertValidCustomClassName(String className) {
         if (SourceVersion.isKeyword(className) || !SourceVersion.isIdentifier(className)) {
@@ -141,44 +135,43 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
     }
 
     /**
-     * Returns a default class name from a type descriptor.
+     * Creates a source file for an qualified class name.
      *
-     * @param type descriptor
-     * @return default class name from {@code type}
+     * @param qualifiedClassName qualified class name
+     * @return source file for {@code qualifiedClassName}
      * @since 0.1.0
      */
-    protected String getDefaultClassName(TypeDescriptor type) {
-        String className = type.getQualifiedName();
-        return className + annotationClass.getSimpleName();
-    }
-
-    /**
-     * Creates a source file for a class name.
-     *
-     * @param className class name
-     * @return source file for {@code className}
-     * @since 0.1.0
-     */
-    protected JavaFileObject createSourceFile(String className) {
+    protected JavaFileObject createSourceFile(String qualifiedClassName) {
         try {
-            return processingEnv.getFiler().createSourceFile(className);
+            return processingEnv.getFiler().createSourceFile(qualifiedClassName);
         } catch (IOException e) {
-            throw new MetterException("Exception of source file creation for: " + className, e);
+            throw new MetterException("Exception of source file creation for: " + qualifiedClassName, e);
         }
     }
 
     /**
-     * Creates a map of field to method from a type descriptor.
+     * Creates a source from a source class name and a descriptor.
      *
-     * @param type descriptor
-     * @return map of field to method from {@code type}
+     * @param sourceClassName source class name
+     * @param descriptor      descriptor
+     * @return source from {@code sourceClassName} and {@code descriptor}
+     * @since 0.2.0
+     */
+    protected abstract String createSource(String sourceClassName, D descriptor);
+
+    /**
+     * Creates a map of field to method from a descriptor.
+     *
+     * @param descriptor descriptor
+     * @return map of field to method from {@code descriptor}
      * @since 0.1.0
      */
-    protected Map<String, String> createField2MethodMap(TypeDescriptor type) {
+    protected Map<String, String> createField2MethodMap(D descriptor) {
         Map<String, String> field2Method = new HashMap<>();
-        Set<FieldDescriptor> fields = getFields(type);
+        Set<FieldDescriptor> fields = getFields(descriptor);
+        FieldChecker fieldChecker = getFieldChecker(descriptor);
         for (FieldDescriptor field : fields) {
-            if (isTargetField(field)) {
+            if (fieldChecker.isTarget(field)) {
                 field2Method.put(field.getName(), getMethod(field));
             }
         }
@@ -186,55 +179,33 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
     }
 
     /**
-     * Returns fields from a type descriptor with fields of super classes.
+     * Returns fields from a descriptor with fields of super classes.
      *
-     * @param type descriptor
-     * @return fields from {@code type} with fields of super classes
+     * @param descriptor descriptor
+     * @return fields from {@code descriptor} with fields of super classes
      * @since 0.1.0
      */
-    protected Set<FieldDescriptor> getFields(TypeDescriptor type) {
-        Set<TypeDescriptor> superTypes = getAllSuperTypes(type);
-        Set<FieldDescriptor> fields = Stream.concat(Stream.of(type), superTypes.stream())
-                .flatMap(descriptor -> descriptor.getFields().stream())
-                .collect(Collectors.toSet());
-        Set<String> includedFields = getIncludedFields(type);
-        Set<String> excludedFields = getExcludedFields(type);
-        if (includedFields.isEmpty() && excludedFields.isEmpty()) {
-            return fields;
-        }
-        if (!includedFields.isEmpty()) {
-            return fields.stream().filter(f -> includedFields.contains(f.getName())).collect(Collectors.toSet());
-        } else {
-            return fields.stream().filter(f -> !excludedFields.contains(f.getName())).collect(Collectors.toSet());
-        }
-    }
+    protected abstract Set<FieldDescriptor> getFields(D descriptor);
 
     /**
-     * Returns included fields from a type descriptor.
+     * Returns included fields from a descriptor.
      *
-     * @param type descriptor
-     * @return included fields from {@code type}
+     * @param descriptor descriptor
+     * @return included fields from {@code descriptor}
      * @since 0.1.0
      */
-    protected abstract Set<String> getIncludedFields(TypeDescriptor type);
+    protected abstract Set<String> getIncludedFields(D descriptor);
 
     /**
-     * Returns excluded fields from a type descriptor.
+     * Returns excluded fields from a descriptor.
      *
-     * @param type descriptor
-     * @return excluded fields from {@code type}
+     * @param descriptor descriptor
+     * @return excluded fields from {@code descriptor}
      * @since 0.1.0
      */
-    protected abstract Set<String> getExcludedFields(TypeDescriptor type);
+    protected abstract Set<String> getExcludedFields(D descriptor);
 
-    /**
-     * Checks if a field descriptor is target field.
-     *
-     * @param field descriptor
-     * @return {@code field} is target field.
-     * @since 0.1.0
-     */
-    protected abstract boolean isTargetField(FieldDescriptor field);
+    protected abstract FieldChecker getFieldChecker(D descriptor);
 
     /**
      * Returns a method for a field descriptor.
@@ -246,16 +217,84 @@ public abstract class BaseMethodSupplierProcessor<A extends Annotation> extends 
     protected abstract String getMethod(FieldDescriptor field);
 
     /**
-     * Creates a source from a type descriptor, a map of field to method and a source class name.
+     * Checks if a type descriptor of a field descriptor has a getter method
      *
-     * @param type            descriptor
-     * @param field2Method    map of filed to method
-     * @param sourceClassName source class name
-     * @return source from {@code type}, {@code field2Method} and {@code sourceClassName}
-     * @since 0.1.0
+     * @param field descriptor
+     * @return if a type descriptor of {@code descriptor} has a getter method
+     * @since 0.1.1
      */
-    protected String createSource(TypeDescriptor type, Map<String, String> field2Method, String sourceClassName) {
-        return sourceGenerator.generate(sourceClassName, type.getQualifiedName(), field2Method);
+    protected boolean hasGetterMethod(FieldDescriptor field) {
+        return getGetter(field).isPresent();
+    }
+
+    protected Optional<MethodDescriptor> getGetter(FieldDescriptor field) {
+        String getter = getGetterMethodName(field);
+        TypeDescriptor type = field.getParent();
+        if (!type.hasMethod(getter)) {
+            return Optional.empty();
+        }
+        Set<MethodDescriptor> methods = type.getMethods(getter);
+        return methods.stream()
+                .filter(method -> method.isNotPrivate() && method.hasNoParameters()
+                        && field.getTypeName().equals(method.getTypeName()))
+                .findFirst();
+    }
+
+    /**
+     * Returns a getter-method for a field descriptor.
+     *
+     * @param field descriptor
+     * @return getter-method for {@code field}
+     * @since 0.1.1
+     */
+    protected String getGetterMethodName(FieldDescriptor field) {
+        String methodNamePrefix = "boolean".equals(field.getTypeName()) ? "is" : "get";
+        String name = field.getName();
+        return methodNamePrefix + Strings.capitalize(name);
+    }
+
+
+    /**
+     * Checks if a type descriptor of a field descriptor has a setter method
+     *
+     * @param field descriptor
+     * @return if a type descriptor of {@code field} has a setter method
+     * @since 0.1.1
+     */
+    protected boolean hasSetterMethod(FieldDescriptor field) {
+        String methodName = getSetterMethodName(field);
+        TypeDescriptor type = field.getParent();
+        if (type.hasMethod(methodName)) {
+            Set<MethodDescriptor> methods = type.getMethods(methodName);
+            return methods.stream().anyMatch(method -> method.isNotPrivate() && "void".equals(method.getTypeName())
+                    && method.hasOnlyOneParameter(field.getTypeName()));
+        }
+        return false;
+    }
+
+    protected Optional<MethodDescriptor> getSetter(FieldDescriptor field) {
+        String methodName = getSetterMethodName(field);
+        TypeDescriptor type = field.getParent();
+        if (!type.hasMethod(methodName)) {
+            return Optional.empty();
+        }
+        Set<MethodDescriptor> methods = type.getMethods(methodName);
+        return methods.stream()
+                .filter(method -> method.isNotPrivate() && "void".equals(method.getTypeName())
+                        && method.hasOnlyOneParameter(field.getTypeName()))
+                .findFirst();
+    }
+
+    /**
+     * Returns a setter-method for a field descriptor.
+     *
+     * @param field descriptor
+     * @return setter-method for {@code field}
+     * @since 0.1.1
+     */
+    protected String getSetterMethodName(FieldDescriptor field) {
+        String name = field.getName();
+        return "set" + Strings.capitalize(name);
     }
 
     /**

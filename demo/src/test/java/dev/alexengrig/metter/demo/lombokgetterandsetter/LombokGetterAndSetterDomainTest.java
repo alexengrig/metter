@@ -17,30 +17,42 @@
 package dev.alexengrig.metter.demo.lombokgetterandsetter;
 
 import dev.alexengrig.metter.demo.BaseDomainTest;
-import org.junit.Test;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class LombokGetterAndSetterDomainTest extends BaseDomainTest<LombokGetterAndSetterDomain> {
-    @Test
-    public void should_contains_allGetters() {
-        Map<String, Function<LombokGetterAndSetterDomain, Object>> getterByField = getGetterMap(new LombokGetterAndSetterDomainGetterSupplier());
-        assertSize(getterByField, 2);
-        assertGetterFields(getterByField, "integer", "bool");
-        LombokGetterAndSetterDomain domain = new LombokGetterAndSetterDomain(1, true);
-        assertGetterValue(getterByField, domain, "integer", 1);
-        assertGetterValue(getterByField, domain, "bool", true);
+    @Override
+    protected Supplier<Map<String, Function<LombokGetterAndSetterDomain, Object>>> createGetterSupplier() {
+        return new LombokGetterAndSetterDomainGetterSupplier();
     }
 
-    @Test
-    public void should_contains_allSetters() {
-        Map<String, BiConsumer<LombokGetterAndSetterDomain, Object>> setterByField = getSetterMap(new LombokGetterAndSetterDomainSetterSupplier());
-        assertSize(setterByField, 2);
-        assertSetterFields(setterByField, "integer", "bool");
-        LombokGetterAndSetterDomain domain = new LombokGetterAndSetterDomain(1, true);
-        assertSetterValue(setterByField, domain, "integer", 10, LombokGetterAndSetterDomain::getInteger);
-        assertSetterValue(setterByField, domain, "bool", false, LombokGetterAndSetterDomain::isBool);
+    @Override
+    protected Supplier<Map<String, BiConsumer<LombokGetterAndSetterDomain, Object>>> createSetterSupplier() {
+        return new LombokGetterAndSetterDomainSetterSupplier();
+    }
+
+    @Override
+    protected String[] getFieldNames() {
+        return createNames("integer", "bool");
+    }
+
+    @Override
+    protected Object[] getFieldValues() {
+        return createValues(1, true);
+    }
+
+    @Override
+    protected Function<LombokGetterAndSetterDomain, Object>[] getFieldGetters() {
+        return createGetters(
+                LombokGetterAndSetterDomain::getInteger,
+                LombokGetterAndSetterDomain::isBool);
+    }
+
+    @Override
+    protected LombokGetterAndSetterDomain createDomain() {
+        return new LombokGetterAndSetterDomain(1, true);
     }
 }

@@ -17,28 +17,40 @@
 package dev.alexengrig.metter.demo.inheritance;
 
 import dev.alexengrig.metter.demo.BaseDomainTest;
-import org.junit.Test;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class FatherDomainTest extends BaseDomainTest<FatherDomain> {
-    @Test
-    public void should_contains_allGettersWithSuper() {
-        Map<String, Function<FatherDomain, Object>> getterByField = getGetterMap(new FatherDomainGetterSupplier());
-        assertSize(getterByField, 1);
-        assertGetterFields(getterByField, "fatherInt");
-        FatherDomain domain = new FatherDomain(1);
-        assertGetterValue(getterByField, domain, "fatherInt", 1);
+    @Override
+    protected Supplier<Map<String, Function<FatherDomain, Object>>> createGetterSupplier() {
+        return new FatherDomainGetterSupplier();
     }
 
-    @Test
-    public void should_contains_allSettersWithSuper() {
-        Map<String, BiConsumer<FatherDomain, Object>> setterByField = getSetterMap(new FatherDomainSetterSupplier());
-        assertSize(setterByField, 1);
-        assertSetterFields(setterByField, "fatherInt");
-        FatherDomain domain = new FatherDomain(1);
-        assertSetterValue(setterByField, domain, "fatherInt", 10, FatherDomain::getFatherInt);
+    @Override
+    protected Supplier<Map<String, BiConsumer<FatherDomain, Object>>> createSetterSupplier() {
+        return new FatherDomainSetterSupplier();
+    }
+
+    @Override
+    protected String[] getFieldNames() {
+        return createNames("fatherInt");
+    }
+
+    @Override
+    protected Object[] getFieldValues() {
+        return createValues(1);
+    }
+
+    @Override
+    protected Function<FatherDomain, Object>[] getFieldGetters() {
+        return createGetters(FatherDomain::getFatherInt);
+    }
+
+    @Override
+    protected FatherDomain createDomain() {
+        return new FatherDomain(1);
     }
 }

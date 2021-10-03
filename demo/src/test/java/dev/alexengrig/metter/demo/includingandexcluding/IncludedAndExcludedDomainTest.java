@@ -17,36 +17,40 @@
 package dev.alexengrig.metter.demo.includingandexcluding;
 
 import dev.alexengrig.metter.demo.BaseDomainTest;
-import org.junit.Test;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-
-import static org.junit.Assert.assertEquals;
+import java.util.function.Supplier;
 
 public class IncludedAndExcludedDomainTest extends BaseDomainTest<IncludedAndExcludedDomain> {
-    @Test
-    public void should_contains_allIncludedGetters() {
-        Map<String, Function<IncludedAndExcludedDomain, Object>> getterByField = getGetterMap(new IncludedAndExcludedDomainGetterSupplier());
-        assertSize(getterByField, 1);
-        assertGetterFields(getterByField, "included");
-        IncludedAndExcludedDomain domain = new IncludedAndExcludedDomain(1, 2, 3);
-        assertGetterValue(getterByField, domain, "included", 1);
-        assertEquals("Ignored field value is incorrect", 2, domain.getIgnored());
-        assertEquals("Excluded field value is incorrect", 3, domain.getExcluded());
+    @Override
+    protected Supplier<Map<String, Function<IncludedAndExcludedDomain, Object>>> createGetterSupplier() {
+        return new IncludedAndExcludedDomainGetterSupplier();
     }
 
-    @Test
-    public void should_contains_allIncludedSetters() {
-        Map<String, BiConsumer<IncludedAndExcludedDomain, Object>> setterByField = getSetterMap(new IncludedAndExcludedDomainSetterSupplier());
-        assertSize(setterByField, 1);
-        assertSetterFields(setterByField, "included");
-        IncludedAndExcludedDomain domain = new IncludedAndExcludedDomain(1, 2, 3);
-        assertSetterValue(setterByField, domain, "included", 10, IncludedAndExcludedDomain::getIncluded);
-        domain.setIgnored(20);
-        assertEquals("Ignored field value is incorrect", 20, domain.getIgnored());
-        domain.setExcluded(30);
-        assertEquals("Excluded field value is incorrect", 30, domain.getExcluded());
+    @Override
+    protected Supplier<Map<String, BiConsumer<IncludedAndExcludedDomain, Object>>> createSetterSupplier() {
+        return new IncludedAndExcludedDomainSetterSupplier();
+    }
+
+    @Override
+    protected String[] getFieldNames() {
+        return createNames("included");
+    }
+
+    @Override
+    protected Object[] getFieldValues() {
+        return createValues(1);
+    }
+
+    @Override
+    protected Function<IncludedAndExcludedDomain, Object>[] getFieldGetters() {
+        return createGetters(IncludedAndExcludedDomain::getIncluded);
+    }
+
+    @Override
+    protected IncludedAndExcludedDomain createDomain() {
+        return new IncludedAndExcludedDomain(1, 2, 3);
     }
 }

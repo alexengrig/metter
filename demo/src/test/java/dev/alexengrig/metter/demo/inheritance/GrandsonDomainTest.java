@@ -17,32 +17,43 @@
 package dev.alexengrig.metter.demo.inheritance;
 
 import dev.alexengrig.metter.demo.BaseDomainTest;
-import org.junit.Test;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class GrandsonDomainTest extends BaseDomainTest<GrandsonDomain> {
-    @Test
-    public void should_contains_allGettersWithSuper() {
-        Map<String, Function<GrandsonDomain, Object>> getterByField = getGetterMap(new GrandsonDomainGetterSupplier());
-        assertSize(getterByField, 3);
-        assertGetterFields(getterByField, "fatherInt", "sonInt", "grandsonInt");
-        GrandsonDomain domain = new GrandsonDomain(1, 2, 3);
-        assertGetterValue(getterByField, domain, "fatherInt", 1);
-        assertGetterValue(getterByField, domain, "sonInt", 2);
-        assertGetterValue(getterByField, domain, "grandsonInt", 3);
+    @Override
+    protected Supplier<Map<String, Function<GrandsonDomain, Object>>> createGetterSupplier() {
+        return new GrandsonDomainGetterSupplier();
     }
 
-    @Test
-    public void should_contains_allSettersWithSuper() {
-        Map<String, BiConsumer<GrandsonDomain, Object>> setterByField = getSetterMap(new GrandsonDomainSetterSupplier());
-        assertSize(setterByField, 3);
-        assertSetterFields(setterByField, "fatherInt", "sonInt", "grandsonInt");
-        GrandsonDomain domain = new GrandsonDomain(1, 2, 3);
-        assertSetterValue(setterByField, domain, "fatherInt", 10, GrandsonDomain::getFatherInt);
-        assertSetterValue(setterByField, domain, "sonInt", 20, GrandsonDomain::getSonInt);
-        assertSetterValue(setterByField, domain, "grandsonInt", 30, GrandsonDomain::getGrandsonInt);
+    @Override
+    protected Supplier<Map<String, BiConsumer<GrandsonDomain, Object>>> createSetterSupplier() {
+        return new GrandsonDomainSetterSupplier();
+    }
+
+    @Override
+    protected String[] getFieldNames() {
+        return createNames("fatherInt", "sonInt", "grandsonInt");
+    }
+
+    @Override
+    protected Object[] getFieldValues() {
+        return createValues(1, 2, 3);
+    }
+
+    @Override
+    protected Function<GrandsonDomain, Object>[] getFieldGetters() {
+        return createGetters(
+                GrandsonDomain::getFatherInt,
+                GrandsonDomain::getSonInt,
+                GrandsonDomain::getGrandsonInt);
+    }
+
+    @Override
+    protected GrandsonDomain createDomain() {
+        return new GrandsonDomain(1, 2, 3);
     }
 }

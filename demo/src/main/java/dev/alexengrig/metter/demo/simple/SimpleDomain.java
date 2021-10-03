@@ -25,6 +25,7 @@ public class SimpleDomain {
     private int integer;
     private boolean bool;
     private String string;
+    @SuppressWarnings("All")
     private byte noGetterAndSetter;
 
     public SimpleDomain(int integer, boolean bool, String string) {

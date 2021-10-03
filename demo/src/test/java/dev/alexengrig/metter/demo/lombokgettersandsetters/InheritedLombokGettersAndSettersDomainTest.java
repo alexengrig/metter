@@ -17,34 +17,43 @@
 package dev.alexengrig.metter.demo.lombokgettersandsetters;
 
 import dev.alexengrig.metter.demo.BaseDomainTest;
-import org.junit.Test;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class InheritedLombokGettersAndSettersDomainTest extends BaseDomainTest<InheritedLombokGettersAndSettersDomain> {
-    @Test
-    public void should_contains_allGetters() {
-        Map<String, Function<InheritedLombokGettersAndSettersDomain, Object>> getterByField
-                = getGetterMap(new InheritedLombokGettersAndSettersDomainGetterSupplier());
-        assertSize(getterByField, 3);
-        assertGetterFields(getterByField, "integer", "bool", "longer");
-        InheritedLombokGettersAndSettersDomain domain = new InheritedLombokGettersAndSettersDomain(1, true, 2, 3);
-        assertGetterValue(getterByField, domain, "integer", 1);
-        assertGetterValue(getterByField, domain, "bool", true);
-        assertGetterValue(getterByField, domain, "longer", 3L);
+    @Override
+    protected Supplier<Map<String, Function<InheritedLombokGettersAndSettersDomain, Object>>> createGetterSupplier() {
+        return new InheritedLombokGettersAndSettersDomainGetterSupplier();
     }
 
-    @Test
-    public void should_contains_allSetters() {
-        Map<String, BiConsumer<InheritedLombokGettersAndSettersDomain, Object>> setterByField
-                = getSetterMap(new InheritedLombokGettersAndSettersDomainSetterSupplier());
-        assertSize(setterByField, 3);
-        assertSetterFields(setterByField, "integer", "bool", "longer");
-        InheritedLombokGettersAndSettersDomain domain = new InheritedLombokGettersAndSettersDomain(1, true, 2, 3);
-        assertSetterValue(setterByField, domain, "integer", 10, InheritedLombokGettersAndSettersDomain::getInteger);
-        assertSetterValue(setterByField, domain, "bool", false, InheritedLombokGettersAndSettersDomain::isBool);
-        assertSetterValue(setterByField, domain, "longer", 30L, InheritedLombokGettersAndSettersDomain::getLonger);
+    @Override
+    protected Supplier<Map<String, BiConsumer<InheritedLombokGettersAndSettersDomain, Object>>> createSetterSupplier() {
+        return new InheritedLombokGettersAndSettersDomainSetterSupplier();
+    }
+
+    @Override
+    protected String[] getFieldNames() {
+        return createNames("integer", "bool", "longer");
+    }
+
+    @Override
+    protected Object[] getFieldValues() {
+        return createValues(1, true, 4L);
+    }
+
+    @Override
+    protected Function<InheritedLombokGettersAndSettersDomain, Object>[] getFieldGetters() {
+        return createGetters(
+                InheritedLombokGettersAndSettersDomain::getInteger,
+                InheritedLombokGettersAndSettersDomain::isBool,
+                InheritedLombokGettersAndSettersDomain::getLonger);
+    }
+
+    @Override
+    protected InheritedLombokGettersAndSettersDomain createDomain() {
+        return new InheritedLombokGettersAndSettersDomain(1, true,3, 4);
     }
 }

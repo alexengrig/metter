@@ -17,13 +17,12 @@
 package dev.alexengrig.metter.processor;
 
 import com.google.auto.service.AutoService;
+import dev.alexengrig.metter.FieldChecker;
 import dev.alexengrig.metter.annotation.SetterSupplier;
 import dev.alexengrig.metter.element.descriptor.FieldDescriptor;
-import dev.alexengrig.metter.element.descriptor.MethodDescriptor;
 import dev.alexengrig.metter.element.descriptor.TypeDescriptor;
 import dev.alexengrig.metter.exception.MetterException;
 import dev.alexengrig.metter.generator.SetterSupplierSourceGenerator;
-import dev.alexengrig.metter.util.Strings;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
@@ -42,7 +41,7 @@ import java.util.Set;
  * @since 0.1.0
  */
 @AutoService(Processor.class)
-public class SetterSupplierProcessor extends BaseMethodSupplierProcessor<SetterSupplier> {
+public class SetterSupplierProcessor extends OnClassSupplierProcessor<SetterSupplier> {
     /**
      * Constructs.
      *
@@ -66,47 +65,52 @@ public class SetterSupplierProcessor extends BaseMethodSupplierProcessor<SetterS
     /**
      * Returns a custom class name from {@link dev.alexengrig.metter.annotation.SetterSupplier#value()}.
      *
-     * @param type descriptor
+     * @param descriptor descriptor
      * @return custom class name from {@link dev.alexengrig.metter.annotation.SetterSupplier#value()}
      * @since 0.1.0
      */
     @Override
-    protected String getCustomClassName(TypeDescriptor type) {
-        return type.getAnnotation(annotationClass)
+    protected String getCustomClassName(TypeDescriptor descriptor) {
+        return descriptor.getAnnotation(annotationClass)
                 .map(SetterSupplier::value)
-                .orElseThrow(() -> new MetterException("Type " + type + " has no annotation: " + annotationClass));
+                .orElseThrow(() -> new MetterException("Type " + descriptor + " has no annotation: " + annotationClass));
     }
 
     /**
      * Returns included fields from {@link dev.alexengrig.metter.annotation.SetterSupplier#includedFields()}.
      *
-     * @param type descriptor
+     * @param descriptor descriptor
      * @return included fields from {@link dev.alexengrig.metter.annotation.SetterSupplier#includedFields()}
      * @since 0.1.0
      */
     @Override
-    protected Set<String> getIncludedFields(TypeDescriptor type) {
-        return type.getAnnotation(annotationClass)
+    protected Set<String> getIncludedFields(TypeDescriptor descriptor) {
+        return descriptor.getAnnotation(annotationClass)
                 .map(SetterSupplier::includedFields)
                 .map(Arrays::asList)
                 .map(HashSet::new)
-                .orElseThrow(() -> new MetterException("Type " + type + " has no annotation: " + annotationClass));
+                .orElseThrow(() -> new MetterException("Type " + descriptor + " has no annotation: " + annotationClass));
     }
 
     /**
      * Returns excluded fields from {@link dev.alexengrig.metter.annotation.SetterSupplier#excludedFields()}.
      *
-     * @param type descriptor
+     * @param descriptor descriptor
      * @return excluded fields from {@link dev.alexengrig.metter.annotation.SetterSupplier#excludedFields()}
      * @since 0.1.0
      */
     @Override
-    protected Set<String> getExcludedFields(TypeDescriptor type) {
-        return type.getAnnotation(annotationClass)
+    protected Set<String> getExcludedFields(TypeDescriptor descriptor) {
+        return descriptor.getAnnotation(annotationClass)
                 .map(SetterSupplier::excludedFields)
                 .map(Arrays::asList)
                 .map(HashSet::new)
-                .orElseThrow(() -> new MetterException("Type " + type + " has no annotation: " + annotationClass));
+                .orElseThrow(() -> new MetterException("Type " + descriptor + " has no annotation: " + annotationClass));
+    }
+
+    @Override
+    protected FieldChecker getFieldChecker(TypeDescriptor descriptor) {
+        return this::isTargetField;
     }
 
     /**
@@ -122,8 +126,7 @@ public class SetterSupplierProcessor extends BaseMethodSupplierProcessor<SetterS
      * or type descriptor of {@code descriptor} has a setter method
      * @since 0.1.0
      */
-    @Override
-    protected boolean isTargetField(FieldDescriptor field) {
+    private boolean isTargetField(FieldDescriptor field) {
         if (field.hasAnnotation(Setter.class)) {
             return !field.getAnnotation(Setter.class)
                     .map(Setter::value)
@@ -141,36 +144,6 @@ public class SetterSupplierProcessor extends BaseMethodSupplierProcessor<SetterS
     }
 
     /**
-     * Checks if a type descriptor of a field descriptor has a setter method
-     *
-     * @param field descriptor
-     * @return if a type descriptor of {@code field} has a setter method
-     * @since 0.1.1
-     */
-    protected boolean hasSetterMethod(FieldDescriptor field) {
-        String methodName = getSetterMethod(field);
-        TypeDescriptor type = field.getParent();
-        if (type.hasMethod(methodName)) {
-            Set<MethodDescriptor> methods = type.getMethods(methodName);
-            return methods.stream().anyMatch(method -> method.isNotPrivate() && "void".equals(method.getTypeName())
-                    && method.hasOnlyOneParameter(field.getTypeName()));
-        }
-        return false;
-    }
-
-    /**
-     * Returns a setter-method for a field descriptor.
-     *
-     * @param field descriptor
-     * @return setter-method for {@code field}
-     * @since 0.1.1
-     */
-    protected String getSetterMethod(FieldDescriptor field) {
-        String name = field.getName();
-        return "set" + Strings.capitalize(name);
-    }
-
-    /**
      * Returns a setter for a field descriptor.
      *
      * @param field descriptor
@@ -179,6 +152,6 @@ public class SetterSupplierProcessor extends BaseMethodSupplierProcessor<SetterS
      */
     @Override
     protected String getMethod(FieldDescriptor field) {
-        return "(instance, value) -> instance." + getSetterMethod(field) + "((" + field.getTypeName() + ") value)";
+        return "(instance, value) -> instance." + getSetterMethodName(field) + "((" + field.getTypeName() + ") value)";
     }
 }

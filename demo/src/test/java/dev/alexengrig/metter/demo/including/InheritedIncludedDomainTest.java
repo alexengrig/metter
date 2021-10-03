@@ -17,38 +17,42 @@
 package dev.alexengrig.metter.demo.including;
 
 import dev.alexengrig.metter.demo.BaseDomainTest;
-import org.junit.Test;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-
-import static org.junit.Assert.assertEquals;
+import java.util.function.Supplier;
 
 public class InheritedIncludedDomainTest extends BaseDomainTest<InheritedIncludedDomain> {
-    @Test
-    public void should_contains_allIncludedGetters() {
-        Map<String, Function<InheritedIncludedDomain, Object>> getterByField = getGetterMap(new InheritedIncludedDomainGetterSupplier());
-        assertSize(getterByField, 2);
-        assertGetterFields(getterByField, "included", "alsoIncluded");
-        InheritedIncludedDomain domain = new InheritedIncludedDomain(1, 2, 3, 4);
-        assertGetterValue(getterByField, domain, "included", 1);
-        assertGetterValue(getterByField, domain, "alsoIncluded", 3);
-        assertEquals("Ignored field value is incorrect", 2, domain.getIgnored());
-        assertEquals("Also ignored field value is incorrect", 4, domain.getAlsoIgnored());
+    @Override
+    protected Supplier<Map<String, Function<InheritedIncludedDomain, Object>>> createGetterSupplier() {
+        return new InheritedIncludedDomainGetterSupplier();
     }
 
-    @Test
-    public void should_contains_allIncludedSetters() {
-        Map<String, BiConsumer<InheritedIncludedDomain, Object>> setterByField = getSetterMap(new InheritedIncludedDomainSetterSupplier());
-        assertSize(setterByField, 2);
-        assertSetterFields(setterByField, "included", "alsoIncluded");
-        InheritedIncludedDomain domain = new InheritedIncludedDomain(1, 2, 3, 4);
-        assertSetterValue(setterByField, domain, "included", 10, InheritedIncludedDomain::getIncluded);
-        assertSetterValue(setterByField, domain, "alsoIncluded", 30, InheritedIncludedDomain::getAlsoIncluded);
-        domain.setIgnored(20);
-        assertEquals("Ignored field value is incorrect", 20, domain.getIgnored());
-        domain.setAlsoIgnored(40);
-        assertEquals("Also ignored field value is incorrect", 40, domain.getAlsoIgnored());
+    @Override
+    protected Supplier<Map<String, BiConsumer<InheritedIncludedDomain, Object>>> createSetterSupplier() {
+        return new InheritedIncludedDomainSetterSupplier();
+    }
+
+    @Override
+    protected String[] getFieldNames() {
+        return createNames("included", "alsoIncluded");
+    }
+
+    @Override
+    protected Object[] getFieldValues() {
+        return createValues(1, 3);
+    }
+
+    @Override
+    protected Function<InheritedIncludedDomain, Object>[] getFieldGetters() {
+        return createGetters(
+                InheritedIncludedDomain::getIncluded,
+                InheritedIncludedDomain::getAlsoIncluded);
+    }
+
+    @Override
+    protected InheritedIncludedDomain createDomain() {
+        return new InheritedIncludedDomain(1, 2, 3, 4);
     }
 }
